@@ -18,9 +18,9 @@ locals {
 }
 
 source "hcloud" "sumati" {
-  server_type = "cx11"
+  server_type = "cx21"
   # ZFS
-  image = "ubuntu-22.04"
+  image = "debian-11"
   rescue      = "linux64"
   location    = "nbg1"
   snapshot_name = "nixos-{{ timestamp }}"

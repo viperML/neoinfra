@@ -68,4 +68,6 @@
       configurationLimit = 10;
     };
   };
+
+  services.qemuGuest.enable = true;
 }
