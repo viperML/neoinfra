@@ -20,7 +20,7 @@ locals {
 source "hcloud" "sumati" {
   server_type = "cx11"
   # ZFS
-  image = "ubuntu-20.04"
+  image = "ubuntu-22.04"
   rescue      = "linux64"
   location    = "nbg1"
   snapshot_name = "nixos-{{ timestamp }}"
@@ -39,5 +39,9 @@ build {
   provisioner "file" {
     source = "secrets/sumati.age"
     destination = "/mnt/secrets/sumati.age"
+  }
+
+  post-processor "manifest" {
+    custom_data = local.build-labels
   }
 }

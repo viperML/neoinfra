@@ -1,0 +1,10 @@
+keys:
+  - &admin_gen6 age12ew7ztetf7ju00ssp6673jgqpnrpa6hnvm58s92v3clk4msxtfcq7knj6j
+  - &host_sumati age1ka9n7hnjfe0skhk9q3wy7lscsurk7h0geh48jgszf6wzh45ghdmq305xkr
+
+creation_rules:
+  - path_regex: secrets/[^/]+\.yaml$
+    key_groups:
+    - age:
+      - *admin_gen6
+      - *host_sumati

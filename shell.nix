@@ -5,5 +5,6 @@ pkgs.mkShell {
     hcloud
     shellcheck
     age
+    sops
   ];
 }

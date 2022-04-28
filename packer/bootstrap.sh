@@ -57,6 +57,7 @@ gpg2 --verify ./install.asc
 
 sh ./install
 set +u
+# shellcheck source=/dev/null
 . /root/.nix-profile/etc/profile.d/nix.sh
 set -u
 

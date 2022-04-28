@@ -1,3 +1,5 @@
 .env
 *.age
 .direnv
+result
+*.qcow2
