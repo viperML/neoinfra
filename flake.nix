@@ -35,7 +35,7 @@
       "x86_64-linux"
     ];
     genSystems = lib.genAttrs supportedSystems;
-    pkgsFor = lib.recursiveUpdate self.legacyPackages self.packages;
+    pkgsFor = self.legacyPackages;
   in {
     nixosConfigurations."sumati" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
@@ -71,10 +71,13 @@
       default = import ./shell.nix {pkgs = pkgsFor.${system};};
     });
 
-    legacyPackages = genSystems (system: nixpkgs.legacyPackages.${system});
+    legacyPackages = genSystems (system:
+      lib.recursiveUpdate
+      nixpkgs.legacyPackages.${system}
+      self.packages.${system});
 
     packages = genSystems (system: let
-      inherit (self.legacyPackages.${system}) callPackage;
+      inherit (nixpkgs.legacyPackages.${system}) callPackage;
     in {
       hcl = callPackage ./packages/hcl.nix {};
       inherit (deploy-rs.packages.${system}) deploy-rs;
