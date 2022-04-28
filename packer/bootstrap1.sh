@@ -30,14 +30,15 @@ rm -f /usr/local/sbin/{zpool,zfs}
 DISK="/dev/sda"
 sgdisk --zap-all $DISK
 
-sgdisk -n1:1M:+300M -t1:EF02 $DISK
-sgdisk -n2:0:0      -t2:8300 $DISK
+sgdisk -a1 -n1:2048:4095 -t1:EF02 $DISK
+sgdisk -a1 -n2:0:+300M   -t2:8300 $DISK
+sgdisk     -n3:0:0       -t3:8300 $DISK
 
 partprobe $DISK
 wipefs -a "$DISK"1
 wipefs -a "$DISK"2
 
-mkfs.ext4 -F -L BOOT "$DISK"1
+mkfs.ext4 -F -L BOOT "$DISK"2
 
 zpool create \
     -o ashift=12 \
@@ -51,7 +52,7 @@ zpool create \
     -O xattr=sa \
     -O mountpoint=none \
     -R /mnt \
-    -f tank "$DISK"2
+    -f tank "$DISK"3
 
 zfs create -o mountpoint=legacy tank/rootfs
 zfs snap tank/rootfs@empty
@@ -62,7 +63,7 @@ zfs create -o mountpoint=legacy tank/secrets
 mkdir -p /mnt
 mount -t zfs tank/rootfs /mnt
 mkdir -p /mnt/{boot,nix,var,secrets}
-mount "$DISK"1 /mnt/boot
+mount /dev/disk/by-label/BOOT /mnt/boot
 mount -t zfs tank/nix /mnt/nix
 mount -t zfs tank/var /mnt/var
 mount -t zfs tank/secrets /mnt/secrets

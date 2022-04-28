@@ -25,7 +25,11 @@
   networking = rec {
     hostName = "sumati";
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);
-    networkmanager.enable = true;
+    useNetworkd = true;
+    useDHCP = false;
+    interfaces.enp1s0 = {
+      useDHCP = true;
+    };
   };
 
   fileSystems = {
@@ -55,6 +59,8 @@
   sops.age.keyFile = "/secrets/sumati.age";
 
   boot = {
+    tmpOnTmpfs = true;
+    supportedFilesystems = ["zfs"];
     initrd.availableKernelModules = [
       "ahci"
       "xhci_pci"
@@ -68,6 +74,8 @@
       zfsSupport = true;
       configurationLimit = 10;
     };
+    kernelPackages = pkgs.zfs.latestCompatibleLinuxPackages;
+    zfs.enableUnstable = true;
   };
 
   services.qemuGuest.enable = true;
