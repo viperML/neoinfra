@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }: {
   time.timeZone = "Europe/Berlin";
@@ -27,7 +28,7 @@
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);
     useNetworkd = true;
     useDHCP = false;
-    interfaces.enp1s0 = {
+    interfaces.ens3 = {
       useDHCP = true;
     };
   };
@@ -76,6 +77,9 @@
     };
     kernelPackages = pkgs.zfs.latestCompatibleLinuxPackages;
     zfs.enableUnstable = true;
+    initrd.postDeviceCommands = lib.mkAfter ''
+      zfs rollback -r tank/rootfs@empty
+    '';
   };
 
   services.qemuGuest.enable = true;

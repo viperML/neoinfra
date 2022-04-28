@@ -27,6 +27,7 @@
   outputs = inputs @ {
     self,
     nixpkgs,
+    deploy-rs,
     ...
   }: let
     inherit (nixpkgs) lib;
@@ -53,6 +54,19 @@
       ];
     };
 
+    deploy.nodes."sumati" = {
+      hostname = "sumati";
+      fastConnection = false;
+      profiles.system = {
+        sshUser = "admin";
+        path =
+          deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."sumati";
+        user = "root";
+      };
+    };
+
+    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+
     devShells = genSystems (system: {
       default = import ./shell.nix {pkgs = pkgsFor.${system};};
     });
@@ -63,7 +77,7 @@
       inherit (self.legacyPackages.${system}) callPackage;
     in {
       hcl = callPackage ./packages/hcl.nix {};
-      inherit (inputs.deploy-rs.packages.${system}) deploy-rs;
+      inherit (deploy-rs.packages.${system}) deploy-rs;
       inherit
         (inputs.unstable.legacyPackages.${system})
         alejandra
