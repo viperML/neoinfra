@@ -19,8 +19,7 @@ locals {
 
 source "hcloud" "sumati" {
   server_type = "cx21"
-  # ZFS
-  image = "debian-11"
+  image = "debian-11" # doesn't matter since we boot the rescue system
   rescue      = "linux64"
   location    = "nbg1"
   snapshot_name = "nixos-{{ timestamp }}"

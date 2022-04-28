@@ -54,6 +54,7 @@ zpool create \
     -f tank "$DISK"2
 
 zfs create -o mountpoint=legacy tank/rootfs
+zfs snap tank/rootfs@empty
 zfs create -o mountpoint=legacy tank/nix
 zfs create -o mountpoint=legacy tank/var
 zfs create -o mountpoint=legacy tank/secrets
@@ -67,30 +68,29 @@ mount -t zfs tank/var /mnt/var
 mount -t zfs tank/secrets /mnt/secrets
 
 
-## Install nix
-VERSION="2.8.0"
-curl -o install https://releases.nixos.org/nix/nix-$VERSION/install
-curl -o install.asc https://releases.nixos.org/nix/nix-$VERSION/install.asc
+# Download nix installer
+NIXVERSION="2.8.0"
+curl -o install https://releases.nixos.org/nix/nix-$NIXVERSION/install
+curl -o install.asc https://releases.nixos.org/nix/nix-$NIXVERSION/install.asc
 gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
 gpg2 --verify ./install.asc
 
-
+# Add an user to run the installer and run it
 useradd nixinstaller
 usermod -aG sudo nixinstaller
 echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/nixinstaller
-
 chown :nixinstaller ./install
 chmod ug+x ./install
-
 sudo -u nixinstaller sh ./install --no-channel-add --daemon --daemon-user-count 4
 set +u
 # shellcheck source=/dev/null
 . /root/.nix-profile/etc/profile.d/nix.sh
 set -u
 
-echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+tee -a /etc/nix/nix.conf <<EOF
+experimental-features = nix-command flakes
+auto-optimise-store = true
+EOF
 
-
-# Get nixos-install from unstable to support flakes just in case
-nix profile install "github:NixOS/nixpkgs/nixos-unstable#nixos-install-tools"
-nixos-install --no-root-passwd --flake github:viperML/neoinfra#nixosConfigurations.sumati
+nix profile install github:viperML/neoinfra#nixos-install-tools
+nixos-install --no-root-passwd --flake github:viperML/neoinfra#sumati
