@@ -1,14 +1,8 @@
 {...}: let
   inherit (builtins) toString;
-  nar-port = 8383;
   cache-port = 5000;
 in {
-  services.nar-serve = {
-    enable = true;
-    port = nar-port;
-    cacheURL = "http://localhost:${toString cache-port}";
-  };
-
+  # TODO sign packages
   services.nix-serve = {
     enable = true;
     bindAddress = "localhost";
@@ -23,11 +17,20 @@ in {
     };
   };
 
-  services.nginx.virtualHosts."nar.ayats.org" = {
+  services.nginx.virtualHosts."nix.ayats.org" = {
     enableACME = true;
     forceSSL = true;
     locations."/" = {
-      proxyPass = "http://localhost:${toString nar-port}";
+      root = "/nix/store";
+      extraConfig = ''
+        autoindex off;
+      '';
+    };
+    locations."~ /(.+)" = {
+      root = "/nix/store";
+      extraConfig = ''
+        autoindex on;
+      '';
     };
   };
 }

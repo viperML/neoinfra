@@ -13,6 +13,7 @@
     htop
     fish
     vim
+    jq
   ];
 
   nix = {
