@@ -21,6 +21,9 @@
       experimental-features = nix-command flakes
     '';
     autoOptimiseStore = true;
+    systemFeatures = [
+      "nixos-test"
+    ];
   };
 
   networking = rec {
@@ -58,6 +61,10 @@
     };
   };
 
+  swapDevices = [
+    {device = "/dev/disk/by-label/SWAP";}
+  ];
+
   boot = {
     tmpOnTmpfs = true;
     supportedFilesystems = ["zfs"];
@@ -72,13 +79,16 @@
       enable = true;
       device = "/dev/sda";
       zfsSupport = true;
-      configurationLimit = 10;
+      configurationLimit = 20;
     };
     kernelPackages = pkgs.zfs.latestCompatibleLinuxPackages;
     zfs.enableUnstable = true;
     initrd.postDeviceCommands = lib.mkAfter ''
       zfs rollback -r tank/rootfs@empty
     '';
+    kernel.sysctl = {
+      "vm.swappiness" = 10;
+    };
   };
 
   services.qemuGuest.enable = true;
@@ -95,6 +105,7 @@
 
   services.openssh = {
     enable = true;
+    openFirewall = false;
     hostKeys = [
       {
         path = config.sops.secrets."ssh_host_key".path;
@@ -102,4 +113,10 @@
       }
     ];
   };
+  systemd.services.sshd = {
+    after = ["tailscaled.service"];
+    preStart = lib.mkAfter "${pkgs.coreutils}/bin/sleep 5";
+  };
+  services.tailscale.enable = true;
+  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
 }

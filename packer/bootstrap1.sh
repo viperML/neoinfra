@@ -60,6 +60,18 @@ zfs create -o mountpoint=legacy tank/nix
 zfs create -o mountpoint=legacy tank/var
 zfs create -o mountpoint=legacy tank/secrets
 
+zfs create \
+    -b 8192 \
+    -o compression=zle \
+    -o primarycache=metadata \
+    -o secondarycache=none \
+    -o sync=always \
+    -o logbias=throughput \
+    -V 4G \
+    tank/swap
+
+mkswap -L SWAP -f /dev/zvol/tank/swap
+
 mkdir -p /mnt
 mount -t zfs tank/rootfs /mnt
 mkdir -p /mnt/{boot,nix,var,secrets}
