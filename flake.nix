@@ -3,6 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
     nixpkgs-unfree = {
       url = "github:numtide/nixpkgs-unfree/main";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-compat = {

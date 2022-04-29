@@ -54,10 +54,9 @@
     "/secrets" = {
       device = "tank/secrets";
       fsType = "zfs";
+      neededForBoot = true;
     };
   };
-
-  sops.age.keyFile = "/secrets/sumati.age";
 
   boot = {
     tmpOnTmpfs = true;
@@ -83,4 +82,24 @@
   };
 
   services.qemuGuest.enable = true;
+
+  sops.age = {
+    keyFile = "/secrets/sumati.age";
+    sshKeyPaths = [];
+  };
+  sops.gnupg.sshKeyPaths = [];
+  sops.secrets."ssh_host_key" = {
+    sopsFile = ../secrets/sumati-ssh.yaml;
+    mode = "600";
+  };
+
+  services.openssh = {
+    enable = true;
+    hostKeys = [
+      {
+        path = config.sops.secrets."ssh_host_key".path;
+        type = "ed25519";
+      }
+    ];
+  };
 }
