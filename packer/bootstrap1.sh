@@ -59,6 +59,7 @@ zfs snap tank/rootfs@empty
 zfs create -o mountpoint=legacy tank/nix
 zfs create -o mountpoint=legacy tank/var
 zfs create -o mountpoint=legacy tank/secrets
+zfs create -o mountpoint=legacy tank/docker
 
 zfs create \
     -b 8192 \

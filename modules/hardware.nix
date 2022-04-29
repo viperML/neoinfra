@@ -59,6 +59,10 @@
       fsType = "zfs";
       neededForBoot = true;
     };
+    "/var/lib/docker" = {
+      device = "tank/docker";
+      fsType = "zfs";
+    };
   };
 
   swapDevices = [
