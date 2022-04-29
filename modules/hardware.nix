@@ -114,8 +114,11 @@
     sshKeyPaths = [];
   };
   sops.gnupg.sshKeyPaths = [];
+  sops.defaultSopsFile = ../secrets/sumati.yaml;
+
+  # SSH Config
+
   sops.secrets."ssh_host_key" = {
-    sopsFile = ../secrets/sumati-ssh.yaml;
     mode = "600";
   };
 

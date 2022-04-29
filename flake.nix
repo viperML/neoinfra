@@ -60,6 +60,7 @@
         inputs.sops-nix.nixosModules.sops
         self.nixosModules.hcloud
         ./modules/nix-serve.nix
+        ./modules/gitlab-runner.nix
       ];
     };
 

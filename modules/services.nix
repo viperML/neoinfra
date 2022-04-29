@@ -35,9 +35,7 @@
     requires = ["docker.service"];
   };
 
-  sops.secrets."cloudflare_credentials" = {
-    sopsFile = ../secrets/sumati-cloudflare.yaml;
-  };
+  sops.secrets."cloudflare_credentials" = {};
 
   security.acme = {
     acceptTerms = true;
