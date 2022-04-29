@@ -1,6 +1,9 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs-unfree = {
+      url = "github:numtide/nixpkgs-unfree/main";
+    };
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-compat = {
       url = "github:edolstra/flake-compat";
@@ -27,6 +30,7 @@
   outputs = inputs @ {
     self,
     nixpkgs,
+    nixpkgs-unfree,
     deploy-rs,
     ...
   }: let
@@ -35,7 +39,9 @@
       "x86_64-linux"
     ];
     genSystems = lib.genAttrs supportedSystems;
-    pkgsFor = self.legacyPackages;
+    pkgsFor = genSystems (system:
+      self.legacyPackages.${system}
+      // self.packages.${system});
   in {
     nixosConfigurations."sumati" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
@@ -51,7 +57,12 @@
         "${modulesPath}/profiles/qemu-guest.nix"
         inputs.nixos-flakes.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
+        self.nixosModules.hcloud
       ];
+    };
+
+    nixosModules = {
+      hcloud = import ./modules/hcloud;
     };
 
     deploy.nodes."sumati" = {
@@ -71,13 +82,10 @@
       default = import ./shell.nix {pkgs = pkgsFor.${system};};
     });
 
-    legacyPackages = genSystems (system:
-      lib.recursiveUpdate
-      nixpkgs.legacyPackages.${system}
-      self.packages.${system});
+    legacyPackages = nixpkgs-unfree.legacyPackages;
 
     packages = genSystems (system: let
-      inherit (nixpkgs.legacyPackages.${system}) callPackage;
+      callPackage = pkgsFor.${system}.callPackage;
     in {
       hcl = callPackage ./packages/hcl.nix {};
       inherit (deploy-rs.packages.${system}) deploy-rs;

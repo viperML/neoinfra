@@ -12,7 +12,10 @@
   flake = import flake-compat {
     src = ./.;
   };
-  lib = flake.defaultNix.legacyPackages.${system}.lib;
+  inherit (flake.defaultNix.legacyPackages.${system}) lib;
+  pkgs =
+    lib.genAttrs ["x86_64-linux"] (system:
+      flake.defaultNix.legacyPackages.${system} // flake.defaultNix.packages.${system});
 in
   assert args ? localSystem -> !(args ? system);
-  assert args ? system -> !(args ? localSystem); lib.recursiveUpdate flake.defaultNix.legacyPackages.${system} flake.defaultNix.packages.${system}
+  assert args ? system -> !(args ? localSystem); pkgs.${system}

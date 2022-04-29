@@ -7,4 +7,5 @@ chmod 600 /mnt/secrets/*
 umount /mnt/{var,nix,boot,secrets}
 umount /mnt
 
+zfs rollback -r tank/rootfs@empty
 zpool export tank
