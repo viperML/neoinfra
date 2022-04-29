@@ -59,6 +59,7 @@
         inputs.nixos-flakes.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
         self.nixosModules.hcloud
+        # ./modules/nar-serve.nix
       ];
     };
 

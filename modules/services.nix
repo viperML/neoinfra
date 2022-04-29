@@ -34,4 +34,20 @@
     '';
     requires = ["docker.service"];
   };
+
+  sops.secrets."cloudflare_credentials" = {
+    sopsFile = ../secrets/sumati-cloudflare.yaml;
+  };
+
+  security.acme = {
+    acceptTerms = true;
+    email = "ayatsfer@gmail.com";
+    # https://nixos.org/manual/nixos/stable/index.html#module-security-acme-config-dns
+    certs."ayats.org" = {
+      # server = "https://acme-staging-v02.api.letsencrypt.org/directory";
+      domain = "*.ayats.org";
+      dnsProvider = "cloudflare";
+      credentialsFile = config.sops.secrets."cloudflare_credentials".path;
+    };
+  };
 }
