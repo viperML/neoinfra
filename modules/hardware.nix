@@ -25,6 +25,11 @@
     systemFeatures = [
       "nixos-test"
     ];
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-old";
+    };
   };
 
   networking = rec {
@@ -69,6 +74,12 @@
   swapDevices = [
     {device = "/dev/disk/by-label/SWAP";}
   ];
+
+  services.zfs.autoScrub = {
+    enable = true;
+    pools = ["tank"];
+    interval = "weekly";
+  };
 
   boot = {
     tmpOnTmpfs = true;
