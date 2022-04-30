@@ -125,6 +125,7 @@
   services.openssh = {
     enable = true;
     openFirewall = false;
+    passwordAuthentication = false;
     hostKeys = [
       {
         path = config.sops.secrets."ssh_host_key".path;
