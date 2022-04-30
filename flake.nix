@@ -58,7 +58,7 @@
         "${modulesPath}/profiles/qemu-guest.nix"
         inputs.nixos-flakes.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
-        self.nixosModules.hcloud
+        # self.nixosModules.hcloud
         ./modules/nix-serve
         ./modules/gitlab-runner.nix
       ];

@@ -4,3 +4,4 @@
 result
 *.qcow2
 packer-manifest.json
+*.pem

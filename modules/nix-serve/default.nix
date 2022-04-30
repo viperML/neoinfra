@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: let
   inherit (builtins) toString;
@@ -26,21 +27,15 @@
       '';
     };
 in {
-  # https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html
-  containers.nix-serve = {
-    config = _: {
-      networking.firewall.allowedTCPPorts = [cache-port];
-      services.nix-serve = {
-        enable = true;
-        port = cache-port;
-      };
-    };
-    privateNetwork = true;
-    hostAddress = "192.168.100.2";
-    localAddress = cache-ip;
-    autoStart = true;
-    ephemeral = true;
-    extraFlags = ["-U"];
+  sops.secrets."cache_priv_key" = {
+    restartUnits = ["nix-serve"];
+    # owner = "nix-serve";
+  };
+
+  services.nix-serve = {
+    enable = true;
+    port = cache-port;
+    secretKeyFile = config.sops.secrets."cache_priv_key".path;
   };
 
   services.nginx.virtualHosts."cache.ayats.org" = {
@@ -48,7 +43,7 @@ in {
     forceSSL = true;
     locations = {
       "/" = {
-        proxyPass = "http://${cache-ip}:${toString cache-port}";
+        proxyPass = "http://localhost:${toString cache-port}";
       };
       "/robots.txt" = {
         return = ''200 "User-agent: *\nDisallow: /\n"'';
@@ -59,6 +54,7 @@ in {
     };
   };
 
+  # https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html
   containers.http-store = {
     config = _: {
       networking.firewall.allowedTCPPorts = [80];

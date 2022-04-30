@@ -39,6 +39,7 @@
   systemd.services.gitlab-runner = {
     confinement.enable = true;
     confinement.packages = config.services.gitlab-runner.extraPackages;
+    after = ["nscd.service"];
     serviceConfig = {
       User = "gitlab-runner";
       Group = "gitlab-runner";
