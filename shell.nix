@@ -32,6 +32,7 @@ in
       age
       sops
       deploy-rs
+      nomad
       # Formatters
       treefmt-wrapped
       hcl

@@ -53,14 +53,16 @@
       in [
         ./modules/hardware.nix
         ./modules/admin.nix
-        ./modules/services.nix
         "${modulesPath}/profiles/minimal.nix"
         "${modulesPath}/profiles/qemu-guest.nix"
         inputs.nixos-flakes.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
+
+        ./modules/services.nix
         # self.nixosModules.hcloud
         ./modules/nix-serve
         ./modules/gitlab-runner.nix
+        ./modules/nomad.nix
       ];
     };
 
