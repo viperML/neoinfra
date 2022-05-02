@@ -34,10 +34,15 @@
   networking = rec {
     hostName = "sumati";
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);
-    useNetworkd = true;
+    useNetworkd = false;
     useDHCP = false;
-    interfaces.ens3 = {
-      useDHCP = true;
+  };
+
+  systemd.network = {
+    enable = true;
+    networks.default = {
+      matchConfig.Match = "en*";
+      networkConfig.DHCP = "yes";
     };
   };
 
