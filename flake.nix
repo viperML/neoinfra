@@ -26,6 +26,7 @@
       inputs.utils.follows = "flake-utils";
       inputs.flake-compat.follows = "flake-compat";
     };
+    viperML-dotfiles.url = "github:viperML/dotfiles";
   };
 
   outputs = inputs @ {

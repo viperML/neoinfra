@@ -11,9 +11,8 @@
   environment.defaultPackages = [];
   environment.systemPackages = with pkgs; [
     htop
-    fish
-    vim
     jq
+    inputs.viperML-dotfiles.packages.${pkgs.system}.vshell
   ];
 
   nix = {
