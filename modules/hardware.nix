@@ -41,7 +41,7 @@
   systemd.network = {
     enable = true;
     networks.default = {
-      matchConfig.Match = "en*";
+      matchConfig.Name = "en*";
       networkConfig.DHCP = "yes";
     };
   };
