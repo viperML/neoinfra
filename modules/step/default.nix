@@ -70,7 +70,8 @@
           type = "SSHPOP";
           name = "sshpop";
           claims = let
-            _time = "30d";
+            # 60 days
+            _time = "1440h";
           in {
             enableSSHCA = true;
             defaultHostSSHCertDuration = _time;

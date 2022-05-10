@@ -13,15 +13,22 @@ img_id=$(echo "$img_name" | sed 's|.raw.tar.gz$||;s|\.|-|g;s|_|-|g')
 read -p "Cleanup old? [Y/n] " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[nN]$ ]]; then
-	tarballs=($(gsutil ls "gs://$GCP_BUCKET" | grep nixos-image))
-	for x in "${tarballs[@]}"; do
-		echo "Removing $x"
-		gsutil rm -r "$x"
+	objects=($(gsutil ls "gs://$GCP_BUCKET"))
+	# Run if object has "nixos-image" in the name
+	for object in "${objects[@]}"; do
+		if [[ $object =~ nixos-image ]]; then
+			echo "Deleting $object"
+			gsutil rm -r "$object"
+		fi
 	done
-	images=($(gcloud compute images list --filter="name~nixos-image"))
-	for x in "${images[@]}"; do
-		echo "Removing $x"
-		gcloud compute images delete "$x"
+
+	images=($(gcloud compute images list --filter=name~nixos-image| grep -v NAME | cut -d' ' -f1))
+	# Run if image has "nixos-image" in the name
+	for image in "${images[@]}"; do
+		if [[ $image =~ nixos-image ]]; then
+			echo "Deleting $image"
+			gcloud compute images delete "$image"
+		fi
 	done
 fi
 
