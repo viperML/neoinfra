@@ -1,3 +1,8 @@
+/*
+ Some background information:
+ - Running on port 443, no reverse proxy
+ - Firewall configured in the cloud provisioner
+ */
 {
   config,
   pkgs,
@@ -11,7 +16,7 @@
     root = "${STEPPATH}/certs/root_ca.crt";
     federatedRoots = null;
     crt = "${STEPPATH}/certs/intermediate_ca.crt";
-    key = "${STEPPATH}/secrets/intermediate_ca_key"; # needed?
+    key = "${STEPPATH}/secrets/intermediate_ca_key";
     address = "0.0.0.0:443";
     insecureAddress = "";
     dnsNames = [
@@ -50,11 +55,26 @@
           domains = ["ca.ayats.org"];
           listenAddress = ":10000";
           # https://smallstep.com/docs/step-ca/provisioners#claims
-          claims = {
-            maxTLSCertDuration = "8h";
-            defaultTLSCertDuration = "2h";
-            disableRenewal = true;
+          claims = let
+            _time = "14h";
+          in {
+            maxTLSCertDuration = _time;
+            defaultTLSCertDuration = _time;
             enableSSHCA = true;
+            maxUserSSHCertDuration = _time;
+            defaultUserSSHCertDuration = _time;
+            disableRenewal = true;
+          };
+        }
+        {
+          type = "SSHPOP";
+          name = "sshpop";
+          claims = let
+            _time = "30d";
+          in {
+            enableSSHCA = true;
+            defaultHostSSHCertDuration = _time;
+            maxHostSSHCertDuration = _time;
           };
         }
       ];
@@ -129,18 +149,21 @@ in {
   users.groups.step-ca = {};
 
   environment.etc."smallstep/ca.json".source = settingsFile;
+  environment.systemPackages = [pkgs.step-cli];
 
   systemd.packages = [pkgs.step-ca];
+  systemd.tmpfiles.rules = [
+    "d /var/lib/step-ca-secret 0700 root root - -"
+  ];
+
   systemd.services = {
     "step-ca-secret" = {
       wantedBy = ["multi-user.target"];
-      script = ''
-        ${pkgs.pwgen}/bin/pwgen -sy 30 1 > password
-        echo "Password generated successfully"
-      '';
       serviceConfig = {
         UMask = "0077";
         WorkingDirectory = "/var/lib/step-ca-secret";
+        StandardOutput = "truncate:/var/lib/step-ca-secret/password";
+        ExecStart = "${pkgs.pwgen}/bin/pwgen -sy 42 1";
         StateDirectory = "step-ca-secret";
         Type = "oneshot";
       };
@@ -157,6 +180,8 @@ in {
           --ssh \
           --deployment-type=standalone \
           --name=step-pki \
+          --provisioner=ayatsfer@gmail.com \
+          --dns ca.ayats.org \
           --password-file=''${CREDENTIALS_DIRECTORY}/password
         mkdir -p ${STEPPATH}/templates
         cp -r ${./templates}/* ${STEPPATH}/templates

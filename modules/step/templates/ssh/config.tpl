@@ -4,7 +4,7 @@ Match exec "step ssh check-host %h"
 {{- end }}
 {{- if or .User.GOOS "none" | eq "windows" }}
 	UserKnownHostsFile "{{.User.StepPath}}\ssh\known_hosts"
-	ProxyCommand C:\Windows\System32\cmd.exe /c step ssh proxycommand %r %h %p
+	ProxyCommand C:\Windows\System32\cmd.exe /c step ssh proxycommand %r %h %p --provisioner "Google"
 {{- else }}
 	UserKnownHostsFile "{{.User.StepPath}}/ssh/known_hosts"
 	ProxyCommand step ssh proxycommand %r %h %p

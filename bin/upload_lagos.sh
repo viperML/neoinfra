@@ -10,12 +10,19 @@ img_path=$(echo result/*.tar.gz)
 img_name=${IMAGE_NAME:-$(basename "$img_path")}
 img_id=$(echo "$img_name" | sed 's|.raw.tar.gz$||;s|\.|-|g;s|_|-|g')
 
-gsutil ls "gs://$GCP_BUCKET"
-# Ask for confirmation or exit
-read -p "Continue? [y/N] " -n 1 -r
-echo # (optional) move to a new line
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-	exit 0
+read -p "Cleanup old? [Y/n] " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[nN]$ ]]; then
+	tarballs=($(gsutil ls "gs://$GCP_BUCKET" | grep nixos-image))
+	for x in "${tarballs[@]}"; do
+		echo "Removing $x"
+		gsutil rm -r "$x"
+	done
+	images=($(gcloud compute images list --filter="name~nixos-image"))
+	for x in "${images[@]}"; do
+		echo "Removing $x"
+		gcloud compute images delete "$x"
+	done
 fi
 
 gsutil cp result/*.tar.gz "gs://$GCP_BUCKET/$img_name"
