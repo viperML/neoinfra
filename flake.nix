@@ -79,7 +79,7 @@
         {
           virtualisation.googleComputeImage = {
             diskSize = "auto";
-            compressionLevel = 1;
+            compressionLevel = 9;
           };
         }
         "${modulesPath}/profiles/minimal.nix"

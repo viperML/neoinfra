@@ -6,8 +6,7 @@
   # TODO
   services.getty.autologinUser = "root";
 
-  services.openssh.enable = lib.mkForce false;
-  system.disableInstallerTools = true;
+  # services.openssh.enable = lib.mkForce false;
   documentation.enable = false;
   environment.defaultPackages = [];
   # environment.systemPackages = with pkgs;

@@ -35,6 +35,7 @@ in
       nomad
       step-cli
       step-ca
+      google-cloud-sdk-gce
       # Formatters
       treefmt-wrapped
       hcl
