@@ -48,13 +48,14 @@
     pkgsFor = genSystems (system:
       self.legacyPackages.${system}
       // self.packages.${system});
-    modulesPath = "${nixpkgs}/nixos/modules";
   in {
     nixosConfigurations."sumati" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = pkgsFor.${system};
       specialArgs = {inherit inputs;};
-      modules = [
+      modules = let
+        modulesPath = "${nixpkgs}/nixos/modules";
+      in [
         ./modules/hardware.nix
         ./modules/admin.nix
         "${modulesPath}/profiles/minimal.nix"
@@ -74,14 +75,16 @@
       system = "x86_64-linux";
       pkgs = inputs.unstable.legacyPackages.${system};
       specialArgs = {inherit inputs;};
-      modules = [
-        # "${modulesPath}/virtualisation/google-compute-image.nix"
-        # {
-        #   virtualisation.googleComputeImage = {
-        #     diskSize = "auto";
-        #     compressionLevel = 9;
-        #   };
-        # }
+      modules = let
+        modulesPath = "${inputs.unstable}/nixos/modules";
+      in [
+        "${modulesPath}/virtualisation/google-compute-image.nix"
+        {
+          virtualisation.googleComputeImage = {
+            diskSize = "auto";
+            compressionLevel = 9;
+          };
+        }
         "${modulesPath}/profiles/minimal.nix"
         ./modules/lagos.nix
         ./modules/step
