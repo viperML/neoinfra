@@ -27,6 +27,10 @@
       inputs.flake-compat.follows = "flake-compat";
     };
     viperML-dotfiles.url = "github:viperML/dotfiles";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -44,14 +48,13 @@
     pkgsFor = genSystems (system:
       self.legacyPackages.${system}
       // self.packages.${system});
+    modulesPath = "${nixpkgs}/nixos/modules";
   in {
     nixosConfigurations."sumati" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = pkgsFor.${system};
       specialArgs = {inherit inputs;};
-      modules = let
-        modulesPath = "${nixpkgs}/nixos/modules";
-      in [
+      modules = [
         ./modules/hardware.nix
         ./modules/admin.nix
         "${modulesPath}/profiles/minimal.nix"
@@ -64,6 +67,24 @@
         ./modules/nix-serve
         ./modules/gitlab-runner.nix
         ./modules/nomad.nix
+      ];
+    };
+
+    nixosConfigurations."lagos" = nixpkgs.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = pkgsFor.${system};
+      specialArgs = {inherit inputs;};
+      modules = [
+        "${modulesPath}/virtualisation/google-compute-image.nix"
+        {
+          virtualisation.googleComputeImage = {
+            diskSize = "auto";
+            compressionLevel = 1;
+          };
+        }
+        "${modulesPath}/profiles/minimal.nix"
+        ./modules/lagos.nix
+        ./modules/step
       ];
     };
 

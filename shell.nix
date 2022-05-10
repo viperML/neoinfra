@@ -33,6 +33,8 @@ in
       sops
       deploy-rs
       nomad
+      step-cli
+      step-ca
       # Formatters
       treefmt-wrapped
       hcl
