@@ -70,18 +70,18 @@
       ];
     };
 
-    nixosConfigurations."lagos" = nixpkgs.lib.nixosSystem rec {
+    nixosConfigurations."lagos" = inputs.unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
-      pkgs = pkgsFor.${system};
+      pkgs = inputs.unstable.legacyPackages.${system};
       specialArgs = {inherit inputs;};
       modules = [
-        "${modulesPath}/virtualisation/google-compute-image.nix"
-        {
-          virtualisation.googleComputeImage = {
-            diskSize = "auto";
-            compressionLevel = 9;
-          };
-        }
+        # "${modulesPath}/virtualisation/google-compute-image.nix"
+        # {
+        #   virtualisation.googleComputeImage = {
+        #     diskSize = "auto";
+        #     compressionLevel = 9;
+        #   };
+        # }
         "${modulesPath}/profiles/minimal.nix"
         ./modules/lagos.nix
         ./modules/step
