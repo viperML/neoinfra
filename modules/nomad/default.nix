@@ -37,6 +37,11 @@ args @ {
     enableDocker = false;
     dropPrivileges = false;
     settings = import ./settings.nix args;
+    extraPackages = [
+      config.nix.package
+      pkgs.git
+      pkgs.curl
+    ];
     extraSettingsPlugins = [
       inputs.nomad-driver-containerd-nix.packages.${pkgs.system}.nomad-driver-containerd-nix
     ];

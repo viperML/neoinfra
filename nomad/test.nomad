@@ -1,6 +1,6 @@
 # https://www.nomadproject.io/docs/job-specification
 # https://learn.hashicorp.com/tutorials/nomad/jobs-submit
-job "python_server1" {
+job "python_server3" {
   datacenters = ["dc1"]
   // type        = "service"
 
