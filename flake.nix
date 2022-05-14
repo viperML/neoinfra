@@ -31,6 +31,10 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nomad-driver-containerd-nix = {
+      url = "git+https://gitlab.com/viperml-public/nomad-driver-containerd-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -67,7 +71,7 @@
         # self.nixosModules.hcloud
         ./modules/nix-serve
         ./modules/gitlab-runner.nix
-        ./modules/nomad.nix
+        ./modules/nomad
       ];
     };
 

@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   networking.firewall.interfaces.tailscale0 = {
@@ -34,19 +35,13 @@
     enable = true;
     enableDocker = false;
     dropPrivileges = false;
-    settings = {
-      bind_addr = "0.0.0.0";
-      server = {
-        enabled = true;
-        bootstrap_expect = 1;
-      };
-      client = {
-        enabled = true;
-        host_volume."nix" = {
-          path = "/nix";
-          read_only = false;
-        };
-      };
-    };
+    settings = import ./settings.nix;
+    extraSettingsPlugins = [
+      inputs.nomad-driver-containerd-nix.packages."x86_64-linux".nomad-driver-containerd-nix
+    ];
+  };
+
+  virtualisation.containerd = {
+    enable = true;
   };
 }

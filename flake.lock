@@ -484,6 +484,26 @@
         "type": "github"
       }
     },
+    "nomad-driver-containerd-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1652539856,
+        "narHash": "sha256-1cl5BJEFB81oQnd1okOrNFsbr0Jdvs1Arud7uDh1lyg=",
+        "ref": "refs/heads/master",
+        "rev": "73562fed84b0366a224e2dba5fee2cabd238a627",
+        "revCount": 329,
+        "type": "git",
+        "url": "https://gitlab.com/viperml-public/nomad-driver-containerd-nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/viperml-public/nomad-driver-containerd-nix"
+      }
+    },
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
@@ -493,6 +513,7 @@
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unfree": "nixpkgs-unfree",
+        "nomad-driver-containerd-nix": "nomad-driver-containerd-nix",
         "sops-nix": "sops-nix",
         "unstable": "unstable",
         "viperML-dotfiles": "viperML-dotfiles"
