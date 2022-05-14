@@ -1,7 +1,8 @@
-{
+args @ {
   config,
   pkgs,
   inputs,
+  lib,
   ...
 }: {
   networking.firewall.interfaces.tailscale0 = {
@@ -35,9 +36,9 @@
     enable = true;
     enableDocker = false;
     dropPrivileges = false;
-    settings = import ./settings.nix;
+    settings = import ./settings.nix args;
     extraSettingsPlugins = [
-      inputs.nomad-driver-containerd-nix.packages."x86_64-linux".nomad-driver-containerd-nix
+      inputs.nomad-driver-containerd-nix.packages.${pkgs.system}.nomad-driver-containerd-nix
     ];
   };
 

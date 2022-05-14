@@ -1,25 +1,32 @@
 # https://www.nomadproject.io/docs/job-specification
 # https://learn.hashicorp.com/tutorials/nomad/jobs-submit
-job "python_server" {
+job "python_server1" {
   datacenters = ["dc1"]
-  type        = "service"
+  // type        = "service"
 
   group "mygroup" {
     count = 1
-    volume "nix" {
-      type      = "host"
-      source    = "nix"
-      read_only = false
-    }
-    task "mytask" {
-      driver = "exec"
-      volume_mount {
-        volume      = "nix"
-        destination = "/nix"
+
+    network {
+      mode = "bridge"
+      port "http" {
+        static = 8080
+        to     = 8080
       }
+    }
+
+    task "mytask" {
+      driver = "containerd-driver"
+
       config {
-        command = "nix"
-        args    = ["run", "nixpkgs#python3", "--", "-m", "http.server", "8080"]
+        flake_ref  = "git+https://github.com/viperML/home#serve"
+        flake_sha  = "sha256-IW7Tvwuw2tvDdbAmFY37y57KZvEuaE8TXuEs2vJysi0="
+        entrypoint = ["bin/serve"]
+      }
+
+      resources {
+        cpu    = 500
+        memory = 256
       }
     }
   }
