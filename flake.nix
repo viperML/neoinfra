@@ -72,6 +72,7 @@
         ./modules/nix-serve
         ./modules/gitlab-runner.nix
         ./modules/nomad
+        ./nomad/http-store
       ];
     };
 

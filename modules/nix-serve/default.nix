@@ -86,21 +86,7 @@ in {
      ephemeral = true;
      extraFlags = ["-U"];
    };
-   
-   services.nginx.virtualHosts."nix.ayats.org" = {
-     enableACME = true;
-     forceSSL = true;
-     locations = {
-       "/" = {
-         proxyPass = "http://${http-store-ip}:80";
-       };
-       "/robots.txt" = {
-         return = ''200 "User-agent: *\nDisallow: /\n"'';
-         extraConfig = ''
-           add_header Content-Type text/plain;
-         '';
-       };
-     };
+
    };
    */
 }
