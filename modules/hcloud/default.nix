@@ -10,7 +10,6 @@
     '';
   } "metadata" (builtins.readFile ./metadata.py);
 in {
-  # TODO cloud init
   systemd.services = {
     hcloud-metadata = {
       description = "Download cloud-init & hetzner network metadata";

@@ -19,19 +19,6 @@ args @ {
     ];
   };
 
-  # Pseudo-fhsenv for the exec runner
-  systemd.tmpfiles.rules = let
-    collection = pkgs.symlinkJoin {
-      name = "nomad-environment";
-      paths = [
-        pkgs.coreutils
-        config.nix.package
-      ];
-    };
-  in [
-    "L+ /usr/local - - - - ${collection}"
-  ];
-
   services.nomad = {
     enable = true;
     enableDocker = false;
@@ -40,7 +27,6 @@ args @ {
     extraPackages = [
       config.nix.package
       pkgs.git
-      pkgs.curl
     ];
     extraSettingsPlugins = [
       inputs.nomad-driver-containerd-nix.packages.${pkgs.system}.nomad-driver-containerd-nix

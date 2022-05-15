@@ -44,6 +44,10 @@
       User = "gitlab-runner";
       Group = "gitlab-runner";
       DynamicUser = lib.mkForce false;
+      # Failed to create directory at /var/empty/usr: Operation not permitted
+      StartLimitIntervalSec = "5";
+      StartLimitBurst = "5";
+      ReloadPropagatedFrom = ["nscd.service"];
       Environment = [
         "NIX_REMOTE=daemon"
         "PAGER=cat"

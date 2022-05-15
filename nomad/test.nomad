@@ -1,8 +1,7 @@
 # https://www.nomadproject.io/docs/job-specification
 # https://learn.hashicorp.com/tutorials/nomad/jobs-submit
-job "python_server3" {
+job "server4" {
   datacenters = ["dc1"]
-  // type        = "service"
 
   group "mygroup" {
     count = 1
@@ -19,8 +18,8 @@ job "python_server3" {
       driver = "containerd-driver"
 
       config {
-        flake_ref  = "git+https://github.com/viperML/home#serve"
-        flake_sha  = "sha256-IW7Tvwuw2tvDdbAmFY37y57KZvEuaE8TXuEs2vJysi0="
+        flake_ref  = "git+https://github.com/viperML/home?ref=bookworm#packages.x86_64-linux.serve"
+        flake_sha  = "sha256-/EXw/7dMvWZC7ZnSMDCki1ViMJ5zE6uJaDt7S7Mukl0="
         entrypoint = ["bin/serve"]
       }
 

@@ -29,6 +29,7 @@ args: {
       enabled = true;
       stats_interval = "5s";
       containerd_runtime = "io.containerd.runc.v2";
+      nix_executable = args.config.nix.package.outPath;
     };
   };
 }
