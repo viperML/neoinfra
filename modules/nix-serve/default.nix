@@ -38,7 +38,7 @@ in {
   };
 
   services.nginx.virtualHosts."cache.ayats.org" = {
-    enableACME = true;
+    useACMEHost = "ayats.org";
     forceSSL = true;
     locations = {
       "/" = {

@@ -73,6 +73,7 @@
         ./modules/gitlab-runner.nix
         ./modules/nomad
         ./nomad/http-store
+        ./nomad/blog
       ];
     };
 

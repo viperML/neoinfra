@@ -25,6 +25,8 @@
     certs."ayats.org" = {
       # server = "https://acme-staging-v02.api.letsencrypt.org/directory";
       domain = "*.ayats.org";
+      group = "nginx";
+
       dnsProvider = "cloudflare";
       credentialsFile = config.sops.secrets."cloudflare_credentials".path;
     };
