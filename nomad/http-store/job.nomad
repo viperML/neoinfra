@@ -14,8 +14,8 @@ job "http-store" {
       driver = "containerd-driver"
 
       config {
-        flake_ref = "nixpkgs/a3917caedfead19f853aa5769de4c3ea4e4db584#miniserve"
-        flake_sha = "sha256-NcJnbGDBBN023x8s3ll3HZxBcQoPq1ry9E2sjg+4flc="
+        flake_ref = "nixpkgs/${var.nixpkgs_rev}#miniserve"
+        flake_sha = var.nixpkgs_narHash
         entrypoint = [
           "bin/miniserve",
           "/nix/store",
@@ -40,4 +40,16 @@ job "http-store" {
       }
     }
   }
+}
+
+variable "nixpkgs_rev" {
+  type = string
+  validation {
+    condition = var.nixpkgs_rev != "null"
+    error_message = "Git tree is dirty."
+  }
+}
+
+variable "nixpkgs_narHash" {
+  type = string
 }
