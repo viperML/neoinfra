@@ -1,5 +1,5 @@
 args: {
-  bind_addr = "0.0.0.0";
+  bind_addr = ''{{ GetInterfaceIP "tailscale0" }}'';
 
   server = {
     enabled = true;
