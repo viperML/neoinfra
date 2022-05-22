@@ -38,7 +38,7 @@ in {
   };
 
   services.nginx.virtualHosts."cache.ayats.org" = {
-    useACMEHost = "ayats.org";
+    enableACME = true;
     forceSSL = true;
     locations = {
       "/" = {
@@ -46,47 +46,12 @@ in {
       };
       "/robots.txt" = {
         return = ''200 "User-agent: *\nDisallow: /\n"'';
-        extraConfig = ''
-          add_header Content-Type text/plain;
-        '';
+        # TODO
+        # extraConfig = ''
+        #   add_header Content-Type text/plain;
+        # '';
       };
     };
   };
 
-  /*
-   # https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html
-   containers.http-store = {
-     config = _: {
-       networking.firewall.allowedTCPPorts = [80];
-       services.nginx = {
-         enable = true;
-         additionalModules = [pkgs.nginxModules.fancyindex];
-         virtualHosts."localhost".locations = {
-           "~ /(.+)-(.+)" = {
-             root = "/nix/store";
-             extraConfig = ''
-               fancyindex on;
-               fancyindex_exact_size off;
-               fancyindex_header "${lib.removePrefix "/nix/store" nginx-theme.outPath}/header.html";
-               fancyindex_footer "${lib.removePrefix "/nix/store" nginx-theme.outPath}/footer.html";
-               fancyindex_show_path off;
-               fancyindex_name_length 255;
-               fancyindex_time_format "-";
-               fancyindex_default_sort name;
-               fancyindex_directories_first on;
-             '';
-           };
-         };
-       };
-     };
-     privateNetwork = true;
-     hostAddress = "192.168.100.2";
-     localAddress = http-store-ip;
-     autoStart = true;
-     ephemeral = true;
-     extraFlags = ["-U"];
-   };
-
-   };
-   */
 }

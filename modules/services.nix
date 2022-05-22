@@ -14,21 +14,39 @@
     recommendedOptimisation = true;
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
-  };
+    # https://gitlab.com/putchar/dotnix/-/blob/main/NixOS/hosts/hetzner-1/nginx.nix
+    commonHttpConfig = ''
+      # Add HSTS header with preloading to HTTPS requests.
+      # Adding this header to HTTP requests is discouraged
+      map $scheme $hsts_header {
+          https   "max-age=31536000; includeSubdomains; preload";
+      }
+      add_header Strict-Transport-Security $hsts_header;
 
-  sops.secrets."cloudflare_credentials" = {};
+      # Enable CSP for your services.
+      add_header Content-Security-Policy "script-src 'self'; object-src 'none'; base-uri 'none';" always;
+
+      # Minimize information leaked to other domains
+      #add_header 'Referrer-Policy' 'origin-when-cross-origin';
+      add_header 'Referrer-Policy' 'same-origin';
+
+      # Disable embedding as a frame
+      add_header X-Frame-Options DENY;
+
+      # Prevent injection of code in other mime types (XSS Attacks)
+      add_header X-Content-Type-Options nosniff;
+
+      # Enable XSS protection of the browser.
+      # May be unnecessary when CSP is configured properly (see above)
+      add_header X-XSS-Protection "1; mode=block";
+
+      # This might create errors
+      proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+    '';
+  };
 
   security.acme = {
     acceptTerms = true;
     email = "ayatsfer@gmail.com";
-    # https://nixos.org/manual/nixos/stable/index.html#module-security-acme-config-dns
-    certs."ayats.org" = {
-      # server = "https://acme-staging-v02.api.letsencrypt.org/directory";
-      domain = "*.ayats.org";
-      group = "nginx";
-
-      dnsProvider = "cloudflare";
-      credentialsFile = config.sops.secrets."cloudflare_credentials".path;
-    };
   };
 }

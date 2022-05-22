@@ -1,6 +1,6 @@
 {...}: {
   services.nginx.virtualHosts."nix.ayats.org" = {
-    useACMEHost = "ayats.org";
+    enableACME = true;
     forceSSL = true;
     locations = {
       "~ /(.+)" = {
@@ -8,9 +8,10 @@
       };
       "/robots.txt" = {
         return = ''200 "User-agent: *\nDisallow: /\n"'';
-        extraConfig = ''
-          add_header Content-Type text/plain;
-        '';
+        # TODO
+        # extraConfig = ''
+        #   add_header Content-Type text/plain;
+        # '';
       };
     };
   };

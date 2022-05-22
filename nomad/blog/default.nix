@@ -1,7 +1,7 @@
 {...}: {
   services.nginx.virtualHosts."ayats.org" = {
     default = true;
-    useACMEHost = "ayats.org";
+    enableACME = true;
     forceSSL = true;
     locations = {
       "/" = {
