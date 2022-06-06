@@ -1,6 +1,30 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
+  }
+}
+
 variable "gcp_project" {
   type        = string
   description = "The ID of the project in which the resource belongs."
+}
+
+variable "cloudflare_email" {
+  type        = string
+  description = "Email of the Cloudflare account"
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "API Key for Cloudflare DNS"
+}
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Zone ID for Cloudflare"
 }
 
 provider "google" {
@@ -9,8 +33,13 @@ provider "google" {
   zone    = "us-east1-b"
 }
 
+provider "cloudflare" {
+  email     = var.cloudflare_email
+  api_token = var.cloudflare_api_token
+}
+
 data "external" "image" {
-  program = ["bin/terraform-lagos.sh"]
+  program = ["./build.sh"]
 }
 
 locals {
@@ -62,6 +91,7 @@ resource "google_compute_instance" "lagos" {
   network_interface {
     network = google_compute_network.vpc_network.self_link
     access_config {
+      network_tier = "STANDARD"
     }
   }
 }
@@ -71,6 +101,22 @@ resource "google_compute_network" "vpc_network" {
   auto_create_subnetworks = "true"
 }
 
+locals {
+  ip = "${google_compute_instance.lagos.network_interface.0.access_config.0.nat_ip}"
+}
+
+resource "cloudflare_record" "record" {
+  zone_id = var.cloudflare_zone_id
+  name    = "ca"
+  type    = "A"
+  proxied = false
+  value   = local.ip
+}
+
 output "image_id" {
   value = google_compute_image.lagos.id
+}
+
+output "ip" {
+  value = local.ip
 }

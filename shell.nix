@@ -39,6 +39,7 @@ in
       (terraform.withPlugins (t: [
         t.google
         t.external
+        t.cloudflare
       ]))
       # Formatters
       treefmt-wrapped
