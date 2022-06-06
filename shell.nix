@@ -36,6 +36,10 @@ in
       step-cli
       step-ca
       google-cloud-sdk-gce
+      (terraform.withPlugins (t: [
+        t.google
+        t.external
+      ]))
       # Formatters
       treefmt-wrapped
       hcl

@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     nixpkgs-unfree = {
       url = "github:numtide/nixpkgs-unfree/main";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,10 +14,9 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-flakes = {
-      url = "github:viperML/nixos-flakes";
+    nix-common = {
+      url = "github:viperML/nix-common";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-compat.follows = "flake-compat";
     };
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs = {
@@ -64,7 +63,7 @@
         ./modules/admin.nix
         "${modulesPath}/profiles/minimal.nix"
         "${modulesPath}/profiles/qemu-guest.nix"
-        inputs.nixos-flakes.nixosModules.channels-to-flakes
+        inputs.nix-common.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
 
         ./modules/services.nix
