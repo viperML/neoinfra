@@ -5,4 +5,5 @@
   systemd.services."getty@".serviceConfig = {
     TTYVTDisallocate = false;
   };
+  boot.initrd.systemd.enable = true;
 }

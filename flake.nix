@@ -124,6 +124,7 @@
     in {
       hcl = callPackage ./packages/hcl.nix {};
       inherit (deploy-rs.packages.${system}) deploy-rs;
+      inherit (inputs.nomad-driver-containerd-nix.packages.${system}) nomad-driver-containerd-nix;
       inherit
         (inputs.unstable.legacyPackages.${system})
         alejandra
