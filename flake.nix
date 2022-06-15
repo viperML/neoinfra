@@ -76,25 +76,30 @@
       ];
     };
 
-    nixosConfigurations."lagos" = inputs.unstable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = inputs.unstable.legacyPackages.${system};
-      specialArgs = {inherit inputs;};
-      modules = let
-        modulesPath = "${inputs.unstable}/nixos/modules";
-      in [
-        "${modulesPath}/virtualisation/google-compute-image.nix"
-        {
-          virtualisation.googleComputeImage = {
-            diskSize = "auto";
-            compressionLevel = 9;
-          };
-        }
-        "${modulesPath}/profiles/minimal.nix"
-        ./modules/lagos.nix
-        ./modules/step
-      ];
-    };
+    nixosConfigurations."lagos" = let
+      n = inputs.nixpkgs;
+    in
+      n.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        pkgs = n.legacyPackages.${system};
+        specialArgs = {
+          inherit inputs;
+        };
+        modules = let
+          modulesPath = "${n}/nixos/modules";
+        in [
+          "${modulesPath}/virtualisation/google-compute-image.nix"
+          {
+            virtualisation.googleComputeImage = {
+              diskSize = "auto";
+              compressionLevel = 9;
+            };
+          }
+          "${modulesPath}/profiles/minimal.nix"
+          ./modules/lagos.nix
+          ./modules/step
+        ];
+      };
 
     nixosModules = {
       hcloud = import ./modules/hcloud;

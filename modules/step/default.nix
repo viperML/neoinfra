@@ -65,6 +65,7 @@ in {
       wantedBy = ["multi-user.target"];
       after = ["step-ca-secret.service"];
       script = with pkgs; ''
+        set -euxo pipefail
         step ca init \
           --ssh \
           --name="ca-ayats-org" \

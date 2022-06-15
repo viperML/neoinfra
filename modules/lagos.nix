@@ -6,4 +6,5 @@
     TTYVTDisallocate = false;
   };
   boot.initrd.systemd.enable = true;
+  system.stateVersion = "22.05";
 }
