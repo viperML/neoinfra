@@ -73,7 +73,8 @@
               ./modules/sumati/nix-serve.nix
               ./modules/sumati/gitlab-runner.nix
               ./modules/sumati/nomad
-              ./nomad/http-store
+              #
+              # ./nomad/http-store
               ./nomad/blog
             ];
         };
