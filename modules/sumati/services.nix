@@ -47,6 +47,6 @@
 
   security.acme = {
     acceptTerms = true;
-    email = "ayatsfer@gmail.com";
+    defaults.email = "ayatsfer@gmail.com";
   };
 }

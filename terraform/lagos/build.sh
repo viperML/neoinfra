@@ -3,7 +3,7 @@ set -euo pipefail
 
 DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
 
-out_path=$(nix build $DIR#nixosConfigurations.lagos.config.system.build.googleComputeImage --print-out-paths --no-link)
+out_path=$(nix build $DIR#nixosConfigurations.lagos-prod.config.system.build.googleComputeImage --print-out-paths --no-link)
 
 image_path=
 for path in "$out_path"/*.tar.gz; do

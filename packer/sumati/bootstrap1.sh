@@ -101,6 +101,6 @@ extra-experimental-features = nix-command flakes
 EOF
 
 nix profile install github:viperML/neoinfra#nixos-install-tools
-nixos-install --no-root-passwd --flake github:viperML/neoinfra#sumati-golden
+nixos-install --no-root-passwd --flake github:viperML/neoinfra#sumati-base
 
 swapoff "$DISK"2
