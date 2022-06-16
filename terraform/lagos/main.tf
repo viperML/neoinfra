@@ -78,9 +78,30 @@ resource "google_compute_image" "lagos" {
   }
 }
 
+resource "google_compute_address" "lagos" {
+  name = "terraform-address"
+}
+
+resource "google_compute_project_default_network_tier" "default" {
+  network_tier = "STANDARD"
+}
+
+resource "google_compute_firewall" "rules" {
+  name        = "lagos"
+  network     = "default"
+  allow {
+    protocol  = "tcp"
+    ports     = ["443"]
+  }
+  # TODO only allow traffic coming from cloudflare
+  source_ranges = ["0.0.0.0/0"]
+  target_tags = ["lagos"]
+}
+
 resource "google_compute_instance" "lagos" {
   name         = "instance"
   machine_type = "e2-micro"
+  tags = ["lagos"]
 
   boot_disk {
     initialize_params {
@@ -89,16 +110,11 @@ resource "google_compute_instance" "lagos" {
   }
 
   network_interface {
-    network = google_compute_network.vpc_network.self_link
+    network = "default"
     access_config {
-      network_tier = "STANDARD"
+      nat_ip = google_compute_address.lagos.address
     }
   }
-}
-
-resource "google_compute_network" "vpc_network" {
-  name                    = "terraform-network"
-  auto_create_subnetworks = "true"
 }
 
 locals {

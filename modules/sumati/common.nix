@@ -3,24 +3,24 @@
   inputs,
   config,
   lib,
+  self,
   ...
 }: {
   time.timeZone = "Europe/Berlin";
-  system.stateVersion = "21.11";
-  system.configurationRevision = inputs.self.rev or null;
+  system.stateVersion = "22.05";
+  system.configurationRevision = self.rev or null;
   environment.defaultPackages = [];
+
   environment.systemPackages = with pkgs; [
     htop
     jq
-    inputs.viperML-dotfiles.packages.${pkgs.system}.vshell
+    # (pkgs.callPackage inputs.viperML-dotfiles.packages.${pkgs.system}.vshell.override)
   ];
 
   nix = {
-    package = pkgs.nixUnstable;
     extraOptions = ''
-      experimental-features = nix-command flakes
+      extra-experimental-features = nix-command flakes
     '';
-    autoOptimiseStore = true;
     systemFeatures = [
       "nixos-test"
     ];
@@ -64,7 +64,7 @@
       device = "tank/var";
       fsType = "zfs";
     };
-    "/secrets" = {
+    "/var/lib/secrets" = {
       device = "tank/secrets";
       fsType = "zfs";
       neededForBoot = true;
@@ -106,6 +106,7 @@
     initrd.postDeviceCommands = lib.mkAfter ''
       zfs rollback -r tank/rootfs@empty
     '';
+    initrd.systemd.enable = true;
     kernel.sysctl = {
       "vm.swappiness" = 10;
     };
@@ -114,33 +115,32 @@
   services.qemuGuest.enable = true;
 
   sops.age = {
-    keyFile = "/secrets/sumati.age";
+    keyFile = "/var/lib/secrets/sumati.age";
     sshKeyPaths = [];
   };
   sops.gnupg.sshKeyPaths = [];
-  sops.defaultSopsFile = ../secrets/sumati.yaml;
-
-  # SSH Config
-
-  sops.secrets."ssh_host_key" = {
+  sops.defaultSopsFile = "${self}/secrets/sumati.yaml";
+  sops.secrets."ssh_host_ecdsa_key" = {
+    sopsFile = "${self}/secrets/sumati-ssh.yaml";
     mode = "600";
+  };
+  sops.secrets."ssh_host_ecdsa_key-cert-pub" = {
+    sopsFile = "${self}/secrets/sumati-ssh.yaml";
+    mode = "644";
   };
 
   services.openssh = {
     enable = true;
     openFirewall = false;
     passwordAuthentication = false;
-    hostKeys = [
-      {
-        path = config.sops.secrets."ssh_host_key".path;
-        type = "ed25519";
-      }
-    ];
+    extraConfig = ''
+      HostKey ${config.sops.secrets."ssh_host_ecdsa_key".path}
+      HostCertificate ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}
+    '';
+    hostKeys = [];
   };
-  systemd.services.sshd = {
-    after = ["tailscaled.service"];
-    preStart = lib.mkAfter "${pkgs.coreutils}/bin/sleep 5";
-  };
+
   services.tailscale.enable = true;
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
+  networking.firewall.checkReversePath = "loose";
 }

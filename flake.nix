@@ -55,22 +55,24 @@
     nixosConfigurations."sumati" = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = pkgsFor.${system};
-      specialArgs = {inherit inputs;};
+      specialArgs = {
+        inherit inputs self;
+      };
       modules = let
         modulesPath = "${nixpkgs}/nixos/modules";
       in [
-        ./modules/hardware.nix
+        ./modules/sumati/common.nix
         ./modules/admin.nix
         "${modulesPath}/profiles/minimal.nix"
         "${modulesPath}/profiles/qemu-guest.nix"
         inputs.nix-common.nixosModules.channels-to-flakes
         inputs.sops-nix.nixosModules.sops
 
-        ./modules/services.nix
-        # self.nixosModules.hcloud
-        ./modules/nix-serve
-        ./modules/gitlab-runner.nix
-        ./modules/nomad
+        ./modules/sumati/common.nix
+        ./modules/sumati/nix-serve.nix
+        ./modules/sumati/gitlab-runner.nix
+        ./modules/sumati/nomad
+
         ./nomad/http-store
         ./nomad/blog
       ];
@@ -96,8 +98,8 @@
             };
           }
           "${modulesPath}/profiles/minimal.nix"
-          ./modules/lagos.nix
-          ./modules/step
+          ./modules/lagos/common.nix
+          ./modules/lagos/step.nix
         ];
       };
 

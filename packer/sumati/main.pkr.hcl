@@ -4,6 +4,10 @@ variable "hcloud-token" {
   sensitive = true
 }
 
+variable "name" {
+  type = string
+}
+
 locals {
   build-id = "${uuidv4()}"
   build-labels = {
@@ -19,7 +23,7 @@ source "hcloud" "sumati" {
   image           = "debian-11" # doesn't matter since we boot the rescue system
   rescue          = "linux64"
   location        = "nbg1"
-  snapshot_name   = "nixos-{{ timestamp }}"
+  snapshot_name   = "nixos-${var.name}"
   snapshot_labels = local.build-labels
   ssh_username    = "root"
   token           = "${var.hcloud-token}"
@@ -29,16 +33,16 @@ build {
   sources = ["source.hcloud.sumati"]
 
   provisioner "shell" {
-    script = "packer/bootstrap1.sh"
+    script = "bootstrap1.sh"
   }
 
   provisioner "file" {
-    source      = "secrets/sumati.age"
-    destination = "/mnt/secrets/sumati.age"
+    source      = "sumati.age"
+    destination = "/mnt/var/lib/secrets/sumati.age"
   }
 
   provisioner "shell" {
-    script = "packer/bootstrap2.sh"
+    script = "bootstrap2.sh"
   }
 
   post-processor "manifest" {

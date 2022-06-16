@@ -41,6 +41,8 @@ in
         t.external
         t.cloudflare
       ]))
+      moreutils
+      remarshal
       # Formatters
       treefmt-wrapped
       hcl
