@@ -9,6 +9,7 @@
     t.google
     t.external
     t.cloudflare
+    t.hcloud
   ]);
 in
   mkShell {

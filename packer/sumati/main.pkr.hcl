@@ -11,10 +11,8 @@ variable "name" {
 locals {
   build-id = "${uuidv4()}"
   build-labels = {
-    os-flavor              = "nixos"
-    "packer.io/build.id"   = "${local.build-id}"
+    "name" = var.name
     "packer.io/build.time" = "{{ timestamp }}"
-    "packer.io/version"    = "{{ packer_version }}"
   }
 }
 
@@ -23,7 +21,7 @@ source "hcloud" "sumati" {
   image           = "debian-11" # doesn't matter since we boot the rescue system
   rescue          = "linux64"
   location        = "nbg1"
-  snapshot_name   = "nixos-${var.name}"
+  snapshot_name   = "${var.name}"
   snapshot_labels = local.build-labels
   ssh_username    = "root"
   token           = "${var.hcloud-token}"
