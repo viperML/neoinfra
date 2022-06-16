@@ -27,8 +27,8 @@ sgdisk --zap-all $DISK
 
 sgdisk -a1 -n5:0:1M      -t5:EF02 $DISK
 sgdisk     -n1:0:+300M   -t1:8300 $DISK
-sgdisk     -n2:0:+4G
-sgdisk     -n3:0:0       -t2:8300 $DISK
+sgdisk     -n2:0:+4G     -t2:8200 $DISK
+sgdisk     -n3:0:0       -t3:8300 $DISK
 
 partprobe $DISK
 wipefs -a "$DISK"1
@@ -38,7 +38,7 @@ wipefs -a "$DISK"3
 mkfs.ext4 -F -L BOOT "$DISK"1
 
 mkswap -L SWAP -f "$DISK"2
-swapon "$DISK"3
+swapon "$DISK"2
 
 sudo apt install -y \
     zfsutils-linux \
@@ -101,6 +101,6 @@ extra-experimental-features = nix-command flakes
 EOF
 
 nix profile install github:viperML/neoinfra#nixos-install-tools
-nixos-install --no-root-passwd --flake github:viperML/neoinfra#sumati
+nixos-install --no-root-passwd --flake github:viperML/neoinfra#sumati-golden
 
-swapoff "$DIST"2
+swapoff "$DISK"2
