@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nomad-driver-containerd-nix = {
-      url = "git+https://gitlab.com/viperml-public/nomad-driver-containerd-nix";
+      url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -138,7 +138,12 @@
     in {
       hcl = callPackage ./packages/hcl.nix {};
       inherit (deploy-rs.packages.${system}) deploy-rs;
-      inherit (inputs.nomad-driver-containerd-nix.packages.${system}) nomad-driver-containerd-nix;
+      nomad-driver-containerd-nix = pkgsFor.${system}.buildGoModule {
+        src = inputs.nomad-driver-containerd-nix;
+        pname = "nomad-driver-containerd-nix";
+        version = inputs.nomad-driver-containerd-nix.lastModifiedDate;
+        vendorSha256 = "sha256-+EniB8cZ2Jh4A/EdaLlFFhB69fD5ZzqEQ+Yw3M1qyfo=";
+      };
     });
   };
 }

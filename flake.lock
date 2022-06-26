@@ -730,17 +730,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1654546976,
-        "narHash": "sha256-E7pMJ4G/oHDDs+/ifO/36tGaRaUlX8UZhtKhKMb4duE=",
+        "lastModified": 1654022303,
+        "narHash": "sha256-GftC/1H5PcEoeW0leKoPKDbwMJ3x8kGCHyNleBrNAc0=",
         "ref": "refs/heads/master",
-        "rev": "72c5ae62de4904dc2adbabafc20fee9cd9ebcbcc",
-        "revCount": 336,
+        "rev": "6d99de29b6d3e3f06382990648277671f34774f2",
+        "revCount": 331,
         "type": "git",
-        "url": "https://gitlab.com/viperml-public/nomad-driver-containerd-nix"
+        "url": "https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.com/viperml-public/nomad-driver-containerd-nix"
+        "url": "https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git"
       }
     },
     "nose": {
