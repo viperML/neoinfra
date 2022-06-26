@@ -3,6 +3,7 @@ args @ {
   pkgs,
   inputs,
   lib,
+  self,
   ...
 }: {
   networking.firewall.interfaces.tailscale0 = {
@@ -29,7 +30,7 @@ args @ {
       pkgs.git
     ];
     extraSettingsPlugins = [
-      inputs.nomad-driver-containerd-nix.packages.${pkgs.system}.nomad-driver-containerd-nix
+      self.packages.${pkgs.system}.nomad-driver-containerd-nix
     ];
   };
 
