@@ -48,15 +48,8 @@
 
   fileSystems = {
     "/" = {
-      fsType = "tmpfs";
-      device = "none";
-      options = [
-        "defaults"
-        "size=2G"
-        "mode=755"
-      ];
-      # fsType = "ext4";
-      # device = "/dev/disk/by-label/cloudimg-rootfs";
+      device = "/dev/disk/by-label/cloudimg-rootfs";
+      fsType = "ext4";
     };
     "/efi" = {
       device = "/dev/disk/by-label/UEFI";
