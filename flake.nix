@@ -119,6 +119,8 @@
         basename = "kalypso";
         variants = rec {
           base = [
+            "${modulesPath}/profiles/minimal.nix"
+            "${modulesPath}/profiles/qemu-guest.nix"
             ./modules/kalypso/common.nix
             ./modules/admin.nix
           ];

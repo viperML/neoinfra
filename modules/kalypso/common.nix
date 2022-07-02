@@ -13,6 +13,10 @@
   ];
 
   boot = {
+    kernelParams = [
+      "console=ttyS0"
+      "console=tty1"
+    ];
     loader = {
       systemd-boot.enable = true;
       efi = {
