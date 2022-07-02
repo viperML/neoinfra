@@ -13,10 +13,17 @@
   ];
 
   boot = {
-    loader.systemd-boot.enable = true;
-    loader.efi.canTouchEfiVariables = true;
-    initrd.systemd.enable = true;
-    initrd.availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
+    loader = {
+      systemd-boot.enable = true;
+      efi = {
+        efiSysMountPoint = "/efi";
+        canTouchEfiVariables = true;
+      };
+    };
+    initrd = {
+      systemd.enable = true;
+      availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
+    };
   };
 
   systemd.network = {
@@ -44,7 +51,7 @@
       device = "/dev/disk/by-label/cloudimg-rootfs";
       fsType = "ext4";
     };
-    "/boot/efi" = {
+    "/efi" = {
       device = "/dev/disk/by-label/UEFI";
       fsType = "vfat";
     };
