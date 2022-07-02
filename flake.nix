@@ -34,6 +34,7 @@
 
     genSystems = lib.genAttrs [
       "x86_64-linux"
+      "aarch64-linux"
     ];
 
     pkgsFor = inputs.nixpkgs.legacyPackages;
@@ -112,7 +113,16 @@
               }
             ];
         };
-      });
+      }) // {
+        kalypso = nixpkgs.lib.nixosSystem rec {
+          system = "aarch64-linux";
+          pkgs = pkgsFor.${system};
+          modules = [
+            ./modules/kalypso/common.nix
+            ./modules/admin.nix
+          ];
+        };
+      };
 
     deploy.nodes."sumati" = {
       hostname = "sumati";
