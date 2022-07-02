@@ -30,6 +30,7 @@ in
         remarshal
         alejandra
         shfmt
+        oci-cli
         ;
       inherit
         deploy-rs

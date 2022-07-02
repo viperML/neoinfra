@@ -113,16 +113,18 @@
               }
             ];
         };
-      }) // {
-        kalypso = nixpkgs.lib.nixosSystem rec {
-          system = "aarch64-linux";
-          pkgs = pkgsFor.${system};
-          modules = [
+      })
+      // (mkSystems {
+        system = "aarch64-linux";
+        basename = "kalypso";
+        variants = rec {
+          base = [
             ./modules/kalypso/common.nix
             ./modules/admin.nix
           ];
+          prod = base ++ [];
         };
-      };
+      });
 
     deploy.nodes."sumati" = {
       hostname = "sumati";
