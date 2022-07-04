@@ -121,6 +121,7 @@
           base = [
             "${modulesPath}/profiles/minimal.nix"
             "${modulesPath}/profiles/qemu-guest.nix"
+            inputs.nix-common.nixosModules.channels-to-flakes
             ./modules/kalypso/common.nix
             ./modules/admin.nix
           ];

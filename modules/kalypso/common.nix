@@ -55,7 +55,7 @@
       device = "/dev/disk/by-label/cloudimg-rootfs";
       fsType = "ext4";
     };
-    "/efi" = {
+    ${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-label/UEFI";
       fsType = "vfat";
     };
