@@ -25,7 +25,8 @@
       };
     };
     initrd = {
-      systemd.enable = true;
+      # Doesn't work with NIXOS_LUSTRATE
+      # systemd.enable = true;
       availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
     };
   };
