@@ -1,16 +1,18 @@
 {
   config,
   pkgs,
-  modulesPath,
   ...
 }: {
   system.stateVersion = "22.05";
 
   time.timeZone = "UTC";
 
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+  nix.settings = {
+    extra-experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 
   boot = {
     kernelParams = [
@@ -25,8 +27,7 @@
       };
     };
     initrd = {
-      # Doesn't work with NIXOS_LUSTRATE
-      # systemd.enable = true;
+      systemd.enable = true;
       availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
     };
   };
@@ -51,14 +52,38 @@
     openFirewall = true;
   };
 
-  fileSystems = {
+  fileSystems = let
+    original = "/old-root";
+  in {
     "/" = {
-      device = "/dev/disk/by-label/cloudimg-rootfs";
-      fsType = "ext4";
+      fsType = "tmpfs";
+      device = "none";
+      options = [
+        "defaults"
+        "size=2G"
+        "mode=755"
+      ];
     };
     ${config.boot.loader.efi.efiSysMountPoint} = {
       device = "/dev/disk/by-label/UEFI";
       fsType = "vfat";
+    };
+    ${original} = {
+      device = "/dev/disk/by-label/cloudimg-rootfs";
+      fsType = "ext4";
+      neededForBoot = true;
+      options = [
+        "discard"
+        "noatime"
+      ];
+    };
+    "/nix" = {
+      device = "${original}/nix";
+      options = ["bind"];
+    };
+    "/var" = {
+      device = "${original}/new-var";
+      options = ["bind"];
     };
   };
 }

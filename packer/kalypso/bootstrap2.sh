@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 ESP=/efi
-FLAKE=github:viperML/dotfiles
+FLAKE=github:viperML/neoinfra
 
 set +ux
 . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
@@ -13,10 +13,6 @@ echo "extra-experimental-features = nix-command flakes" | tee -a /etc/nix/nix.co
 
 # Needed to install the bootloader
 touch /etc/NIXOS
-
-tee /etc/NIXOS_LUSTRATE <<EOF
-$ESP
-EOF
 
 nix profile install $FLAKE#git
 
@@ -33,5 +29,10 @@ mount /dev/disk/by-label/UEFI $ESP
 /nix/var/nix/profiles/system/bin/switch-to-configuration boot
 umount $ESP
 
+mkdir /new-var
+
+# 0 1 are nix and nsscert from installer
+# 2 is git installed before
+nix profile remove 0 1 2
 
 rm -rfv /etc
