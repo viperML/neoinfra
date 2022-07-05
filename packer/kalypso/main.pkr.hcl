@@ -40,7 +40,7 @@ build {
 
   provisioner "file" {
     source      = "kalypso.age"
-    destination = "/new-var/lib/secrets/kalypso.age"
+    destination = "/home/ubuntu/kalypso.age"
   }
 
   provisioner "shell" {

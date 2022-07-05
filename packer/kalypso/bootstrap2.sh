@@ -30,7 +30,6 @@ mount /dev/disk/by-label/UEFI $ESP
 umount $ESP
 
 mkdir -p /new-var
-mkdir -p /new-var/lib/secrets
 
 # 0 1 are nix and nsscert from installer
 # 2 is git installed before
