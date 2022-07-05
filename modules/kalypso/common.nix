@@ -3,89 +3,38 @@
   pkgs,
   ...
 }: {
-  system.stateVersion = "22.05";
-
-  time.timeZone = "UTC";
-
-  nix.settings = {
-    extra-experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
-
-  boot = {
-    kernelParams = [
-      "console=ttyS0"
-      "console=tty1"
-    ];
-    loader = {
-      systemd-boot.enable = true;
-      efi = {
-        efiSysMountPoint = "/efi";
-        canTouchEfiVariables = true;
-      };
-    };
-    initrd = {
-      # systemd.enable = true;
-      availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
-    };
-  };
-
-  systemd.network = {
-    enable = true;
-    networks.default = {
-      matchConfig.Name = "en*";
-      networkConfig.DHCP = "yes";
-    };
-  };
-
   networking = rec {
     hostName = "kalypso";
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);
-    useNetworkd = false;
-    useDHCP = false;
+  };
+
+  sops.age = {
+    keyFile = "/var/lib/secrets/kalypso.age";
+    sshKeyPaths = [];
+  };
+  sops.gnupg.sshKeyPaths = [];
+  sops.defaultSopsFile = "${self}/secrets/kalypso.yaml";
+  sops.secrets."ssh_host_ecdsa_key" = {
+    sopsFile = "${self}/secrets/kalypso-ssh.yaml";
+    mode = "600";
+  };
+  sops.secrets."ssh_host_ecdsa_key-cert-pub" = {
+    sopsFile = "${self}/secrets/kalypso-ssh.yaml";
+    mode = "644";
   };
 
   services.openssh = {
     enable = true;
-    openFirewall = true;
+    # openFirewall = false;
+    passwordAuthentication = false;
+    extraConfig = ''
+      HostKey ${config.sops.secrets."ssh_host_ecdsa_key".path}
+      HostCertificate ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}
+    '';
+    hostKeys = [];
   };
 
-  fileSystems = let
-    original = "/old-root";
-  in {
-    "/" = {
-      fsType = "tmpfs";
-      device = "none";
-      options = [
-        "defaults"
-        "size=2G"
-        "mode=755"
-      ];
-    };
-    ${config.boot.loader.efi.efiSysMountPoint} = {
-      device = "/dev/disk/by-label/UEFI";
-      fsType = "vfat";
-    };
-    ${original} = {
-      device = "/dev/disk/by-label/cloudimg-rootfs";
-      fsType = "ext4";
-      neededForBoot = true;
-      options = [
-        "discard"
-        "noatime"
-      ];
-    };
-    "/nix" = {
-      device = "${original}/nix";
-      options = ["bind"];
-      depends = [original];
-    };
-    "/var" = {
-      device = "${original}/new-var";
-      options = ["bind"];
-      depends = [original];
-    };
-  };
+  # services.tailscale.enable = true;
+  # networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
+  # networking.firewall.checkReversePath = "loose";
 }

@@ -29,10 +29,9 @@ mount /dev/disk/by-label/UEFI $ESP
 /nix/var/nix/profiles/system/bin/switch-to-configuration boot
 umount $ESP
 
-mkdir /new-var
+mkdir -p /new-var
+mkdir -p /new-var/lib/secrets
 
 # 0 1 are nix and nsscert from installer
 # 2 is git installed before
 nix profile remove 0 1 2
-
-rm -rfv /etc

@@ -1,6 +1,7 @@
 keys:
+  - &kalypso age1ww69req83tfjjr75z9hu7akyun5f7duxavdp66yrhp0tpcqk0p0s266sgd
+  - &ayats_gen6 age1k8y8zmuzy4gk60avryxd8k0mpq5z7f7fnf7paezrzrm75ej7xueqe5lqgz
   - &sumati age1dnmwd637md9tpwqkj5608skuu583w02xmex9lg4k5dyx3c8eef8qhmqf33
-  - &ayats_gen6 age1dvuqf497ljdjd8v6r9w26zlqfv409chfu0txuk48vtglx3sfqa9sd3fnks
 
 
 creation_rules:
@@ -9,3 +10,9 @@ creation_rules:
     - age:
       - *ayats_gen6
       - *sumati
+
+  - path_regex: secrets/.*kalypso.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *kalypso

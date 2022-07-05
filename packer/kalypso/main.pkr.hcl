@@ -37,4 +37,14 @@ build {
     script = "bootstrap2.sh"
     execute_command = "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
   }
+
+  provisioner "file" {
+    source      = "kalypso.age"
+    destination = "/new-var/lib/secrets/kalypso.age"
+  }
+
+  provisioner "shell" {
+    script = "bootstrap3.sh"
+    execute_command = "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
+  }
 }

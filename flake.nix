@@ -122,8 +122,9 @@
             "${modulesPath}/profiles/minimal.nix"
             "${modulesPath}/profiles/qemu-guest.nix"
             inputs.nix-common.nixosModules.channels-to-flakes
-            ./modules/kalypso/common.nix
+            ./modules/oracle.nix
             ./modules/admin.nix
+            ./modules/kalypso/common.nix
           ];
           prod = base ++ [];
         };
@@ -136,6 +137,17 @@
         sshUser = "admin";
         path =
           deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."sumati-prod";
+        user = "root";
+      };
+    };
+
+    deploy.nodes."kalypso" = {
+      hostname = "kalypso";
+      fastConnection = false;
+      profiles.system = {
+        sshUser = "admin";
+        path =
+          deploy-rs.lib."aarch64-linux".activate.nixos self.nixosConfigurations."kalypso-prod";
         user = "root";
       };
     };
