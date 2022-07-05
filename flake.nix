@@ -125,6 +125,7 @@
             ./modules/oracle.nix
             ./modules/admin.nix
             ./modules/kalypso/common.nix
+            inputs.sops-nix.nixosModules.sops
           ];
           prod = base ++ [];
         };

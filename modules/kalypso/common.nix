@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  self,
   ...
 }: {
   networking = rec {
