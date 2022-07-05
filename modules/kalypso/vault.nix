@@ -5,6 +5,7 @@
   pkgs,
   ...
 }: {
+  # https://medium.com/oracledevs/deploying-and-integrating-hashicorp-vault-on-and-with-oci-cf9152b3d1a2
   services.vault = {
     enable = true;
     # Includes UI
