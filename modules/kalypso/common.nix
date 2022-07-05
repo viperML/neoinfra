@@ -27,7 +27,7 @@
       };
     };
     initrd = {
-      systemd.enable = true;
+      # systemd.enable = true;
       availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
     };
   };
@@ -80,10 +80,12 @@
     "/nix" = {
       device = "${original}/nix";
       options = ["bind"];
+      depends = [original];
     };
     "/var" = {
       device = "${original}/new-var";
       options = ["bind"];
+      depends = [original];
     };
   };
 }
