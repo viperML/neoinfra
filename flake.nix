@@ -127,7 +127,11 @@
             ./modules/kalypso/common.nix
             inputs.sops-nix.nixosModules.sops
           ];
-          prod = base ++ [];
+          prod =
+            base
+            ++ [
+              ./modules/kalypso/vault.nix
+            ];
         };
       });
 

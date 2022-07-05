@@ -7,6 +7,7 @@ packer-manifest.json
 *.pem
 lagos-project.json
 temp*yaml
+*vault.hcl
 
 ### https://raw.github.com/github/gitignore/e5323759e387ba347a9d50f8b0ddd16502eb71d4/Terraform.gitignore
 

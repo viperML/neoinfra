@@ -16,3 +16,9 @@ creation_rules:
     - age:
       - *ayats_gen6
       - *kalypso
+
+  - path_regex: secrets/.*vault.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *kalypso
