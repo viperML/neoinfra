@@ -37,4 +37,17 @@ args @ {
   virtualisation.containerd = {
     enable = true;
   };
+
+  sops.secrets."nomad_env" = {
+    owner = config.systemd.services.nomad.serviceConfig.User or "root";
+    restartUnits = ["nomad.service"];
+  };
+
+  systemd.services.nomad = {
+    serviceConfig = {
+      EnvironmentFile = [
+        config.sops.secrets."nomad_env".path
+      ];
+    };
+  };
 }

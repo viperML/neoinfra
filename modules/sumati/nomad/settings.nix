@@ -32,4 +32,10 @@ args: {
       nix_executable = args.config.nix.package.outPath;
     };
   };
+
+  vault = {
+    enabled = true;
+    address = "http://kalypso:8200";
+    create_from_role = "nomad-cluster";
+  };
 }
