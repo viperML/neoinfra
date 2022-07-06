@@ -18,9 +18,12 @@
   ];
 
   nix = {
-    extraOptions = ''
-      extra-experimental-features = nix-command flakes
-    '';
+    settings = {
+      extra-experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+    };
     systemFeatures = [
       "nixos-test"
     ];
@@ -30,6 +33,14 @@
       options = "--delete-old";
     };
   };
+
+  sops.secrets."private_nixconf" = {
+    owner = "root";
+    group = "wheel";
+    mode = "0440";
+  };
+
+  environment.etc."xdg/nix/nix.conf".source = config.sops.secrets."private_nixconf".path;
 
   networking = rec {
     hostName = "sumati";
