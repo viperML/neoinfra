@@ -14,5 +14,7 @@
         vendorSha256 = "sha256-+EniB8cZ2Jh4A/EdaLlFFhB69fD5ZzqEQ+Yw3M1qyfo=";
       };
     };
+
+    legacyPackages = pkgs;
   };
 }

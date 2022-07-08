@@ -17,7 +17,6 @@ in {
   };
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
       "console=ttyS0"
       "console=tty1"
@@ -31,11 +30,7 @@ in {
     };
     initrd = {
       # systemd.enable = true;
-      availableKernelModules = [
-        "xhci_pci"
-        "virtio_pci"
-        "usbhid"
-      ];
+      availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
     };
   };
 

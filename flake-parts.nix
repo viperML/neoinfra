@@ -23,6 +23,10 @@ in {
       deploy.nodes = mkOption {
         type = types.lazyAttrsOf types.unspecified;
         default = {};
+        # apply = mapAttrs (k: v: {
+        #   _file = "${toString self.outPath}/flake.nix#nixosModules.${k}";
+        #   imports = [v];
+        # });
         description = ''
           NixOS modules.
         '';
