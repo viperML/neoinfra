@@ -20,7 +20,7 @@ data "oci_core_images" "kalypso" {
   sort_order     = "DESC"
 }
 data "oci_core_image" "kalypso" {
-  image_id = one(data.oci_core_images.kalypso.images).id
+  image_id = element(data.oci_core_images.kalypso.images, 1).id
 }
 
 
