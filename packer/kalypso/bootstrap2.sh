@@ -3,13 +3,14 @@ set -euxo pipefail
 
 ESP=/efi
 FLAKE=github:viperML/neoinfra
+CONFIG=kalypso-prod
 
 set +ux
 . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
 . /etc/profile
 set -ux
 
-echo "extra-experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
+echo "extra-experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 
 # Needed to install the bootloader
 touch /etc/NIXOS
@@ -19,7 +20,7 @@ nix profile install $FLAKE#git
 nix build \
 	--profile /nix/var/nix/profiles/system \
 	--print-build-logs \
-	$FLAKE#nixosConfigurations.kalypso-base.config.system.build.toplevel
+	$FLAKE#nixosConfigurations.$CONFIG.config.system.build.toplevel
 
 
 export NIXOS_INSTALL_BOOTLOADER=1
