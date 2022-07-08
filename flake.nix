@@ -56,8 +56,16 @@
       perSystem = {
         pkgs,
         self',
+        system,
         ...
       }: {
+        _module.args.pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+
+        legacyPackages = pkgs;
+
         devShells.default = pkgs.callPackage ./shell.nix {
           inherit (self'.packages) deploy-rs hcl;
         };
@@ -67,6 +75,7 @@
         inherit (nixpkgs) lib;
       in {
         checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+
         lib = {
           mkSystems = f: let
             input = f "${nixpkgs}/nixos/modules";

@@ -7,10 +7,12 @@ terraform {
   }
 }
 
+
 variable "compartment_id" {
   type        = string
   description = "OCI Compartment OCID"
 }
+
 
 # Get the image built with Packer
 data "oci_core_images" "kalypso" {
@@ -20,11 +22,8 @@ data "oci_core_images" "kalypso" {
   sort_order     = "DESC"
 }
 data "oci_core_image" "kalypso" {
-  image_id = one(data.oci_core_images.kalypso.images).id
+  image_id = element(data.oci_core_images.kalypso.images, 1).id
 }
-
-
-
 
 
 resource "oci_core_vcn" "terraform_vnc" {
@@ -35,6 +34,7 @@ resource "oci_core_vcn" "terraform_vnc" {
   ]
   # TODO need to setup DNS ?
 }
+
 
 resource "oci_core_subnet" "terraform_subnet" {
     cidr_block = "10.0.0.0/24"
