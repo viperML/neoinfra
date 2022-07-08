@@ -10,6 +10,7 @@
     t.external
     t.cloudflare
     t.hcloud
+    t.oci
   ]);
 in
   mkShell {
