@@ -22,68 +22,161 @@
       # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
       url = "gitlab:viperml-public/nomad-driver-containerd-nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      flake = false;
-    };
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
-    flake-parts,
     deploy-rs,
     ...
-  }:
-    flake-parts.lib.mkFlake {inherit self;}
-    {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
+  }: let
+    inherit (nixpkgs) lib;
 
-      imports = [
-        ./flake-parts.nix
+    genSystems = lib.genAttrs [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
 
-        ./packages
-        ./modules/lagos
-        ./modules/kalypso
-        ./modules/sumati
-      ];
+    pkgsFor = inputs.nixpkgs.legacyPackages;
 
-      perSystem = {
-        pkgs,
-        self',
-        ...
-      }: {
-        devShells.default = pkgs.callPackage ./shell.nix {
-          inherit (self'.packages) deploy-rs hcl;
+    mkSystems = {
+      system,
+      basename,
+      variants,
+    }:
+      lib.mapAttrs' (n: modules:
+        lib.nameValuePair "${basename}-${n}" (nixpkgs.lib.nixosSystem {
+          inherit system modules;
+          pkgs = pkgsFor.${system};
+          specialArgs = {inherit inputs self;};
+        }))
+      variants;
+
+    modulesPath = "${nixpkgs}/nixos/modules";
+  in {
+    nixosConfigurations =
+      (mkSystems {
+        system = "x86_64-linux";
+        basename = "sumati";
+        variants = rec {
+          base = [
+            ./modules/sumati/common.nix
+            ./modules/admin.nix
+            "${modulesPath}/profiles/minimal.nix"
+            "${modulesPath}/profiles/qemu-guest.nix"
+            inputs.nix-common.nixosModules.channels-to-flakes
+            inputs.sops-nix.nixosModules.sops
+          ];
+          prod =
+            base
+            ++ [
+              ./modules/sumati/services.nix
+              ./modules/sumati/nix-serve.nix
+              ./modules/sumati/gitlab-runner.nix
+              ./modules/sumati/nomad
+              #
+              # ./nomad/http-store
+              ./nomad/blog
+            ];
         };
-      };
-
-      flake = let
-        inherit (nixpkgs) lib;
-      in {
-        checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
-        lib = {
-          mkSystems = f: let
-            input = f "${nixpkgs}/nixos/modules";
-            inherit (input) system basename variants;
-          in
-            lib.mapAttrs' (n: modules:
-              lib.nameValuePair "${basename}-${n}" (nixpkgs.lib.nixosSystem {
-                inherit system;
-                pkgs = self.legacyPackages.${system};
-                modules =
-                  modules
-                  ++ [
-                    {_module.args = {inherit inputs self;};}
-                  ];
-              }))
-            variants;
+      })
+      // (mkSystems {
+        system = "x86_64-linux";
+        basename = "lagos";
+        variants = let
+          base = [
+            "${modulesPath}/profiles/minimal.nix"
+            ./modules/lagos/common.nix
+            ./modules/lagos/step.nix
+          ];
+        in {
+          vm =
+            base
+            ++ [
+              {
+                fileSystems."/" = {
+                  fsType = "tmpfs";
+                  device = "none";
+                };
+                boot.loader.grub.device = "/dev/null";
+              }
+            ];
+          prod =
+            base
+            ++ [
+              "${modulesPath}/virtualisation/google-compute-image.nix"
+              {
+                virtualisation.googleComputeImage = {
+                  diskSize = "auto";
+                  compressionLevel = 9;
+                };
+              }
+            ];
         };
+      })
+      // (mkSystems {
+        system = "aarch64-linux";
+        basename = "kalypso";
+        variants = rec {
+          base = [
+            "${modulesPath}/profiles/minimal.nix"
+            "${modulesPath}/profiles/qemu-guest.nix"
+            inputs.nix-common.nixosModules.channels-to-flakes
+            ./modules/oracle.nix
+            ./modules/admin.nix
+            ./modules/kalypso/common.nix
+            inputs.sops-nix.nixosModules.sops
+          ];
+          prod =
+            base
+            ++ [
+              ./modules/kalypso/vault.nix
+            ];
+        };
+      });
+
+    deploy.nodes."sumati" = {
+      hostname = "sumati";
+      fastConnection = false;
+      profiles.system = {
+        sshUser = "admin";
+        path =
+          deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."sumati-prod";
+        user = "root";
       };
     };
+
+    deploy.nodes."kalypso" = {
+      hostname = "kalypso";
+      fastConnection = false;
+      profiles.system = {
+        sshUser = "admin";
+        path =
+          deploy-rs.lib."aarch64-linux".activate.nixos self.nixosConfigurations."kalypso-prod";
+        user = "root";
+      };
+    };
+
+    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+
+    devShells = genSystems (system: {
+      default = pkgsFor.${system}.callPackage ./shell.nix (self.packages.${system});
+    });
+
+    legacyPackages = pkgsFor;
+
+    packages = genSystems (system: let
+      inherit (pkgsFor.${system}) callPackage;
+    in {
+      hcl = callPackage ./packages/hcl.nix {};
+      inherit (deploy-rs.packages.${system}) deploy-rs;
+      nomad-driver-containerd-nix = pkgsFor.${system}.buildGoModule {
+        src = inputs.nomad-driver-containerd-nix;
+        pname = "nomad-driver-containerd-nix";
+        version = inputs.nomad-driver-containerd-nix.lastModifiedDate;
+        vendorSha256 = "sha256-+EniB8cZ2Jh4A/EdaLlFFhB69fD5ZzqEQ+Yw3M1qyfo=";
+      };
+    });
+  };
 }
