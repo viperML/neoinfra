@@ -10,15 +10,29 @@ creation_rules:
     - age:
       - *ayats_gen6
       - *sumati
+      hc_vault:
+      - http://kalypso:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets/.*kalypso.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       - *kalypso
+      hc_vault:
+      - http://kalypso:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets/.*vault.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       - *kalypso
+      hc_vault:
+      - http://kalypso:8200/v1/sops/keys/neoinfra
+
+  - path_regex: secrets/test.yaml
+    # hc_vault_transit_uri: "http://kalypso:8200/v1/sops/keys/neoinfra"
+    key_groups:
+    - age:
+      - *kalypso
+      hc_vault:
+      - http://kalypso:8200/v1/sops/keys/neoinfra
