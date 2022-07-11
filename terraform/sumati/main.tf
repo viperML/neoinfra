@@ -9,6 +9,14 @@ terraform {
       version = "~> 3.0"
     }
   }
+  backend "s3" {
+    bucket                      = "viper-tfstate"
+    key                         = "sumati.tfstate"
+    region                      = "fr-par"
+    endpoint                    = "https://s3.fr-par.scw.cloud"
+    skip_credentials_validation = true
+    skip_region_validation      = true
+  }
 }
 variable "cloudflare_email" {
   type        = string

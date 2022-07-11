@@ -5,6 +5,14 @@ terraform {
       version = ">= 4.76.0"
     }
   }
+  backend "s3" {
+    bucket                      = "viper-tfstate"
+    key                         = "kalypso.tfstate"
+    region                      = "fr-par"
+    endpoint                    = "https://s3.fr-par.scw.cloud"
+    skip_credentials_validation = true
+    skip_region_validation      = true
+  }
 }
 
 variable "compartment_id" {

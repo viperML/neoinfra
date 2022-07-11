@@ -5,7 +5,16 @@ terraform {
       version = "~> 3.0"
     }
   }
+  backend "s3" {
+    bucket                      = "viper-tfstate"
+    key                         = "lagos.tfstate"
+    region                      = "fr-par"
+    endpoint                    = "https://s3.fr-par.scw.cloud"
+    skip_credentials_validation = true
+    skip_region_validation      = true
+  }
 }
+
 
 variable "gcp_project" {
   type        = string
@@ -87,21 +96,21 @@ resource "google_compute_project_default_network_tier" "default" {
 }
 
 resource "google_compute_firewall" "rules" {
-  name        = "lagos"
-  network     = "default"
+  name    = "lagos"
+  network = "default"
   allow {
-    protocol  = "tcp"
-    ports     = ["443"]
+    protocol = "tcp"
+    ports    = ["443"]
   }
   # TODO only allow traffic coming from cloudflare
   source_ranges = ["0.0.0.0/0"]
-  target_tags = ["lagos"]
+  target_tags   = ["lagos"]
 }
 
 resource "google_compute_instance" "lagos" {
   name         = "instance"
   machine_type = "e2-micro"
-  tags = ["lagos"]
+  tags         = ["lagos"]
 
   boot_disk {
     initialize_params {
