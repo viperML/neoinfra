@@ -1,6 +1,5 @@
 {
   pkgs,
-  mkShell,
   deploy-rs,
   hcl,
   ...
@@ -13,7 +12,7 @@
     t.oci
   ]);
 in
-  mkShell {
+  pkgs.mkShellNoCC {
     name = "neoinfra";
     packages = __attrValues {
       inherit
