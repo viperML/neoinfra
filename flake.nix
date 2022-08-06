@@ -175,7 +175,7 @@
         src = inputs.nomad-driver-containerd-nix;
         pname = "nomad-driver-containerd-nix";
         version = inputs.nomad-driver-containerd-nix.lastModifiedDate;
-        vendorSha256 = "sha256-+EniB8cZ2Jh4A/EdaLlFFhB69fD5ZzqEQ+Yw3M1qyfo=";
+        vendorSha256 = "sha256-xLQZzs5WzdWUndKhc4hkVqijewfYY9CipAPCgi39a7M=";
       };
     });
   };

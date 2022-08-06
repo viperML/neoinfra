@@ -730,11 +730,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1654022303,
-        "narHash": "sha256-GftC/1H5PcEoeW0leKoPKDbwMJ3x8kGCHyNleBrNAc0=",
+        "lastModified": 1659218012,
+        "narHash": "sha256-Cef/yNtx2mBv27FkU5kXi5FL/yfnMNhU48851ZXvhGA=",
         "owner": "viperml-public",
         "repo": "nomad-driver-containerd-nix",
-        "rev": "6d99de29b6d3e3f06382990648277671f34774f2",
+        "rev": "bb2cd109b88d330dd0da9bdaed6ba6cd0b412fba",
         "type": "gitlab"
       },
       "original": {
