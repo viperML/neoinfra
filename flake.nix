@@ -158,7 +158,7 @@
       };
     };
 
-    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+    # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
     devShells = genSystems (system: {
       default = pkgsFor.${system}.callPackage ./shell.nix (self.packages.${system});
