@@ -9,7 +9,8 @@ set -euxo pipefail
 : $CA_FINGERPRINT
 
 export STORAGE_ROOT=/var/lib/secrets
-export STORAGE_INST=$STORAGE_ROOT/certs-$(date +"%Y-%m-%d")
+export INSTDIR=certs-$(date +"%Y-%m-%d")
+export STORAGE_INST=$STORAGE_ROOT/$INSTDIR
 export STEPPATH=$STORAGE_INST/step
 rm -rf $STORAGE_INST
 mkdir -p $STORAGE_INST
@@ -38,5 +39,4 @@ ayats
 EOF
 
 
-ln -sfTs $STORAGE_INST $STORAGE_ROOT/certs
-systemctl restart sshd.service
+ln -sfTs $INSTDIR $STORAGE_ROOT/certs
