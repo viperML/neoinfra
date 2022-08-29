@@ -35,4 +35,3 @@ creation_rules:
       - *ayats_gen6
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra
-

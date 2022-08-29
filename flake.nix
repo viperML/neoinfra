@@ -67,6 +67,7 @@
             "${modulesPath}/profiles/qemu-guest.nix"
             inputs.nix-common.nixosModules.channels-to-flakes
             inputs.sops-nix.nixosModules.sops
+            ./modules/sumati/step-renew.nix
           ];
           prod =
             base

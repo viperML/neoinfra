@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S nix shell nixpkgs#bash nixpkgs#sops nixpkgs#step-cli nixpkgs#remarshal nixpkgs#age nixpkgs#moreutils --command bash
 set -euxo pipefail
 
 HOST="$1"
@@ -31,6 +31,14 @@ $(<$TEMP/ssh_host_ecdsa_key)
 ssh_host_ecdsa_key-cert-pub = '''
 $(<$TEMP/ssh_host_ecdsa_key-cert.pub)
 '''
+
+root_ca_crt = '''
+$(<$TEMP/certs/root_ca.crt)
+'''
+
+step-defaults = '''
+$(<$TEMP/config/defaults.json)
+'''
 EOF
 
 toml2yaml --yaml-style "|" $TEMP/result.toml $ROOTDIR/secrets/temp-$HOST-ssh.yaml
@@ -45,7 +53,7 @@ age-keygen -o $AGE_PATH
 AGE_PUB=$(age-keygen -y $AGE_PATH)
 
 sed -ne "/&$HOST/!p" .sops.yaml | sponge $ROOTDIR/.sops.yaml
-sed -e "/keys/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge $ROOTDIR/.sops.yaml
+sed -e "/keys:/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge $ROOTDIR/.sops.yaml
 
 for f in $ROOTDIR/secrets/$HOST*.yaml; do
     sops updatekeys --yes $f

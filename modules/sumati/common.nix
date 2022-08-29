@@ -146,7 +146,7 @@
     passwordAuthentication = false;
     extraConfig = ''
       HostKey ${config.sops.secrets."ssh_host_ecdsa_key".path}
-      HostCertificate ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}
+      HostCertificate /var/lib/secrets/ssh_host_ecdsa_key-cert.pub
     '';
     hostKeys = [];
   };
