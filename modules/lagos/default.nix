@@ -18,7 +18,7 @@
   in {
     "lagos-vm" = nixosSystem {
       inherit pkgs system;
-      nixosModules =
+      modules =
         modules
         ++ [
           {
@@ -33,7 +33,7 @@
 
     "lagos-prod" = nixosSystem {
       inherit pkgs system;
-      nixosModules =
+      modules =
         modules
         ++ [
           "${modulesPath}/virtualisation/google-compute-image.nix"

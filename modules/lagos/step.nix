@@ -1,8 +1,8 @@
 /*
- Some background information:
- - Running on port 443, no reverse proxy
- - Firewall configured in the cloud provisioner
- */
+Some background information:
+- Running on port 443, no reverse proxy
+- Firewall configured in the cloud provisioner
+*/
 {
   config,
   pkgs,

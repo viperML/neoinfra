@@ -22,13 +22,12 @@
     ];
   in {
     "sumati-base" = nixosSystem {
-      inherit pkgs system;
-      nixosModules = modules;
+      inherit pkgs system modules;
     };
 
     "sumati-prod" = nixosSystem {
       inherit pkgs system;
-      nixosModules =
+      modules =
         modules
         ++ [
           ./services.nix
@@ -41,4 +40,14 @@
         ];
     };
   });
+
+  flake.deploy.nodes."sumati" = {
+    hostname = "sumati";
+    fastConnection = false;
+    profiles.system = {
+      sshUser = "admin";
+      path = inputs.deploy-rs.lib."x86_64-linux".activate.nixos config.flake.nixosConfigurations."sumati-prod";
+      user = "root";
+    };
+  };
 }

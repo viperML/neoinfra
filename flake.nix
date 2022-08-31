@@ -42,6 +42,7 @@
       ];
 
       imports = [
+        ./modules/flake-parts.nix
         ./packages
         ./modules/kalypso
         ./modules/lagos
@@ -52,6 +53,7 @@
         pkgs,
         system,
         config,
+        lib,
         ...
       }: {
         _module.args = {

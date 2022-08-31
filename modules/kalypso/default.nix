@@ -11,7 +11,7 @@
     nixosSystem,
     ...
   }: let
-    nixosModules = [
+    modules = [
       "${modulesPath}/profiles/minimal.nix"
       "${modulesPath}/profiles/qemu-guest.nix"
       inputs.nix-common.nixosModules.channels-to-flakes
@@ -22,13 +22,13 @@
     ];
   in {
     "kalypso-base" = nixosSystem {
-      inherit system pkgs nixosModules;
+      inherit system pkgs modules;
     };
 
     "kalypso-prod" = nixosSystem {
       inherit system pkgs;
-      nixosModules =
-        nixosModules
+      modules =
+        modules
         ++ [
           ./vault.nix
         ];

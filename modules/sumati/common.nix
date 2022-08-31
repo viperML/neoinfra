@@ -14,7 +14,9 @@
   environment.systemPackages = with pkgs; [
     htop
     jq
-    # (pkgs.callPackage inputs.viperML-dotfiles.packages.${pkgs.system}.vshell.override)
+    tmux
+    step-cli
+    inputs.viperML-dotfiles.packages.${system}.fish
   ];
 
   nix = {
