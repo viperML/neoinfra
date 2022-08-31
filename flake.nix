@@ -29,7 +29,7 @@
     };
   };
 
-  outputs = {
+  outputs = inputs @ {
     self,
     nixpkgs,
     flake-parts,
@@ -59,7 +59,13 @@
           pkgs = import nixpkgs {
             inherit system;
           };
-          inherit (nixpkgs.lib) nixosSystem;
+          nixosSystem = args:
+            nixpkgs.lib.nixosSystem (args
+              // {
+                specialArgs = {
+                  inherit inputs self;
+                };
+              });
         };
 
         devShells.default = with pkgs;
