@@ -23,161 +23,76 @@
       url = "gitlab:viperml-public/nomad-driver-containerd-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs @ {
+  outputs = {
     self,
     nixpkgs,
-    deploy-rs,
+    flake-parts,
     ...
-  }: let
-    inherit (nixpkgs) lib;
+  }:
+    flake-parts.lib.mkFlake {inherit self;} {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
 
-    genSystems = lib.genAttrs [
-      "x86_64-linux"
-      "aarch64-linux"
-    ];
+      imports = [
+        ./packages
+        ./modules/kalypso
+        ./modules/lagos
+        ./modules/sumati
+      ];
 
-    pkgsFor = inputs.nixpkgs.legacyPackages;
-
-    mkSystems = {
-      system,
-      basename,
-      variants,
-    }:
-      lib.mapAttrs' (n: modules:
-        lib.nameValuePair "${basename}-${n}" (nixpkgs.lib.nixosSystem {
-          inherit system modules;
-          pkgs = pkgsFor.${system};
-          specialArgs = {inherit inputs self;};
-        }))
-      variants;
-
-    modulesPath = "${nixpkgs}/nixos/modules";
-  in {
-    nixosConfigurations =
-      (mkSystems {
-        system = "x86_64-linux";
-        basename = "sumati";
-        variants = rec {
-          base = [
-            ./modules/sumati/common.nix
-            ./modules/admin.nix
-            "${modulesPath}/profiles/minimal.nix"
-            "${modulesPath}/profiles/qemu-guest.nix"
-            inputs.nix-common.nixosModules.channels-to-flakes
-            inputs.sops-nix.nixosModules.sops
-            ./modules/sumati/step-renew.nix
-          ];
-          prod =
-            base
-            ++ [
-              ./modules/sumati/services.nix
-              ./modules/sumati/nix-serve.nix
-              ./modules/sumati/gitlab-runner.nix
-              ./modules/sumati/nomad
-              #
-              # ./nomad/http-store
-              ./nomad/blog
-            ];
+      perSystem = {
+        pkgs,
+        system,
+        config,
+        ...
+      }: {
+        _module.args = {
+          modulesPath = "${nixpkgs}/nixos/modules";
+          pkgs = import nixpkgs {
+            inherit system;
+          };
+          inherit (nixpkgs.lib) nixosSystem;
         };
-      })
-      // (mkSystems {
-        system = "x86_64-linux";
-        basename = "lagos";
-        variants = let
-          base = [
-            "${modulesPath}/profiles/minimal.nix"
-            ./modules/lagos/common.nix
-            ./modules/lagos/step.nix
-          ];
-        in {
-          vm =
-            base
-            ++ [
-              {
-                fileSystems."/" = {
-                  fsType = "tmpfs";
-                  device = "none";
-                };
-                boot.loader.grub.device = "/dev/null";
-              }
-            ];
-          prod =
-            base
-            ++ [
-              "${modulesPath}/virtualisation/google-compute-image.nix"
-              {
-                virtualisation.googleComputeImage = {
-                  diskSize = "auto";
-                  compressionLevel = 9;
-                };
-              }
-            ];
-        };
-      })
-      // (mkSystems {
-        system = "aarch64-linux";
-        basename = "kalypso";
-        variants = rec {
-          base = [
-            "${modulesPath}/profiles/minimal.nix"
-            "${modulesPath}/profiles/qemu-guest.nix"
-            inputs.nix-common.nixosModules.channels-to-flakes
-            ./modules/oracle.nix
-            ./modules/admin.nix
-            ./modules/kalypso/common.nix
-            inputs.sops-nix.nixosModules.sops
-          ];
-          prod =
-            base
-            ++ [
-              ./modules/kalypso/vault.nix
-            ];
-        };
-      });
 
-    deploy.nodes."sumati" = {
-      hostname = "sumati";
-      fastConnection = false;
-      profiles.system = {
-        sshUser = "admin";
-        path =
-          deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations."sumati-prod";
-        user = "root";
+        devShells.default = with pkgs;
+          mkShell.override {
+            stdenv = stdenvNoCC;
+          } {
+            name = "neoinfra-shell";
+            packages = [
+              config.packages.hcl
+              config.packages.deploy-rs
+              age
+              sops
+              packer
+              hcloud
+              shellcheck
+              nomad
+              step-cli
+              step-ca
+              google-cloud-sdk-gce
+              moreutils
+              remarshal
+              alejandra
+              shfmt
+              oci-cli
+              (terraform.withPlugins (t: [
+                t.google
+                t.external
+                t.cloudflare
+                t.hcloud
+                t.oci
+              ]))
+            ];
+          };
       };
     };
-
-    deploy.nodes."kalypso" = {
-      hostname = "kalypso";
-      fastConnection = false;
-      profiles.system = {
-        sshUser = "admin";
-        path =
-          deploy-rs.lib."aarch64-linux".activate.nixos self.nixosConfigurations."kalypso-prod";
-        user = "root";
-      };
-    };
-
-    # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
-
-    devShells = genSystems (system: {
-      default = pkgsFor.${system}.callPackage ./shell.nix (self.packages.${system});
-    });
-
-    legacyPackages = pkgsFor;
-
-    packages = genSystems (system: let
-      inherit (pkgsFor.${system}) callPackage;
-    in {
-      hcl = callPackage ./packages/hcl.nix {};
-      inherit (deploy-rs.packages.${system}) deploy-rs;
-      nomad-driver-containerd-nix = pkgsFor.${system}.buildGoModule {
-        src = inputs.nomad-driver-containerd-nix;
-        pname = "nomad-driver-containerd-nix";
-        version = inputs.nomad-driver-containerd-nix.lastModifiedDate;
-        vendorSha256 = "sha256-xLQZzs5WzdWUndKhc4hkVqijewfYY9CipAPCgi39a7M=";
-      };
-    });
-  };
 }
