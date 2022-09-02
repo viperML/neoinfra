@@ -77,7 +77,6 @@
             name = "neoinfra-shell";
             packages = [
               config.packages.hcl
-              config.packages.deploy-rs
               age
               sops
               packer
