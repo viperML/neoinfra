@@ -19,7 +19,7 @@ in {
     "${ca_path}/ssh_user_keys.pub" = {
       mode = "0444";
       text = lib.concatStringsSep "\n" [
-        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBP48bSdoBVw86DtnWzT8g2cl/5ML3vCPS5f88itOPqFrsUZ8dmftMsBG8iMAssvdK6qc9seabRL2/xc3r7Fjnhg="
+        "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMUWVVwPkeBBssbg+REsekNuKT0wxMByBk6UjrHlJ+4fIiYtHlCqRXPsfv92A35BPpIt84WgBr98JpjdTLKWM4U="
       ];
     };
     "${ca_path}/admin_principals" = {
