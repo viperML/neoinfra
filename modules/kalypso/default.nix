@@ -43,6 +43,5 @@
       path = inputs.deploy-rs.lib."aarch64-linux".activate.nixos config.flake.nixosConfigurations."kalypso-prod";
       user = "root";
     };
-    magicRollback = false;
   };
 }
