@@ -5,8 +5,6 @@
 }: let
   original = "/old-root";
 in {
-  system.stateVersion = "22.05";
-
   time.timeZone = "UTC";
 
   nix.settings = {
@@ -47,10 +45,6 @@ in {
   networking = {
     useNetworkd = false;
     useDHCP = false;
-  };
-
-  services.openssh = {
-    enable = true;
   };
 
   fileSystems = {

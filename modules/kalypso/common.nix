@@ -4,6 +4,8 @@
   self,
   ...
 }: {
+  system.stateVersion = "22.05";
+
   networking = rec {
     hostName = "kalypso";
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);

@@ -45,7 +45,7 @@
         ./modules/flake-parts.nix
         ./packages
         ./modules/kalypso
-        ./modules/lagos
+        ./modules/skadi
         ./modules/sumati
       ];
 

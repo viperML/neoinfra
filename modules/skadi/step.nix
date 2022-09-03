@@ -1,8 +1,3 @@
-/*
-Some background information:
-- Running on port 443, no reverse proxy
-- Firewall configured in the cloud provisioner
-*/
 {
   config,
   pkgs,
@@ -31,7 +26,13 @@ Some background information:
     StateDirectory = "step-ca";
     LoadCredential = "password:/var/lib/step-ca-secret/password";
   };
+
+  stepPort = 443;
 in {
+  networking.firewall.allowedTCPPorts = [
+    stepPort
+  ];
+
   users.users.step-ca = {
     inherit home;
     group = "step-ca";
@@ -42,6 +43,7 @@ in {
   environment.systemPackages = [pkgs.step-cli];
 
   systemd.packages = [pkgs.step-ca];
+
   systemd.tmpfiles.rules = [
     "d /var/lib/step-ca-secret 0700 root root - -"
   ];
@@ -61,6 +63,7 @@ in {
         ConditionFileNotEmpty = "!/var/lib/step-ca-secret/password";
       };
     };
+
     "step-ca-setup" = {
       wantedBy = ["multi-user.target"];
       after = ["step-ca-secret.service"];
@@ -71,7 +74,7 @@ in {
           --name="ca-ayats-org" \
           --dns="ca.ayats.org" \
           --provisioner="ayatsfer@gmail.com" \
-          --address=":443" \
+          --address=":${stepPort}" \
           --password-file=''${CREDENTIALS_DIRECTORY}/password
 
         step ca provisioner remove "ayatsfer@gmail.com" --all
@@ -105,6 +108,7 @@ in {
         };
       unitConfig.ConditionFileNotEmpty = "!${STEPPATH}/certs/root_ca.crt";
     };
+
     "step-ca" = {
       wantedBy = ["multi-user.target"];
       after = [
