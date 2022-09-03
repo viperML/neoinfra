@@ -9,6 +9,9 @@ in {
   sops.secrets."root_ca_crt" = {
     sopsFile = "${self}/secrets/sumati-ssh.yaml";
     mode = "600";
+    restartUnits = [
+      "step-copy-user-key.service"
+    ];
   };
 
   systemd.services."step-renew" = {
@@ -47,6 +50,14 @@ in {
     timerConfig.OnCalendar = "daily";
     timerConfig.Persistent = true;
     wantedBy = ["timers.target"];
+  };
+
+  systemd.services."step-copy-user-key" = {
+    description = "Copy new user key after changes";
+    script = ''
+      cp -vfL ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path} ${pubCert}
+      chmod 600 ${pubCert}
+    '';
   };
 
   systemd.tmpfiles.rules = [
