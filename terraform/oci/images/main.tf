@@ -31,5 +31,5 @@ data "oci_core_images" "skadi" {
 }
 
 output "skadi_id" {
-  value = element(data.oci_core_images.kalypso.images, 1).id
+  value = element(data.oci_core_images.skadi.images, 1).id
 }

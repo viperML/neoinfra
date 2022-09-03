@@ -4,6 +4,10 @@ terraform {
       source  = "oracle/oci"
       version = ">= 4.76.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
   }
   backend "s3" {
     bucket                      = "viper-tfstate"
@@ -77,3 +81,37 @@ resource "oci_identity_dynamic_group" "vault_dynamic_group" {
 ###
 # skadi
 ###
+
+resource "oci_core_instance" "skadi" {
+  availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
+  compartment_id      = var.compartment_id
+  shape               = "VM.Standard.A1.Flex"
+  shape_config {
+    memory_in_gbs = 1
+    ocpus         = 1
+  }
+  display_name = "terraform-skadi"
+  source_details {
+    source_type = "image"
+    source_id   = module.images.skadi_id
+  }
+  create_vnic_details {
+    assign_public_ip          = true
+    display_name              = "skadi_vnic"
+    subnet_id                 = module.network.terraform_subnet.id
+    assign_private_dns_record = false
+  }
+}
+
+provider "cloudflare" {
+  email     = var.cloudflare_email
+  api_token = var.cloudflare_api_token
+}
+
+resource "cloudflare_record" "record" {
+  zone_id = var.cloudflare_zone_id
+  name    = "ca"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.skadi.public_ip
+}
