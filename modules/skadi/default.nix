@@ -3,7 +3,7 @@
   withSystem,
   ...
 }: {
-  flake.nixosConfigurations = withSystem "x86_64-linux" ({
+  flake.nixosConfigurations = withSystem "aarch64-linux" ({
     pkgs,
     system,
     nixosSystem,

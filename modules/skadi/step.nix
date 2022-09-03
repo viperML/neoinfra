@@ -67,14 +67,14 @@ in {
     "step-ca-setup" = {
       wantedBy = ["multi-user.target"];
       after = ["step-ca-secret.service"];
-      script = with pkgs; ''
+      script = ''
         set -euxo pipefail
         step ca init \
           --ssh \
           --name="ca-ayats-org" \
           --dns="ca.ayats.org" \
           --provisioner="ayatsfer@gmail.com" \
-          --address=":${stepPort}" \
+          --address=":${toString stepPort}" \
           --password-file=''${CREDENTIALS_DIRECTORY}/password
 
         step ca provisioner remove "ayatsfer@gmail.com" --all
