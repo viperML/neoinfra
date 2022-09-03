@@ -10,6 +10,7 @@ set +ux
 . /etc/profile
 set -ux
 
+echo "extra-experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 
 # Needed to install the bootloader
 touch /etc/NIXOS
