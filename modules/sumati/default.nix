@@ -13,12 +13,11 @@
   }: let
     modules = [
       ./common.nix
-      ../admin.nix
+      ../ssh-admin.nix
       "${modulesPath}/profiles/minimal.nix"
       "${modulesPath}/profiles/qemu-guest.nix"
       inputs.nix-common.nixosModules.channels-to-flakes
       inputs.sops-nix.nixosModules.sops
-      ./step-renew.nix
     ];
   in {
     "sumati-base" = nixosSystem {

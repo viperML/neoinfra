@@ -16,7 +16,7 @@
       "${modulesPath}/profiles/qemu-guest.nix"
       inputs.nix-common.nixosModules.channels-to-flakes
       ../oracle.nix
-      ../admin.nix
+      ../ssh-admin.nix
       ./common.nix
       inputs.sops-nix.nixosModules.sops
     ];

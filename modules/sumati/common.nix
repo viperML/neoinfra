@@ -133,25 +133,7 @@
   };
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = "${self}/secrets/sumati.yaml";
-  sops.secrets."ssh_host_ecdsa_key" = {
-    sopsFile = "${self}/secrets/sumati-ssh.yaml";
-    mode = "600";
-  };
-  sops.secrets."ssh_host_ecdsa_key-cert-pub" = {
-    sopsFile = "${self}/secrets/sumati-ssh.yaml";
-    mode = "644";
-  };
 
-  services.openssh = {
-    enable = true;
-    openFirewall = false;
-    passwordAuthentication = false;
-    extraConfig = ''
-      HostKey ${config.sops.secrets."ssh_host_ecdsa_key".path}
-      HostCertificate /var/lib/secrets/ssh_host_ecdsa_key-cert.pub
-    '';
-    hostKeys = [];
-  };
 
   services.tailscale.enable = true;
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];

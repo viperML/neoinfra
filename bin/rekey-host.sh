@@ -8,7 +8,7 @@ pushd $ROOTDIR
 
 : $CA_FINGERPRINT
 
-export TEMP=$XDG_RUNTIME_DIR/ca-bootstrap
+export TEMP=$XDG_RUNTIME_DIR/ca-bootstrap-$1
 export STEPPATH=$TEMP
 
 step ca bootstrap \
@@ -22,6 +22,10 @@ step ssh certificate \
     --insecure \
     --no-password \
     $HOST $TEMP/ssh_host_ecdsa_key
+
+step ssh config \
+    --force \
+    --roots > $ROOTDIR/secrets/$HOST-ssh_user_key.pub
 
 dd status=none of=$TEMP/result.toml <<EOF
 ssh_host_ecdsa_key = '''
@@ -47,13 +51,16 @@ sops -e $ROOTDIR/secrets/temp-$HOST-ssh.yaml > $ROOTDIR/secrets/$HOST-ssh.yaml
 
 rm $ROOTDIR/secrets/temp-*
 
-AGE_PATH=$ROOTDIR/packer/$HOST/$HOST.age
-rm -fv $AGE_PATH
-age-keygen -o $AGE_PATH
-AGE_PUB=$(age-keygen -y $AGE_PATH)
+read -p "Regen age key? [y/N] " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    AGE_PATH=$ROOTDIR/packer/$HOST/$HOST.age
+    rm -fv $AGE_PATH
+    age-keygen -o $AGE_PATH
+    AGE_PUB=$(age-keygen -y $AGE_PATH)
 
-sed -ne "/&$HOST/!p" .sops.yaml | sponge $ROOTDIR/.sops.yaml
-sed -e "/keys:/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge $ROOTDIR/.sops.yaml
+    sed -ne "/&$HOST/!p" .sops.yaml | sponge $ROOTDIR/.sops.yaml
+    sed -e "/keys:/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge $ROOTDIR/.sops.yaml
+fi
 
 for f in $ROOTDIR/secrets/$HOST*.yaml; do
     sops updatekeys --yes $f
