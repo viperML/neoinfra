@@ -26,27 +26,6 @@ module "images" {
   compartment_id = var.compartment_id
 }
 
-# FIXME
-moved {
-  from = oci_core_subnet.terraform_subnet
-  to   = module.network.oci_core_subnet.terraform_subnet
-}
-moved {
-  from = oci_core_security_list.terraform_subnet_security_list
-  to = module.network.oci_core_security_list.terraform_subnet_security_list
-}
-moved {
-  from = oci_core_route_table.terraform_vcn_route0
-  to = module.network.oci_core_route_table.terraform_vcn_route0
-}
-moved {
-  from = oci_core_internet_gateway.terraform_vcn_gateway
-  to = module.network.oci_core_internet_gateway.terraform_vcn_gateway
-}
-moved {
-  from = oci_core_vcn.terraform_vcn
-  to = module.network.oci_core_vcn.terraform_vcn
-}
 
 ###
 # kalyspo
@@ -98,4 +77,3 @@ resource "oci_identity_dynamic_group" "vault_dynamic_group" {
 ###
 # skadi
 ###
-
