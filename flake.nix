@@ -70,6 +70,8 @@
               });
         };
 
+        legacyPackages = pkgs;
+
         devShells.default = with pkgs;
           mkShell.override {
             stdenv = stdenvNoCC;
