@@ -134,7 +134,6 @@
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = "${self}/secrets/sumati.yaml";
 
-
   services.tailscale.enable = true;
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";

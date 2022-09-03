@@ -31,7 +31,7 @@ in {
       inherit sopsFile;
       mode = "644";
       restartUnits = [
-        "step-copy-user-key.service"
+        "step-renew-reset.service"
       ];
     };
     "root_ca_crt" = {
@@ -77,7 +77,7 @@ in {
    */
 
   systemd.services."step-renew" = {
-    description = "Renew SSH certificates with step-ca and SSHPOP";
+    description = "Renew ssh host certificate with step-ca and SSHPOP";
     path = [pkgs.step-cli];
     environment."STEPPATH" = "/dev/null";
     script = ''
@@ -114,8 +114,8 @@ in {
     wantedBy = ["timers.target"];
   };
 
-  systemd.services."step-copy-user-key" = {
-    description = "Copy new user key after changes";
+  systemd.services."step-renew-reset" = {
+    description = "Reset the ssh host certificate to the sops-nix certificate";
     script = ''
       cp -vfL ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path} ${pubCert}
       chmod 644 ${pubCert}
