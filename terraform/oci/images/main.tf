@@ -33,3 +33,14 @@ data "oci_core_images" "skadi" {
 output "skadi_id" {
   value = element(data.oci_core_images.skadi.images, 1).id
 }
+
+data "oci_core_images" "chandra" {
+  compartment_id = var.compartment_id
+  display_name   = "chandra"
+  sort_by        = "TIMECREATED"
+  sort_order     = "DESC"
+}
+
+output "chandra_id" {
+  value = element(data.oci_core_images.chandra.images, 1).id
+}
