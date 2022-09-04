@@ -1,4 +1,5 @@
 keys:
+  - &chandra age14vvux9hhr24hxuk5jnf3f539jja0z8dq4mv9pa4yr76wa2zn7a9s5ul67q
   - &kalypso age1ww69req83tfjjr75z9hu7akyun5f7duxavdp66yrhp0tpcqk0p0s266sgd
   - &ayats_gen6 age1k8y8zmuzy4gk60avryxd8k0mpq5z7f7fnf7paezrzrm75ej7xueqe5lqgz
   - &sumati age1dnmwd637md9tpwqkj5608skuu583w02xmex9lg4k5dyx3c8eef8qhmqf33
@@ -33,5 +34,13 @@ creation_rules:
     key_groups:
     - age:
       - *ayats_gen6
+      hc_vault:
+      - http://kalypso:8200/v1/sops/keys/neoinfra
+
+  - path_regex: secrets(/|\\).*chandra.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *chandra
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra

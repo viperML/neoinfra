@@ -47,6 +47,7 @@
         ./modules/kalypso
         ./modules/skadi
         ./modules/sumati
+        ./modules/chandra
       ];
 
       perSystem = {

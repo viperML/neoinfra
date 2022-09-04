@@ -11,21 +11,34 @@ pushd $ROOTDIR
 export TEMP=$XDG_RUNTIME_DIR/ca-bootstrap-$1
 export STEPPATH=$TEMP
 
-step ca bootstrap \
-    --ca-url https://ca.ayats.org \
-    --fingerprint $CA_FINGERPRINT \
-    --force
+step_rekey() {
+    step ca bootstrap \
+        --ca-url https://ca.ayats.org \
+        --fingerprint $CA_FINGERPRINT \
+        --force
 
-step ssh certificate \
-    --host \
-    --force \
-    --insecure \
-    --no-password \
-    $HOST $TEMP/ssh_host_ecdsa_key
+    step ssh certificate \
+        --host \
+        --force \
+        --insecure \
+        --no-password \
+        $HOST $TEMP/ssh_host_ecdsa_key
 
-step ssh config \
-    --force \
-    --roots > $ROOTDIR/secrets/$HOST-ssh_user_key.pub
+    step ssh config \
+        --force \
+        --roots > $ROOTDIR/secrets/$HOST-ssh_user_key.pub
+}
+
+if [[ -d "$TEMP" ]]; then
+    read -p "Regen age key? [y/N] " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        step_rekey
+    fi
+else
+    step_rekey
+fi
+
+
 
 dd status=none of=$TEMP/result.toml <<EOF
 ssh_host_ecdsa_key = '''
