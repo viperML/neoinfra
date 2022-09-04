@@ -20,7 +20,7 @@
     };
     nomad-driver-containerd-nix = {
       # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
-      url = "gitlab:viperml-public/nomad-driver-containerd-nix";
+      url = "gitlab:_viperML/nomad-driver-containerd-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts = {
