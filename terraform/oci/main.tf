@@ -136,7 +136,7 @@ resource "oci_core_instance" "chandra" {
   compartment_id      = var.compartment_id
   shape               = "VM.Standard.A1.Flex"
   shape_config {
-    memory_in_gbs = 4
+    memory_in_gbs = 6
     ocpus         = 2
   }
   display_name = "terraform-chandra"
@@ -161,6 +161,6 @@ resource "cloudflare_record" "chandra_a" {
   zone_id = var.cloudflare_zone_id
   name    = "minecraft"
   type    = "A"
-  proxied = true
+  proxied = false
   value   = oci_core_instance.chandra.public_ip
 }
