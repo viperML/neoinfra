@@ -20,7 +20,10 @@ data "oci_core_images" "kalypso" {
 }
 
 output "kalypso_id" {
-  value = element(data.oci_core_images.kalypso.images, 1).id
+  value = flatten([
+    data.oci_core_images.kalypso.images[*].id,
+    ["PLACEHOLDER_KALYPSO"]
+  ])[0]
 }
 
 data "oci_core_images" "skadi" {
@@ -31,7 +34,10 @@ data "oci_core_images" "skadi" {
 }
 
 output "skadi_id" {
-  value = element(data.oci_core_images.skadi.images, 1).id
+  value = flatten([
+    data.oci_core_images.skadi.images[*].id,
+    ["PLACEHOLDER_SKADI"]
+  ])[0]
 }
 
 data "oci_core_images" "chandra" {
@@ -42,5 +48,8 @@ data "oci_core_images" "chandra" {
 }
 
 output "chandra_id" {
-  value = element(data.oci_core_images.chandra.images, 1).id
+  value = flatten([
+    data.oci_core_images.chandra.images[*].id,
+    ["PLACEHOLDER_CHANDRA"]
+  ])[0]
 }
