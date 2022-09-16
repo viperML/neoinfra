@@ -64,7 +64,6 @@ in {
     "${ca_path}/admin_principals" = {
       mode = "0444";
       text = lib.concatStringsSep "\n" [
-        "ayats"
         "admin"
       ];
     };
