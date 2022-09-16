@@ -82,27 +82,35 @@ in {
     };
   };
 
-  # Wipe leftovers of Ubuntu
-  systemd.tmpfiles.rules = map (f: "R ${original}${f} - - - - -") [
-    "/bin"
-    "/boot"
-    "/dev"
-    "/efi"
-    "/etc"
-    "/home"
-    "/lib"
-    "/media"
-    "/mnt"
-    "/opt"
-    "/proc"
-    "/root"
-    "/run"
-    "/sbin"
-    "/snap"
-    "/srv"
-    "/sys"
-    "/tmp"
-    "/usr"
-    "/var"
-  ];
+  # Prevent OOM because /tmp is on tmpfs
+  systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp/nix";
+
+  systemd.tmpfiles.rules =
+    # Wipe leftovers of Ubuntu
+    (map (f: "R ${original}${f} - - - - -") [
+      "/bin"
+      "/boot"
+      "/dev"
+      "/efi"
+      "/etc"
+      "/home"
+      "/lib"
+      "/media"
+      "/mnt"
+      "/opt"
+      "/proc"
+      "/root"
+      "/run"
+      "/sbin"
+      "/snap"
+      "/srv"
+      "/sys"
+      "/tmp"
+      "/usr"
+      "/var"
+    ])
+    ++ [
+      "d ${config.systemd.services.nix-daemon.environment.TMPDIR} 0775 root nixbld 0 -"
+      "z ${config.systemd.services.nix-daemon.environment.TMPDIR} 0775 root nixbld - -"
+    ];
 }
