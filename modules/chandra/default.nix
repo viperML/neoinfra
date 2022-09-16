@@ -19,6 +19,7 @@
       ../ssh-admin.nix
       ./common.nix
       inputs.sops-nix.nixosModules.sops
+      ../user-ayats.nix
 
       # ./minecraft.nix
       ../ld.nix
