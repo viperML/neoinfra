@@ -6,6 +6,7 @@ in {
     name = "ayats";
     isNormalUser = true;
     extraGroups = [];
+    createHome = true;
   };
 
   environment.etc.

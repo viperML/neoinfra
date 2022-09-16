@@ -80,6 +80,11 @@ in {
       options = ["bind"];
       depends = [original];
     };
+    "/home" = {
+      device = "${original}/new-home";
+      options = ["bind"];
+      depends = [original];
+    };
   };
 
   # Prevent OOM because /tmp is on tmpfs
