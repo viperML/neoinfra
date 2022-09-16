@@ -20,7 +20,8 @@
       ./common.nix
       inputs.sops-nix.nixosModules.sops
 
-      ./minecraft.nix
+      # ./minecraft.nix
+      ../ld.nix
     ];
   in {
     "chandra" = nixosSystem {
