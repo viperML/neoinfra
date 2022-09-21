@@ -630,7 +630,8 @@
         "nixpkgs": "nixpkgs",
         "nomad-driver-containerd-nix": "nomad-driver-containerd-nix",
         "sops-nix": "sops-nix",
-        "viperML-dotfiles": "viperML-dotfiles"
+        "viperML-dotfiles": "viperML-dotfiles",
+        "vscode-server": "vscode-server"
       }
     },
     "rust-overlay": {
@@ -743,6 +744,26 @@
       "original": {
         "owner": "viperML",
         "repo": "dotfiles",
+        "type": "github"
+      }
+    },
+    "vscode-server": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1662442857,
+        "narHash": "sha256-e2ex4mO4q6UBoJvPSRdYBX1vIvpulqs6SNxvdSsL6uE=",
+        "owner": "msteen",
+        "repo": "nixos-vscode-server",
+        "rev": "c54b714db58ad05d064f394d6603751ee6bd04f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "msteen",
+        "repo": "nixos-vscode-server",
         "type": "github"
       }
     },

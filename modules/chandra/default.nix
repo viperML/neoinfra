@@ -23,6 +23,8 @@
 
       # ./minecraft.nix
       ../ld.nix
+      inputs.vscode-server.nixosModules.default
+      {services.vscode-server.enable = true;}
     ];
   in {
     "chandra" = nixosSystem {
