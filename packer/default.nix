@@ -1,5 +1,9 @@
 _: {
-  perSystem = {pkgs, config, ...}: {
+  perSystem = {
+    pkgs,
+    config,
+    ...
+  }: {
     devShells.packer = pkgs.mkShellNoCC {
       name = "neoinfra-packer";
       packages = with pkgs; [

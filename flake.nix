@@ -33,7 +33,7 @@
     };
   };
 
-  outputs = inputs @ {
+  outputs = {
     self,
     nixpkgs,
     flake-parts,
@@ -63,7 +63,6 @@
         pkgs,
         system,
         config,
-        lib,
         ...
       }: {
         _module.args = {
@@ -74,35 +73,46 @@
 
         legacyPackages = pkgs;
 
-        devShells.default = with pkgs;
-          mkShell.override {
-            stdenv = stdenvNoCC;
-          } {
-            name = "neoinfra-shell";
+        devShells = with pkgs; {
+          format = mkShellNoCC {
+            name = "neoinfra-format";
             packages = [
-              config.packages.hcl
-              age
-              sops
-              packer
-              shellcheck
-              nomad
-              step-cli
-              step-ca
-              google-cloud-sdk-gce
-              moreutils
-              remarshal
-              alejandra
+              treefmt
               shfmt
-              (python3.withPackages (p: [
-                p.hvac
-                p.click
-              ]))
+              alejandra
+              config.packages.hcl
             ];
-            shellHook = ''
-              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
-              ln -Tsf "$venv" .venv
-            '';
           };
+        };
+
+        # devShells.default = with pkgs;
+        #   mkShell.override {
+        #     stdenv = stdenvNoCC;
+        #   } {
+        #     name = "neoinfra-shell";
+        #     packages = [
+        #       age
+        #       sops
+        #       packer
+        #       shellcheck
+        #       nomad
+        #       step-cli
+        #       step-ca
+        #       google-cloud-sdk-gce
+        #       moreutils
+        #       remarshal
+        #       alejandra
+        #       shfmt
+        #       (python3.withPackages (p: [
+        #         p.hvac
+        #         p.click
+        #       ]))
+        #     ];
+        #     shellHook = ''
+        #       venv="$(cd $(dirname $(which python)); cd ..; pwd)"
+        #       ln -Tsf "$venv" .venv
+        #     '';
+        #   };
       };
     };
 }
