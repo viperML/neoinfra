@@ -1,13 +1,15 @@
 {
-  withSystem,
+  modulesPath,
   self,
-  inputs,
+  withSystem,
   ...
 }: {
   flake = {
-    nixosModules.oci = args: {
+    nixosModules.oci = _: {
       imports = [
         ./hardware.nix
+        "${modulesPath}/profiles/minimal.nix"
+        "${modulesPath}/profiles/qemu-guest.nix"
       ];
     };
 

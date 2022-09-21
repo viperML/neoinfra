@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   ...
 }: let
   original = "/old-root";
@@ -36,7 +35,6 @@ in {
   };
 
   services.qemuGuest.enable = true;
-
 
   fileSystems = {
     "/" = {

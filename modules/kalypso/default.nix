@@ -1,24 +1,21 @@
 {
-  inputs,
-  withSystem,
   config,
+  inputs,
+  self,
+  withSystem,
   ...
 }: {
   flake.nixosConfigurations = withSystem "aarch64-linux" ({
+    nixosSystem,
     pkgs,
     system,
-    modulesPath,
-    nixosSystem,
     ...
   }: let
     modules = [
-      "${modulesPath}/profiles/minimal.nix"
-      "${modulesPath}/profiles/qemu-guest.nix"
-      inputs.nix-common.nixosModules.channels-to-flakes
-      ../oracle.nix
+      self.nixosModules.oci
+      inputs.sops-nix.nixosModules.sops
       ../ssh-admin.nix
       ./common.nix
-      inputs.sops-nix.nixosModules.sops
     ];
   in {
     "kalypso-base" = nixosSystem {

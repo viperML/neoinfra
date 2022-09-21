@@ -6,10 +6,7 @@
   self,
   ...
 }: {
-  time.timeZone = "Europe/Berlin";
   system.stateVersion = "22.05";
-  system.configurationRevision = self.rev or null;
-  environment.defaultPackages = [];
 
   environment.systemPackages = with pkgs; [
     htop
@@ -20,12 +17,6 @@
   ];
 
   nix = {
-    settings = {
-      extra-experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
     systemFeatures = [
       "nixos-test"
     ];

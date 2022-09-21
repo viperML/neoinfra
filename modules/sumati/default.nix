@@ -2,22 +2,23 @@
   withSystem,
   config,
   inputs,
+  modulesPath,
   ...
 }: {
   flake.nixosConfigurations = withSystem "x86_64-linux" ({
     pkgs,
     system,
     nixosSystem,
-    modulesPath,
     ...
   }: let
     modules = [
-      ./common.nix
-      ../ssh-admin.nix
+      # TODO hetzner.nix
       "${modulesPath}/profiles/minimal.nix"
       "${modulesPath}/profiles/qemu-guest.nix"
-      inputs.nix-common.nixosModules.channels-to-flakes
+
       inputs.sops-nix.nixosModules.sops
+      ./common.nix
+      ../ssh-admin.nix
     ];
   in {
     "sumati-base" = nixosSystem {
@@ -30,7 +31,7 @@
         modules
         ++ [
           ./services.nix
-          ./nix-serve.nix
+          # ./nix-serve.nix
           ./gitlab-runner.nix
           ./nomad
           #
