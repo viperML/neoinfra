@@ -48,10 +48,16 @@
       imports = [
         ./modules/flake-parts.nix
         ./packages
+
+        ./terraform
+        ./packer
+
         ./modules/kalypso
         ./modules/skadi
         ./modules/sumati
         ./modules/chandra
+
+        ./modules/oci
       ];
 
       perSystem = {
@@ -87,7 +93,6 @@
               age
               sops
               packer
-              hcloud
               shellcheck
               nomad
               step-cli
@@ -97,15 +102,15 @@
               remarshal
               alejandra
               shfmt
-              oci-cli
-              (terraform.withPlugins (t: [
-                t.google
-                t.external
-                t.cloudflare
-                t.hcloud
-                t.oci
+              (python3.withPackages (p: [
+                p.hvac
+                p.click
               ]))
             ];
+            shellHook = ''
+              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
+              ln -Tsf "$venv" .venv
+            '';
           };
       };
     };
