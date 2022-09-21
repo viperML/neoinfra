@@ -46,18 +46,17 @@
       ];
 
       imports = [
-        ./modules/flake-parts.nix
         ./packages
-
         ./terraform
         ./packer
+        ./modules
 
-        ./modules/kalypso
-        ./modules/skadi
-        ./modules/sumati
-        ./modules/chandra
+        # ./modules/kalypso
+        # ./modules/skadi
+        # ./modules/sumati
+        # ./modules/chandra
 
-        ./modules/oci
+        # ./modules/oci
       ];
 
       perSystem = {
@@ -68,17 +67,9 @@
         ...
       }: {
         _module.args = {
-          modulesPath = "${nixpkgs}/nixos/modules";
           pkgs = import nixpkgs {
             inherit system;
           };
-          nixosSystem = args:
-            nixpkgs.lib.nixosSystem (args
-              // {
-                specialArgs = {
-                  inherit inputs self;
-                };
-              });
         };
 
         legacyPackages = pkgs;

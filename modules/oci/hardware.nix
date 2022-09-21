@@ -5,15 +5,6 @@
 }: let
   original = "/old-root";
 in {
-  time.timeZone = "UTC";
-
-  nix.settings = {
-    extra-experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
-
   boot = {
     kernelParams = [
       "console=ttyS0"
