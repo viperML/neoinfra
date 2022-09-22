@@ -6,7 +6,9 @@ FLAKE=github:viperML/neoinfra
 CONFIG="golden-oci-$1"
 
 set +ux
+# shellcheck source=/dev/null
 . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+# shellcheck source=/dev/null
 . /etc/profile
 set -ux
 
@@ -36,4 +38,12 @@ mkdir -p /new-var
 # 2 is git installed before
 nix profile remove 0 1 2
 
+
+mkdir -p /new-var/lib/secrets
+mv -vf /home/ubuntu/golden.age /new-var/lib/secrets
+chown -R root:root /new-var/lib/secrets
+chmod 600 /new-var/lib/secrets/*.age
+
+
+# shellcheck disable=SC2114
 rm -rf /etc

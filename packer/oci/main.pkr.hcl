@@ -34,6 +34,11 @@ source "oracle-oci" "main" {
 build {
   sources = ["source.oracle-oci.main"]
 
+  provisioner "file" {
+    source      = "../../secrets/golden.age"
+    destination = "/home/ubuntu/golden.age"
+  }
+
   provisioner "shell" {
     script = "bootstrap1.sh"
   }
