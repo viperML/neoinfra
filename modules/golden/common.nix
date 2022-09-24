@@ -5,12 +5,13 @@
   ...
 }: {
   system.stateVersion = "22.05";
+  networking.hostName = "golden";
 
   users.users.admin = {
     isNormalUser = true;
     extraGroups = ["wheel"];
     createHome = true;
-    password = "1234";
+    password = "";
   };
   services.getty.autologinUser = "admin";
   security.sudo.wheelNeedsPassword = false;
