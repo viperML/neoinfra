@@ -23,7 +23,7 @@
         inputs.nixpkgs.lib.nixosSystem {
           inherit (args) system pkgs;
           specialArgs = {
-            # inherit self;
+            inherit self;
             inputs = inputs // {inherit self;};
             rootPath = ../.;
           };

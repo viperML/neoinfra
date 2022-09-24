@@ -1,7 +1,7 @@
 {
   config,
   pkgs,
-  self,
+  rootPath,
   ...
 }: let
   hostName = "chandra";
@@ -18,7 +18,7 @@ in {
     sshKeyPaths = [];
   };
   sops.gnupg.sshKeyPaths = [];
-  sops.defaultSopsFile = "${self}/secrets/${hostName}.yaml";
+  sops.defaultSopsFile = rootPath + "/secrets/${hostName}.yaml";
 
   services.tailscale.enable = true;
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
