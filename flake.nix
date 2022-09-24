@@ -98,16 +98,6 @@
           '';
 
         devShells = with pkgs; {
-          format = mkShellNoCC {
-            name = "neoinfra-format";
-            packages = [
-              treefmt
-              shfmt
-              alejandra
-              config.packages.hcl
-            ];
-          };
-
           python = mkShellNoCC {
             name = "neoinfra-python";
             packages = [
