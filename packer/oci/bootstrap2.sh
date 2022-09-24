@@ -38,8 +38,6 @@ mkdir -p /new-var
 # 2 is git installed before
 nix profile remove 0 1 2
 
-nix-collect-garbage -d
-
 
 mkdir -p /new-var/lib/secrets
 mv -vf /home/ubuntu/golden.age /new-var/lib/secrets
