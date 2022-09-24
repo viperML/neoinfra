@@ -50,13 +50,6 @@
         ./terraform
         ./packer
         ./modules
-
-        # ./modules/kalypso
-        # ./modules/skadi
-        # ./modules/sumati
-        # ./modules/chandra
-
-        # ./modules/oci
       ];
 
       perSystem = {
@@ -103,7 +96,6 @@
             packages = [
               (python3.withPackages (p: [
                 p.click
-                p.Fabric
               ]))
             ];
             shellHook = ''
