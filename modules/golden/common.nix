@@ -28,6 +28,12 @@
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
 
+  services.openssh = {
+    enable = true;
+    openFirewall = false;
+    passwordAuthentication = true;
+  };
+
   sops.secrets."tailscale_key" = {};
 
   # https://tailscale.com/blog/nixos-minecraft/

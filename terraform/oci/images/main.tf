@@ -53,3 +53,18 @@ output "chandra_id" {
     ["PLACEHOLDER_CHANDRA"]
   ])[0]
 }
+
+
+data "oci_core_images" "golden_aarch64" {
+  compartment_id = var.compartment_id
+  display_name   = "golden-oci-aarch64"
+  sort_by        = "TIMECREATED"
+  sort_order     = "DESC"
+}
+
+output "golden_aarch64_id" {
+  value = flatten([
+    data.oci_core_images.golden_aarch64.images[*].id,
+    ["PLACEHOLDER_GOLDEN"]
+  ])[0]
+}
