@@ -26,7 +26,7 @@
   sops.defaultSopsFile = rootPath + "/secrets/golden.yaml";
 
   services.tailscale.enable = true;
-  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
 
   services.openssh = {
@@ -37,6 +37,14 @@
 
   sops.secrets."tailscale_key" = {};
 
+  systemd.services.tailscaled = {
+    serviceConfig = {
+      ExecStart = [
+        ""
+        "${pkgs.tailscale}/bin/tailscaled --state=mem: --socket=/run/tailscale/tailscaled.sock --port $PORT $FLAGS"];
+    };
+  };
+
   # https://tailscale.com/blog/nixos-minecraft/
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
@@ -44,18 +52,18 @@
     wants = ["network-pre.target" "tailscale.service"];
     wantedBy = ["multi-user.target"];
     serviceConfig.Type = "oneshot";
-    script = with pkgs; ''
+    script = ''
       # wait for tailscaled to settle
       sleep 2
 
       # check if we are already authenticated to tailscale
-      status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
+      status="$(${pkgs.tailscale}/bin/tailscale status -json | ${pkgs.jq}/bin/jq -r .BackendState)"
       if [ $status = "Running" ]; then # if so, then do nothing
         exit 0
       fi
 
       # otherwise authenticate with tailscale
-      ${tailscale}/bin/tailscale up -authkey file:${config.sops.secrets."tailscale_key".path}
+      ${pkgs.tailscale}/bin/tailscale up -authkey file:${config.sops.secrets."tailscale_key".path}
     '';
   };
 }
