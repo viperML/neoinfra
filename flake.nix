@@ -83,36 +83,21 @@
               config.packages.hcl
             ];
           };
-        };
 
-        # devShells.default = with pkgs;
-        #   mkShell.override {
-        #     stdenv = stdenvNoCC;
-        #   } {
-        #     name = "neoinfra-shell";
-        #     packages = [
-        #       age
-        #       sops
-        #       packer
-        #       shellcheck
-        #       nomad
-        #       step-cli
-        #       step-ca
-        #       google-cloud-sdk-gce
-        #       moreutils
-        #       remarshal
-        #       alejandra
-        #       shfmt
-        #       (python3.withPackages (p: [
-        #         p.hvac
-        #         p.click
-        #       ]))
-        #     ];
-        #     shellHook = ''
-        #       venv="$(cd $(dirname $(which python)); cd ..; pwd)"
-        #       ln -Tsf "$venv" .venv
-        #     '';
-        #   };
+          python = mkShellNoCC {
+            name = "neoinfra-python";
+            packages = [
+              (python3.withPackages (p: [
+                p.click
+                p.Fabric
+              ]))
+            ];
+            shellHook = ''
+              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
+              ln -sfvT "$venv" "$PWD/.venv"
+            '';
+          };
+        };
       };
     };
 }

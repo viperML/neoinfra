@@ -27,7 +27,7 @@ in {
   sops.secrets."tailscale_key" = {};
 
   # https://tailscale.com/blog/nixos-minecraft/
-  systemd.services.tailscale-autoconnect = {
+  systemd.services.tailscaled-autoconnect = {
     description = "Automatic connection to Tailscale";
     after = ["network-pre.target" "tailscale.service"];
     wants = ["network-pre.target" "tailscale.service"];

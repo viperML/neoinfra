@@ -11,7 +11,7 @@
     isNormalUser = true;
     extraGroups = ["wheel"];
     createHome = true;
-    password = "";
+    openssh.authorizedKeys.keyFiles = [./id_golden.pub];
   };
   services.getty.autologinUser = "admin";
   security.sudo.wheelNeedsPassword = false;
@@ -46,7 +46,7 @@
   };
 
   # https://tailscale.com/blog/nixos-minecraft/
-  systemd.services.tailscale-autoconnect = {
+  systemd.services.tailscaled-autoconnect = {
     description = "Automatic connection to Tailscale";
     after = ["network-pre.target" "tailscale.service"];
     wants = ["network-pre.target" "tailscale.service"];
