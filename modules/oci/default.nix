@@ -24,7 +24,7 @@
           inherit pkgs;
           modules = [
             self.nixosModules.oci
-            ./golden.nix
+            self.nixosModules.golden
           ];
         });
 
@@ -38,7 +38,7 @@
           inherit pkgs;
           modules = [
             self.nixosModules.oci
-            ./golden.nix
+            self.nixosModules.golden
           ];
         });
     };

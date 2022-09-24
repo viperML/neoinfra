@@ -5,13 +5,14 @@
   ...
 }: {
   imports = [
+    ./golden
     ./oci
     ./flake-parts.nix
 
-    ./kalypso
-    ./skadi
-    ./chandra
-    ./sumati
+    # ./kalypso
+    # ./skadi
+    # ./chandra
+    # ./sumati
   ];
 
   _module.args.modulesPath = "${inputs.nixpkgs}/nixos/modules";
@@ -24,6 +25,7 @@
           specialArgs = {
             inherit self;
             inputs = inputs // {inherit self;};
+            rootPath = ../.;
           };
           modules =
             args.modules
