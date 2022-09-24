@@ -41,7 +41,8 @@
     serviceConfig = {
       ExecStart = [
         ""
-        "${pkgs.tailscale}/bin/tailscaled --state=mem: --socket=/run/tailscale/tailscaled.sock --port $PORT $FLAGS"];
+        "${pkgs.tailscale}/bin/tailscaled --state=mem: --socket=/run/tailscale/tailscaled.sock --port $PORT $FLAGS"
+      ];
     };
   };
 

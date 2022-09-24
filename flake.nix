@@ -73,6 +73,30 @@
 
         legacyPackages = pkgs;
 
+        packages.format = with pkgs; let
+          treefmt-conf = (formats.toml {}).generate "treefmt-conf" {
+            formatter = {
+              nix = {
+                command = "${alejandra}/bin/alejandra";
+                includes = ["*.nix"];
+                excludes = ["*.generated.nix"];
+              };
+              python = {
+                command = "${black}/bin/black";
+                includes = ["*.py"];
+                options = ["--line-length" "79"];
+              };
+              hcl = {
+                command = "${config.packages.hcl}/bin/hclfmt";
+                includes = ["*.nomad" "*.hcl" "*.tf"];
+              };
+            };
+          };
+        in
+          writeShellScriptBin "format" ''
+            ${treefmt}/bin/treefmt --config-file ${treefmt-conf} --tree-root ''${1:-.}
+          '';
+
         devShells = with pkgs; {
           format = mkShellNoCC {
             name = "neoinfra-format";
