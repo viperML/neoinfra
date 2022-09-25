@@ -113,10 +113,10 @@ resource "hcloud_firewall" "cloudflare" {
 }
 
 resource "hcloud_server" "sumati" {
-  name        = "sumati"
-  image       = data.hcloud_image.sumati-image.id
-  server_type = "cx21"
-  location    = "nbg1"
+  name         = "sumati"
+  image        = data.hcloud_image.sumati-image.id
+  server_type  = "cx21"
+  location     = "nbg1"
   firewall_ids = [hcloud_firewall.cloudflare.id]
 }
 

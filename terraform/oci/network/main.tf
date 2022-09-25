@@ -38,20 +38,73 @@ resource "oci_core_route_table" "terraform_vcn_route0" {
   }
 }
 
-resource "oci_core_security_list" "terraform_subnet_security_list" {
+# https://github.com/oracle/terraform-provider-oci/issues/1324
+
+resource "oci_core_security_list" "all_egress" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.terraform_vcn.id
-  display_name   = "Terraform Security Lists"
-  ingress_security_rules {
-    protocol  = "all"
-    source    = "0.0.0.0/0"
-    stateless = true
-  }
+  display_name   = "TF - All egress"
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
+    stateless   = false
   }
 }
+
+resource "oci_core_security_list" "icmp" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "TF - ICMP"
+  ingress_security_rules {
+    protocol  = "1"
+    source    = "0.0.0.0/0"
+    stateless = false
+  }
+}
+
+resource "oci_core_security_list" "web" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "TF - Web"
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 80
+      max = 80
+    }
+  }
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 443
+      max = 443
+    }
+  }
+  ingress_security_rules {
+    protocol  = "17"
+    source    = "0.0.0.0/0"
+    stateless = false
+    udp_options {
+      min = 80
+      max = 80
+    }
+  }
+  ingress_security_rules {
+    protocol  = "17"
+    source    = "0.0.0.0/0"
+    stateless = false
+    udp_options {
+      min = 443
+      max = 443
+    }
+  }
+}
+
+
 
 resource "oci_core_subnet" "terraform_subnet" {
   cidr_block     = "10.0.0.0/24"
@@ -59,7 +112,10 @@ resource "oci_core_subnet" "terraform_subnet" {
   vcn_id         = oci_core_vcn.terraform_vcn.id
   display_name   = "terraform_subnet"
   security_list_ids = [
-    oci_core_security_list.terraform_subnet_security_list.id
+    oci_core_security_list.all_egress.id,
+    oci_core_security_list.icmp.id,
+
+    oci_core_security_list.web.id,
   ]
   route_table_id = oci_core_route_table.terraform_vcn_route0.id
 }
