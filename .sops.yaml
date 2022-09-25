@@ -59,5 +59,7 @@ creation_rules:
     - age:
       - *ayats_gen6
       - *kalypso
+      - *chandra
+      - *sumati
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra
