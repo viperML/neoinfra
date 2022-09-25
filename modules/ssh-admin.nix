@@ -75,7 +75,7 @@ in {
 
   /*
    Host certificates (validates a host to a user to avoid TOFU) expire after some time.
-
+   
    These services clone the certificate loaded by sops-nix, and update it if needed
    */
 

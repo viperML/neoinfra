@@ -81,6 +81,7 @@
               };
               hcl = {
                 command = "${config.packages.hcl}/bin/hclfmt";
+                options = ["-w"];
                 includes = ["*.nomad" "*.hcl" "*.tf"];
               };
             };

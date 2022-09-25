@@ -45,7 +45,7 @@ job "http-store" {
 variable "nixpkgs_rev" {
   type = string
   validation {
-    condition = var.nixpkgs_rev != "null"
+    condition     = var.nixpkgs_rev != "null"
     error_message = "Git tree is dirty."
   }
 }

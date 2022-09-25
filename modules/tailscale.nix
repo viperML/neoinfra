@@ -3,8 +3,7 @@
   rootPath,
   pkgs,
   ...
-}:
-{
+}: {
   services.tailscale.enable = true;
   networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";

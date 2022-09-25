@@ -15,15 +15,15 @@ source "oracle-oci" "kalypso" {
   base_image_filter {
     operating_system = "Canonical Ubuntu"
   }
-  compartment_ocid    = var.oci-compartment-ocid
-  image_name          = "kalypso"
-  shape               = "VM.Standard.A1.Flex"
+  compartment_ocid = var.oci-compartment-ocid
+  image_name       = "kalypso"
+  shape            = "VM.Standard.A1.Flex"
   shape_config {
-    ocpus = 2
+    ocpus         = 2
     memory_in_gbs = 4
   }
-  ssh_username        = "ubuntu"
-  subnet_ocid         = var.oci-subnet-ocid
+  ssh_username = "ubuntu"
+  subnet_ocid  = var.oci-subnet-ocid
 }
 
 build {
@@ -34,7 +34,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "bootstrap2.sh"
+    script          = "bootstrap2.sh"
     execute_command = "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
   }
 
@@ -44,7 +44,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "bootstrap3.sh"
+    script          = "bootstrap3.sh"
     execute_command = "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
   }
 }

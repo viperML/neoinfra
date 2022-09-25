@@ -11,7 +11,7 @@ variable "name" {
 locals {
   build-id = "${uuidv4()}"
   build-labels = {
-    "name" = var.name
+    "name"                 = var.name
     "packer.io/build.time" = "{{ timestamp }}"
   }
 }
