@@ -1,8 +1,8 @@
 {
   config,
   lib,
-  self,
   pkgs,
+  rootPath,
   ...
 }: {
   # https://medium.com/oracledevs/deploying-and-integrating-hashicorp-vault-on-and-with-oci-cf9152b3d1a2
@@ -18,11 +18,11 @@
 
   sops.secrets."vault_config" = {
     owner = config.systemd.services.vault.serviceConfig.User;
-    sopsFile = "${self}/secrets/vault.yaml";
+    sopsFile = rootPath + "/secrets/vault.yaml";
     restartUnits = ["vault.service"];
   };
 
-  networking.firewall.interfaces.tailscale0 = {
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
     allowedTCPPorts = [
       8200
     ];

@@ -14,6 +14,7 @@ pprint() {
     echo "$@"
 }
 
+ssh-add "$ROOT/modules/golden/id_golden"
 
 set +e
 run_ssh "test -f /var/lib/secrets/.age"
@@ -36,3 +37,5 @@ scp "$ROOT/secrets/$NEW_HOSTNAME.age" "admin@$OLD_HOSTNAME:$LOCATION_TEMP"
 run_ssh "sudo mv $LOCATION_TEMP $LOCATION"
 run_ssh "sudo chown root:root $LOCATION"
 run_ssh "sudo chmod 0400 $LOCATION"
+
+run_ssh "ls -la /var/lib/secrets"

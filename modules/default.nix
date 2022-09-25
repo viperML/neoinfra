@@ -9,7 +9,7 @@
     ./oci
     ./flake-parts.nix
 
-    # ./kalypso
+    ./kalypso
     # ./skadi
     ./chandra
     # ./sumati

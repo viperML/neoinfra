@@ -51,7 +51,7 @@ resource "oci_core_instance" "kalypso" {
   display_name = "terraform-kalypso"
   source_details {
     source_type = "image"
-    source_id   = module.images.kalypso_id
+    source_id   = module.images.golden_aarch64_id
   }
   create_vnic_details {
     assign_public_ip          = true
@@ -66,6 +66,13 @@ resource "oci_core_instance" "kalypso" {
   }
 }
 
+resource "oci_identity_dynamic_group" "vault_dynamic_group" {
+  compartment_id = var.compartment_id
+  name           = "TerraformVault"
+  description    = "Group holding instances that should access Vault"
+  matching_rule  = "instance.id = '${oci_core_instance.kalypso.id}'"
+}
+
 resource "oci_identity_policy" "vault_policy" {
   compartment_id = var.compartment_id
   description    = "Policies for kalypso to access Vault"
@@ -78,13 +85,6 @@ resource "oci_identity_policy" "vault_policy" {
     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
   ]
-}
-
-resource "oci_identity_dynamic_group" "vault_dynamic_group" {
-  compartment_id = var.compartment_id
-  name           = "TerraformVault"
-  description    = "Group holding instances that should access Vault"
-  matching_rule  = "instance.id = '${oci_core_instance.kalypso.id}'"
 }
 
 
@@ -131,31 +131,31 @@ resource "cloudflare_record" "record" {
 # chandra
 ###
 
-resource "oci_core_instance" "chandra" {
-  availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
-  compartment_id      = var.compartment_id
-  shape               = "VM.Standard.A1.Flex"
-  shape_config {
-    memory_in_gbs = 2
-    ocpus         = 1
-  }
-  display_name = "terraform-chandra"
-  source_details {
-    source_type = "image"
-    source_id   = module.images.golden_aarch64_id
-  }
-  create_vnic_details {
-    assign_public_ip          = true
-    display_name              = "chandra_vnic"
-    subnet_id                 = module.network.terraform_subnet.id
-    assign_private_dns_record = false
-  }
-  lifecycle {
-    ignore_changes = [
-      source_details
-    ]
-  }
-}
+// resource "oci_core_instance" "chandra" {
+//   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
+//   compartment_id      = var.compartment_id
+//   shape               = "VM.Standard.A1.Flex"
+//   shape_config {
+//     memory_in_gbs = 2
+//     ocpus         = 1
+//   }
+//   display_name = "terraform-chandra"
+//   source_details {
+//     source_type = "image"
+//     source_id   = module.images.golden_aarch64_id
+//   }
+//   create_vnic_details {
+//     assign_public_ip          = true
+//     display_name              = "chandra_vnic"
+//     subnet_id                 = module.network.terraform_subnet.id
+//     assign_private_dns_record = false
+//   }
+//   lifecycle {
+//     ignore_changes = [
+//       source_details
+//     ]
+//   }
+// }
 
 // resource "cloudflare_record" "chandra_a" {
 //   zone_id = var.cloudflare_zone_id

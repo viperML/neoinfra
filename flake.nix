@@ -91,9 +91,11 @@
           '';
 
         devShells = with pkgs; {
-          python = mkShellNoCC {
-            name = "neoinfra-python";
+          default = mkShellNoCC {
+            name = "neoinfra-shell";
             packages = [
+              sops
+              age
               (python3.withPackages (p: [
                 p.click
               ]))

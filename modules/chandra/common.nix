@@ -21,7 +21,7 @@ in {
   sops.defaultSopsFile = rootPath + "/secrets/${hostName}.yaml";
 
   services.tailscale.enable = true;
-  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
 
   sops.secrets."tailscale_key" = {};

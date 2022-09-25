@@ -1,20 +1,21 @@
-#!/usr/bin/env -S nix shell nixpkgs#bash nixpkgs#sops nixpkgs#step-cli nixpkgs#remarshal nixpkgs#age nixpkgs#moreutils --command bash
+#!/usr/bin/env -S nix shell .#bash .#sops .#step-cli .#remarshal .#age .#moreutils --command bash
+# shellcheck shell=bash
 set -euxo pipefail
 
 HOST="$1"
 
-ROOTDIR="$(cd $(dirname ${BASH_SOURCE[0]}); cd ..; pwd)"
-pushd $ROOTDIR
+ROOT="$(cd "$(dirname "${BASH_SOURCE[@]}")"; cd ..; pwd)"
+pushd "$ROOT"
 
-: $CA_FINGERPRINT
+: "$CA_FINGERPRINT"
 
-export TEMP=$XDG_RUNTIME_DIR/ca-bootstrap-$1
+export TEMP="$XDG_RUNTIME_DIR/ca-bootstrap-$HOST"
 export STEPPATH=$TEMP
 
 step_rekey() {
     step ca bootstrap \
         --ca-url https://ca.ayats.org \
-        --fingerprint $CA_FINGERPRINT \
+        --fingerprint "$CA_FINGERPRINT" \
         --force
 
     step ssh certificate \
@@ -22,11 +23,11 @@ step_rekey() {
         --force \
         --insecure \
         --no-password \
-        $HOST $TEMP/ssh_host_ecdsa_key
+        "$HOST" "$TEMP/ssh_host_ecdsa_key"
 
     step ssh config \
         --force \
-        --roots > $ROOTDIR/secrets/$HOST-ssh_user_key.pub
+        --roots > "$ROOT/secrets/$HOST-ssh_user_key.pub"
 }
 
 if [[ -d "$TEMP" ]]; then
@@ -40,41 +41,41 @@ fi
 
 
 
-dd status=none of=$TEMP/result.toml <<EOF
+dd status=none of="$TEMP/result.toml" <<EOF
 ssh_host_ecdsa_key = '''
-$(<$TEMP/ssh_host_ecdsa_key)
+$(<"$TEMP"/ssh_host_ecdsa_key)
 '''
 
 ssh_host_ecdsa_key-cert-pub = '''
-$(<$TEMP/ssh_host_ecdsa_key-cert.pub)
+$(<"$TEMP"/ssh_host_ecdsa_key-cert.pub)
 '''
 
 root_ca_crt = '''
-$(<$TEMP/certs/root_ca.crt)
+$(<"$TEMP"/certs/root_ca.crt)
 '''
 
 step-defaults = '''
-$(<$TEMP/config/defaults.json)
+$(<"$TEMP"/config/defaults.json)
 '''
 EOF
 
-toml2yaml --yaml-style "|" $TEMP/result.toml $ROOTDIR/secrets/temp-$HOST-ssh.yaml
+toml2yaml --yaml-style "|" "$TEMP/result.toml" "$ROOT/secrets/temp-$HOST-ssh.yaml"
 
-sops -e $ROOTDIR/secrets/temp-$HOST-ssh.yaml > $ROOTDIR/secrets/$HOST-ssh.yaml
+sops -e "$ROOT/secrets/temp-$HOST-ssh.yaml" > "$ROOT/secrets/$HOST-ssh.yaml"
 
-rm $ROOTDIR/secrets/temp-*
+rm "$ROOT"/secrets/temp-*
 
 read -p "Regen age key? [y/N] " -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    AGE_PATH=$ROOTDIR/packer/$HOST/$HOST.age
-    rm -fv $AGE_PATH
-    age-keygen -o $AGE_PATH
-    AGE_PUB=$(age-keygen -y $AGE_PATH)
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    AGE_PATH="$ROOT/secrets/$HOST.age"
+    rm -fv "$AGE_PATH"
+    age-keygen -o "$AGE_PATH"
+    AGE_PUB=$(age-keygen -y "$AGE_PATH")
 
-    sed -ne "/&$HOST/!p" .sops.yaml | sponge $ROOTDIR/.sops.yaml
-    sed -e "/keys:/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge $ROOTDIR/.sops.yaml
+    sed -ne "/&$HOST/!p" .sops.yaml | sponge "$ROOT/.sops.yaml"
+    sed -e "/keys:/a \  - &$HOST $AGE_PUB" .sops.yaml | sponge "$ROOT/.sops.yaml"
 fi
 
-for f in $ROOTDIR/secrets/$HOST*.yaml; do
-    sops updatekeys --yes $f
+for f in "$ROOT"/secrets/"$HOST"*.yaml; do
+    sops updatekeys --yes "$f"
 done

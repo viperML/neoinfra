@@ -1,13 +1,15 @@
 {
   config,
   pkgs,
-  self,
+  rootPath,
   ...
-}: {
+}: let
+  hostName = "kalypso";
+in {
   system.stateVersion = "22.05";
 
-  networking = rec {
-    hostName = "kalypso";
+  networking = {
+    inherit hostName;
     hostId = builtins.substring 0 8 (builtins.hashString "md5" hostName);
   };
 
@@ -16,13 +18,15 @@
     sshKeyPaths = [];
   };
   sops.gnupg.sshKeyPaths = [];
-  sops.defaultSopsFile = "${self}/secrets/kalypso.yaml";
+  sops.defaultSopsFile = rootPath + "/secrets/kalypso.yaml";
 
   services.tailscale.enable = true;
-  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22];
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
 
-  sops.secrets."tailscale_key" = {};
+  sops.secrets."tailscale_key" = {
+    sopsFile = rootPath + "/secrets/tailscale-server.yaml";
+  };
 
   # https://tailscale.com/blog/nixos-minecraft/
   systemd.services.tailscale-autoconnect = {

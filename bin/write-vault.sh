@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S nix shell .#bash .#sops .#remarshal --command bash
+# shellcheck shell=bash
 set -euxo pipefail
 
 ROOTDIR="$(cd $(dirname ${BASH_SOURCE[0]}); cd ..; pwd)"

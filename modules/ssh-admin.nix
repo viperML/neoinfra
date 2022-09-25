@@ -1,8 +1,8 @@
 {
   lib,
-  self,
   config,
   pkgs,
+  rootPath,
   ...
 }: let
   ca_path = "ssh/ca.d";
@@ -25,7 +25,7 @@ in {
   services.getty.autologinUser = "admin";
 
   sops.secrets = let
-    sopsFile = "${self}/secrets/${hostName}-ssh.yaml";
+    sopsFile = rootPath + "/secrets/${hostName}-ssh.yaml";
   in {
     "ssh_host_ecdsa_key" = {
       inherit sopsFile;
@@ -62,7 +62,7 @@ in {
     "${ca_path}/ssh_user_keys.pub" = {
       mode = "0444";
       text = lib.concatStringsSep "\n" [
-        (lib.fileContents "${self}/secrets/${hostName}-ssh_user_key.pub")
+        (lib.fileContents (rootPath + "/secrets/${hostName}-ssh_user_key.pub"))
       ];
     };
     "${ca_path}/admin_principals" = {
@@ -75,7 +75,7 @@ in {
 
   /*
    Host certificates (validates a host to a user to avoid TOFU) expire after some time.
-   
+
    These services clone the certificate loaded by sops-nix, and update it if needed
    */
 
