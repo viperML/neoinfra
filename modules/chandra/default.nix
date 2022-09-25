@@ -15,6 +15,8 @@
       self.nixosModules.oci
       inputs.sops-nix.nixosModules.sops
       ../ssh-admin.nix
+      ../tailscale.nix
+
       ./common.nix
       ../user-ayats.nix
 
