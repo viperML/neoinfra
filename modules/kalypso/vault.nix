@@ -14,6 +14,10 @@
 
   systemd.services.vault = {
     serviceConfig.ExecStart = lib.mkForce "${config.services.vault.package}/bin/vault server -config ${config.sops.secrets."vault_config".path}";
+    # serviceConfig.AmbientCapabilities = lib.mkForce (lib.concatStringsSep " " [
+    #   "cap_ipc_lock"
+    #   "cap_net_bind_service"
+    # ]);
   };
 
   sops.secrets."vault_config" = {
