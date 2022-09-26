@@ -43,15 +43,11 @@ module "images" {
 resource "oci_core_instance" "kalypso" {
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
   compartment_id      = var.compartment_id
-  shape               = "VM.Standard.A1.Flex"
-  shape_config {
-    memory_in_gbs = 1
-    ocpus         = 1
-  }
-  display_name = "terraform-kalypso"
+  shape               = "VM.Standard.E2.1.Micro"
+  display_name        = "terraform-kalypso"
   source_details {
     source_type = "image"
-    source_id   = module.images.golden_aarch64_id
+    source_id   = module.images.golden_x86_64_id
   }
   create_vnic_details {
     assign_public_ip          = true

@@ -18,13 +18,13 @@ variable "system" {
 locals {
   shape_config = {
     "aarch64" = {
-      shape = "VM.Standard.A1.Flex"
-      ocpus = 2
+      shape         = "VM.Standard.A1.Flex"
+      ocpus         = 2
       memory_in_gbs = 4
     }
     "x86_64" = {
-      shape = "VM.Standard.E4.Flex"
-      ocpus = 2
+      shape         = "VM.Standard.E4.Flex"
+      ocpus         = 2
       memory_in_gbs = 4
     }
   }

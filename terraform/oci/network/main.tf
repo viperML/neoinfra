@@ -56,9 +56,9 @@ resource "oci_core_security_list" "all_ingress" {
   vcn_id         = oci_core_vcn.terraform_vcn.id
   display_name   = "TF - All ingress"
   ingress_security_rules {
-    protocol    = "all"
-    source = "0.0.0.0/0"
-    stateless   = false
+    protocol  = "all"
+    source    = "0.0.0.0/0"
+    stateless = false
   }
 }
 

@@ -5,7 +5,7 @@
   withSystem,
   ...
 }: {
-  flake.nixosConfigurations = withSystem "aarch64-linux" ({
+  flake.nixosConfigurations = withSystem "x86_64-linux" ({
     nixosSystem,
     pkgs,
     system,
@@ -38,7 +38,7 @@
     fastConnection = false;
     profiles.system = {
       sshUser = "admin";
-      path = inputs.deploy-rs.lib."aarch64-linux".activate.nixos config.flake.nixosConfigurations."kalypso-prod";
+      path = inputs.deploy-rs.lib."x86_64-linux".activate.nixos config.flake.nixosConfigurations."kalypso-prod";
       user = "root";
     };
   };
