@@ -15,6 +15,21 @@ variable "system" {
   type = string
 }
 
+locals {
+  shape_config = {
+    "aarch64" = {
+      shape = "VM.Standard.A1.Flex"
+      ocpus = 2
+      memory_in_gbs = 4
+    }
+    "x86_64" = {
+      shape = "VM.Standard.E4.Flex"
+      ocpus = 2
+      memory_in_gbs = 4
+    }
+  }
+}
+
 source "oracle-oci" "main" {
   image_name          = "golden-oci-${var.system}"
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
@@ -22,10 +37,10 @@ source "oracle-oci" "main" {
     operating_system = "Canonical Ubuntu"
   }
   compartment_ocid = var.oci_compartment_ocid
-  shape            = "VM.Standard.A1.Flex"
+  shape            = local.shape_config[var.system]["shape"]
   shape_config {
-    ocpus         = 2
-    memory_in_gbs = 4
+    ocpus         = local.shape_config[var.system]["ocpus"]
+    memory_in_gbs = local.shape_config[var.system]["memory_in_gbs"]
   }
   ssh_username = "ubuntu"
   subnet_ocid  = var.oci_subnet_ocid

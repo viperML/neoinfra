@@ -51,6 +51,17 @@ resource "oci_core_security_list" "all_egress" {
   }
 }
 
+resource "oci_core_security_list" "all_ingress" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "TF - All ingress"
+  ingress_security_rules {
+    protocol    = "all"
+    source = "0.0.0.0/0"
+    stateless   = false
+  }
+}
+
 resource "oci_core_security_list" "icmp" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.terraform_vcn.id
@@ -105,7 +116,6 @@ resource "oci_core_security_list" "web" {
 }
 
 
-
 resource "oci_core_subnet" "terraform_subnet" {
   cidr_block     = "10.0.0.0/24"
   compartment_id = var.compartment_id
@@ -116,6 +126,18 @@ resource "oci_core_subnet" "terraform_subnet" {
     oci_core_security_list.icmp.id,
 
     oci_core_security_list.web.id,
+  ]
+  route_table_id = oci_core_route_table.terraform_vcn_route0.id
+}
+
+resource "oci_core_subnet" "all_ingress_egress" {
+  cidr_block     = "10.0.1.0/24"
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "All ingress egress"
+  security_list_ids = [
+    oci_core_security_list.all_egress.id,
+    oci_core_security_list.all_ingress.id,
   ]
   route_table_id = oci_core_route_table.terraform_vcn_route0.id
 }
