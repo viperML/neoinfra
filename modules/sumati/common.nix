@@ -13,19 +13,14 @@
     jq
     tmux
     step-cli
-    inputs.viperML-dotfiles.packages.${system}.fish
+    # inputs.viperML-dotfiles.packages.${system}.fish
   ];
 
-  nix = {
-    systemFeatures = [
-      "nixos-test"
-    ];
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-old";
-    };
-  };
+  # nix = {
+  #   systemFeatures = [
+  #     "nixos-test"
+  #   ];
+  # };
 
   sops.secrets."private_nixconf" = {
     owner = "root";

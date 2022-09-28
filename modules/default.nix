@@ -12,7 +12,7 @@
     ./kalypso
     # ./skadi
     ./chandra
-    # ./sumati
+    ./sumati
   ];
 
   _module.args.modulesPath = "${inputs.nixpkgs}/nixos/modules";
