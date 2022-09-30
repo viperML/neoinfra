@@ -27,7 +27,7 @@
         inputs.vscode-server.nixosModules.default
         {services.vscode-server.enable = true;}
 
-        # ../skadi/step.nix
+        ../direnv.nix
       ];
     };
   });
