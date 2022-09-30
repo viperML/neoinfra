@@ -10,24 +10,25 @@
     system,
     nixosSystem,
     ...
-  }: let
-    modules = [
-      self.nixosModules.oci
-      inputs.sops-nix.nixosModules.sops
-      ../ssh-admin.nix
-      ../tailscale.nix
-
-      ./common.nix
-      ../user-ayats.nix
-
-      # ./minecraft.nix
-      ../ld.nix
-      inputs.vscode-server.nixosModules.default
-      {services.vscode-server.enable = true;}
-    ];
-  in {
+  }: {
     "chandra" = nixosSystem {
-      inherit system pkgs modules;
+      inherit system pkgs;
+      modules = [
+        self.nixosModules.oci
+        inputs.sops-nix.nixosModules.sops
+        ../ssh-admin.nix
+        ../tailscale.nix
+
+        ./common.nix
+        ../user-ayats.nix
+
+        # ./minecraft.nix
+        ../ld.nix
+        inputs.vscode-server.nixosModules.default
+        {services.vscode-server.enable = true;}
+
+        # ../skadi/step.nix
+      ];
     };
   });
 

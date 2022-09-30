@@ -1,0 +1,122 @@
+{
+  "root": "@steppath@/certs/root_ca.crt",
+  "federatedRoots": null,
+  "crt": "@steppath@/certs/intermediate_ca.crt",
+  "key": "@steppath@/secrets/intermediate_ca_key",
+  "address": ":443",
+  "insecureAddress": "",
+  "dnsNames": [
+    "ca.ayats.org"
+  ],
+  "logger": {
+    "format": "text"
+  },
+  "ssh": {
+    "hostKey": "@steppath@/secrets/ssh_host_ca_key",
+    "userKey": "@steppath@/secrets/ssh_user_ca_key"
+  },
+  "db": {
+    "type": "badgerv2",
+    "dataSource": "@steppath@/db",
+    "badgerFileLoadingMode": ""
+  },
+  "authority": {
+    "provisioners": [
+      {
+        "type": "SSHPOP",
+        "name": "sshpop",
+        "claims": {
+          "enableSSHCA": true,
+          "maxHostSSHCertDuration": "1440h",
+          "defaultHostSSHCertDuration": "1440h"
+        }
+      },
+      {
+        "type": "OIDC",
+        "name": "Google",
+        "clientID": "578708326236-mt9pnsplbnm6m0b5l10l397mcar3u0rn.apps.googleusercontent.com",
+        "clientSecret": "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",
+        "configurationEndpoint": "https://accounts.google.com/.well-known/openid-configuration",
+        "admins": [
+          "ayatsfer@gmail.com"
+        ],
+        "domains": [
+          "ayats.org"
+        ],
+        "claims": {
+          "enableSSHCA": true,
+          "maxHostSSHCertDuration": "1440h",
+          "defaultHostSSHCertDuration": "1440h",
+          "defaultUserSSHCertDuration": "14h",
+          "maxUserSSHCertDuration": "14h"
+        }
+      }
+    ],
+    "template": {},
+    "backdate": "1m0s"
+  },
+  "tls": {
+    "cipherSuites": [
+      "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+    ],
+    "minVersion": 1.2,
+    "maxVersion": 1.3,
+    "renegotiation": false
+  },
+  "templates": {
+    "ssh": {
+      "user": [
+        {
+          "name": "config.tpl",
+          "type": "snippet",
+          "template": "@templates@/ssh/config.tpl",
+          "path": "~/.ssh/config",
+          "comment": "#"
+        },
+        {
+          "name": "step_includes.tpl",
+          "type": "prepend-line",
+          "template": "@templates@/ssh/step_includes.tpl",
+          "path": "@templates@/ssh/includes",
+          "comment": "#"
+        },
+        {
+          "name": "step_config.tpl",
+          "type": "file",
+          "template": "@templates@/ssh/step_config.tpl",
+          "path": "ssh/config",
+          "comment": "#"
+        },
+        {
+          "name": "known_hosts.tpl",
+          "type": "file",
+          "template": "@templates@/ssh/known_hosts.tpl",
+          "path": "ssh/known_hosts",
+          "comment": "#"
+        }
+      ],
+      "host": [
+        {
+          "name": "sshd_config.tpl",
+          "type": "snippet",
+          "template": "@templates@/ssh/sshd_config.tpl",
+          "path": "/etc/ssh/sshd_config",
+          "comment": "#",
+          "requires": [
+            "Certificate",
+            "Key"
+          ]
+        },
+        {
+          "name": "ca.tpl",
+          "type": "snippet",
+          "template": "@templates@/ssh/ca.tpl",
+          "path": "/etc/ssh/ca.pub",
+          "comment": "#"
+        }
+      ]
+    }
+  },
+  "commonName": "Step Online CA"
+}
