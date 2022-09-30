@@ -8,18 +8,18 @@ Configuration files for my servers
 - Multi-purpose VPS
 - Nomad server, with just itself as client
 - Hosting https://ayats.org
-- Hosted on Hetzner Cloud
+- Hetzner Cloud
 
-### `skadi` ()
-- SSH certificate authority using Step-CA
-- Signs trusted certificates to connect to `sumati` without SSH keys or username+password
-- Hosted on Oracle Cloud
+### `skadi`
+- Certificate authority using Step-CA
+- Signs SSH certificates to connect to other nodes with 2FA (no passwords or ssh keys)
+- Oracle Cloud
 
 ### `kalypso`
 - Hashicorp Vault server
-- Provisions secrets to `sumati`'s Nomad runner
-- Hosted on Oracle Cloud
+- Provisions secrets to other nodes
+- Oracle Cloud
 
 ### `chandra`
 - Multi-purpose VPS
-- Hosted on Oracle Cloud
+- Oracle Cloud
