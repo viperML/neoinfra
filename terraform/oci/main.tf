@@ -93,15 +93,11 @@ resource "oci_identity_policy" "vault_policy" {
 resource "oci_core_instance" "skadi" {
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
   compartment_id      = var.compartment_id
-  shape               = "VM.Standard.A1.Flex"
-  shape_config {
-    memory_in_gbs = 1
-    ocpus         = 1
-  }
+  shape               = "VM.Standard.E2.1.Micro"
   display_name = "terraform-skadi"
   source_details {
     source_type = "image"
-    source_id   = module.images.skadi_id
+    source_id   = module.images.golden_x86_64_id
   }
   create_vnic_details {
     assign_public_ip          = true
@@ -128,8 +124,7 @@ resource "oci_identity_dynamic_group" "step" {
   compartment_id = var.compartment_id
   name           = "TerraformStep"
   description    = "Group holding instances that should access Step"
-  # FIXME
-  matching_rule  = "instance.id = '${oci_core_instance.chandra.id}'"
+  matching_rule  = "instance.id = '${oci_core_instance.skadi.id}'"
 }
 
 resource "oci_identity_policy" "step_policy" {
@@ -152,8 +147,8 @@ resource "oci_core_instance" "chandra" {
   compartment_id      = var.compartment_id
   shape               = "VM.Standard.A1.Flex"
   shape_config {
-    memory_in_gbs = 2
-    ocpus         = 2
+    memory_in_gbs = 24
+    ocpus         = 4
   }
   display_name = "terraform-chandra"
   source_details {
@@ -172,11 +167,3 @@ resource "oci_core_instance" "chandra" {
     ]
   }
 }
-
-// resource "cloudflare_record" "chandra_a" {
-//   zone_id = var.cloudflare_zone_id
-//   name    = "minecraft"
-//   type    = "A"
-//   proxied = false
-//   value   = oci_core_instance.chandra.public_ip
-// }

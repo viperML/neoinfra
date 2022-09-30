@@ -1,9 +1,11 @@
 {
   self,
   withSystem,
+  inputs,
+  config,
   ...
 }: {
-  flake.nixosConfigurations = withSystem "aarch64-linux" ({
+  flake.nixosConfigurations = withSystem "x86_64-linux" ({
     pkgs,
     system,
     nixosSystem,
@@ -18,4 +20,14 @@
       ];
     };
   });
+
+  flake.deploy.nodes."skadi" = {
+    hostname = "skadi";
+    fastConnection = false;
+    profiles.system = {
+      sshUser = "admin";
+      path = inputs.deploy-rs.lib."x86_64-linux".activate.nixos config.flake.nixosConfigurations."skadi";
+      user = "root";
+    };
+  };
 }

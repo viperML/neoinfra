@@ -10,7 +10,7 @@
     ./flake-parts.nix
 
     ./kalypso
-    # ./skadi
+    ./skadi
     ./chandra
     ./sumati
   ];
