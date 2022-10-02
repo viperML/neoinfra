@@ -50,6 +50,25 @@
           "defaultUserSSHCertDuration": "14h",
           "maxUserSSHCertDuration": "14h"
         }
+      },
+      {
+        "type": "OIDC",
+        "name": "Auth0",
+        "clientID": "JPvOFXJ5w44ps0LZixWD1WWWCZA4J3D1",
+        "clientSecret": "yvmEm3156ff-7re5tmyIKgF34DBVYA-sBMClbZ3RTszCSkTF6AXtlSVU1jZ3q-mn",
+        "configurationEndpoint": "https://viperml-step.eu.auth0.com/.well-known/openid-configuration",
+        "admins": [
+        ],
+        "domains": [
+          "ayats.org"
+        ],
+        "claims": {
+          "enableSSHCA": true,
+          "maxHostSSHCertDuration": "1440h",
+          "defaultHostSSHCertDuration": "1440h",
+          "defaultUserSSHCertDuration": "14h",
+          "maxUserSSHCertDuration": "14h"
+        }
       }
     ],
     "template": {},
