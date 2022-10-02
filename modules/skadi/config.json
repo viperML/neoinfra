@@ -57,6 +57,7 @@
         "clientID": "JPvOFXJ5w44ps0LZixWD1WWWCZA4J3D1",
         "clientSecret": "yvmEm3156ff-7re5tmyIKgF34DBVYA-sBMClbZ3RTszCSkTF6AXtlSVU1jZ3q-mn",
         "configurationEndpoint": "https://viperml-step.eu.auth0.com/.well-known/openid-configuration",
+        "listenAddress": ":11391",
         "admins": [
         ],
         "domains": [
