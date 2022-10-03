@@ -40,9 +40,6 @@
         "admins": [
           "ayatsfer@gmail.com"
         ],
-        "domains": [
-          "ayats.org"
-        ],
         "claims": {
           "enableSSHCA": true,
           "maxHostSSHCertDuration": "1440h",
@@ -67,7 +64,7 @@
         },
         "options": {
           "ssh": {
-            "templateFile": "@templates@/ssh/oidc.tpl"
+            "templateFile": "@templates@/provisioners/oidc.tpl"
           }
         }
       }
@@ -90,21 +87,21 @@
         {
           "name": "config.tpl",
           "type": "snippet",
-          "template": "@templates@/ssh/config.tpl",
+          "template": "@templates@/ssh/user/config.tpl",
           "path": "~/.ssh/config",
           "comment": "#"
         },
         {
           "name": "step_includes.tpl",
           "type": "prepend-line",
-          "template": "@templates@/ssh/step_includes.tpl",
+          "template": "@templates@/ssh/user/step_includes.tpl",
           "path": "ssh/includes",
           "comment": "#"
         },
         {
           "name": "step_config.tpl",
           "type": "file",
-          "template": "@templates@/ssh/step_config.tpl",
+          "template": "@templates@/ssh/user/step_config.tpl",
           "path": "ssh/config",
           "comment": "#",
           "requires": [
@@ -114,7 +111,7 @@
         {
           "name": "known_hosts.tpl",
           "type": "file",
-          "template": "@templates@/ssh/known_hosts.tpl",
+          "template": "@templates@/ssh/step_known_hosts.tpl",
           "path": "ssh/known_hosts",
           "comment": "#"
         }
@@ -134,7 +131,7 @@
         {
           "name": "ca.tpl",
           "type": "snippet",
-          "template": "@templates@/ssh/ca.tpl",
+          "template": "@templates@/ssh/host/ca.tpl",
           "path": "/etc/ssh/ca.pub",
           "comment": "#"
         }
