@@ -111,7 +111,7 @@
         {
           "name": "known_hosts.tpl",
           "type": "file",
-          "template": "@templates@/ssh/step_known_hosts.tpl",
+          "template": "@templates@/ssh/user/step_known_hosts.tpl",
           "path": "ssh/known_hosts",
           "comment": "#"
         }
@@ -120,7 +120,7 @@
         {
           "name": "sshd_config.tpl",
           "type": "snippet",
-          "template": "@templates@/ssh/sshd_config.tpl",
+          "template": "@templates@/ssh/host/sshd_config.tpl",
           "path": "/etc/ssh/sshd_config",
           "comment": "#",
           "requires": [
