@@ -106,7 +106,10 @@
           "type": "file",
           "template": "@templates@/ssh/step_config.tpl",
           "path": "ssh/config",
-          "comment": "#"
+          "comment": "#",
+          "requires": [
+            "Email"
+          ]
         },
         {
           "name": "known_hosts.tpl",
