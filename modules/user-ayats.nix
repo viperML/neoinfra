@@ -15,6 +15,7 @@ in {
     text = lib.concatStringsSep "\n" [
       "ayats"
       "admin"
+      "ayatsfer@gmail.com"
     ];
   };
 }

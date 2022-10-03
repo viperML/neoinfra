@@ -64,6 +64,11 @@
           "defaultHostSSHCertDuration": "1440h",
           "defaultUserSSHCertDuration": "14h",
           "maxUserSSHCertDuration": "14h"
+        },
+        "options": {
+          "ssh": {
+            "templateFile": "@templates@/ssh/oidc.tpl"
+          }
         }
       }
     ],
