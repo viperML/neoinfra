@@ -98,7 +98,7 @@
           "name": "step_includes.tpl",
           "type": "prepend-line",
           "template": "@templates@/ssh/step_includes.tpl",
-          "path": "@templates@/ssh/includes",
+          "path": "ssh/includes",
           "comment": "#"
         },
         {
