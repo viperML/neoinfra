@@ -7,5 +7,5 @@ Match exec "step ssh check-host{{- if .User.Context }} --context {{ .User.Contex
 	ProxyCommand C:\Windows\System32\cmd.exe /c step ssh proxycommand{{- if .User.Context }} --context {{ .User.Context }}{{- end }} %r %h %p --provisioner="Google"
 {{- else }}
 	UserKnownHostsFile "{{.User.StepPath}}/ssh/known_hosts"
-	ProxyCommand step ssh proxycommand{{- if .User.Context }} --context {{ .User.Context }}{{- end }} SET_EMAIL %h %p --provisioner="Google"
+	ProxyCommand step ssh proxycommand{{- if .User.Context }} --context {{ .User.Context }}{{- end }} {{ .Token.email }} %h %p --provisioner="Google"
 {{- end }}
