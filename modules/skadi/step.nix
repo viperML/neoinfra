@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: let
+{pkgs, ...}: let
   home = "/var/lib/step-ca";
   STEPPATH = home;
 

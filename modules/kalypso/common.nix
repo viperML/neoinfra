@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  rootPath,
-  ...
-}: let
+{rootPath, ...}: let
   hostName = "kalypso";
 in {
   system.stateVersion = "22.05";

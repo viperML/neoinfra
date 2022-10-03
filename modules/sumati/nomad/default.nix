@@ -1,8 +1,6 @@
 args @ {
   config,
   pkgs,
-  inputs,
-  lib,
   self,
   ...
 }: {

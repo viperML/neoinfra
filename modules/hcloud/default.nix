@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: let
+{pkgs, ...}: let
   metadata = pkgs.writers.makeScriptWriter {
     interpreter = (pkgs.python3.withPackages (pP: [pP.pyyaml])).outPath + "/bin/python3";
     check = pkgs.writeShellScript "check" ''

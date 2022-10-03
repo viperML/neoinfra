@@ -40,7 +40,7 @@ filenames = {
     "secrets/ssh_host_ca_key",
     "secrets/ssh_user_ca_key",
     #
-    "secrets/password_intermediate"
+    "secrets/password_intermediate",
 }
 
 for filename in filenames:
