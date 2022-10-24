@@ -18,4 +18,9 @@ in {
       "ayatsfer@gmail.com"
     ];
   };
+
+  programs.ssh = {
+    startAgent = true;
+    agentTimeout = "4h";
+  };
 }
