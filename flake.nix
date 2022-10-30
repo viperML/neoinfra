@@ -52,6 +52,10 @@
         ./modules
       ];
 
+      flake.overlays.openssl = final: prev: {
+        nginxStable = prev.nginxStable.override {openssl = final.openssl_1_1;};
+      };
+
       perSystem = {
         pkgs,
         system,
@@ -61,6 +65,9 @@
         _module.args = {
           pkgs = import nixpkgs {
             inherit system;
+            overlays = [
+              self.overlays.openssl
+            ];
           };
         };
 
