@@ -17,20 +17,7 @@ args: {
 
   client = {
     enabled = true;
-    # host_volume."nix" = {
-    #   path = "/nix";
-    #   read_only = false;
-    # };
     cni_path = "${args.pkgs.cni-plugins}/bin";
-  };
-
-  plugin = {
-    "nomad-driver-containerd".config = {
-      enabled = true;
-      stats_interval = "5s";
-      containerd_runtime = "io.containerd.runc.v2";
-      nix_executable = args.config.nix.package.outPath;
-    };
   };
 
   vault = {

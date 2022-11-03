@@ -14,7 +14,7 @@
   nix = {
     gc = {
       automatic = true;
-      options = "-d 14d";
+      options = "--delete-older-than 14d";
     };
 
     settings = {

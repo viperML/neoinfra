@@ -15,6 +15,8 @@
       };
 
       inherit (inputs'.deploy-rs.packages) deploy-rs;
+
+      nomad = pkgs.callPackage ./nomad.nix {};
     };
   };
 }

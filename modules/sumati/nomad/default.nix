@@ -20,21 +20,24 @@ args @ {
 
   services.nomad = {
     enable = true;
-    enableDocker = false;
+    enableDocker = true;
     dropPrivileges = false;
     settings = import ./settings.nix args;
+    package = self.packages.${pkgs.system}.nomad;
     extraPackages = [
       config.nix.package
       pkgs.git
     ];
-    extraSettingsPlugins = [
-      self.packages.${pkgs.system}.nomad-driver-containerd-nix
-    ];
   };
 
-  virtualisation.containerd = {
+  virtualisation.docker = {
     enable = true;
+    autoPrune = {
+      enable = true;
+    };
   };
+
+  users.groups.docker.members = config.users.groups.wheel.members;
 
   sops.secrets."nomad_env" = {
     owner = config.systemd.services.nomad.serviceConfig.User or "root";
