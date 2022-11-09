@@ -23,4 +23,13 @@ in {
     startAgent = true;
     agentTimeout = "4h";
   };
+
+  networking.firewall.interfaces.tailscale0 = {
+    allowedTCPPortRanges = [
+      {
+        from = 8000;
+        to = 8999;
+      }
+    ];
+  };
 }
