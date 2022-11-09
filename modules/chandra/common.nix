@@ -14,4 +14,8 @@ in {
   };
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = rootPath + "/secrets/${hostName}.yaml";
+
+  boot.binfmt.emulatedSystems = [
+    "wasm32-wasi"
+  ];
 }
