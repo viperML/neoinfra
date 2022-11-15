@@ -28,6 +28,8 @@
         {services.vscode-server.enable = true;}
 
         ../direnv.nix
+        inputs.viperML-dotfiles.nixosModules.xdg-ninja
+        ./xdg.nix
       ];
     };
   });
