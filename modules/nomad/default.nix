@@ -4,19 +4,11 @@ args @ {
   self,
   ...
 }: {
-  networking.firewall.interfaces.tailscale0 = {
-    allowedTCPPorts = [
-      4646
-      4647
-      4648
-    ];
-    allowedTCPPortRanges = [
-      {
-        from = 8000;
-        to = 8999;
-      }
-    ];
-  };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    4646
+    4647
+    4648
+  ];
 
   services.nomad = {
     enable = true;
@@ -24,10 +16,10 @@ args @ {
     dropPrivileges = false;
     settings = import ./settings.nix args;
     package = self.packages.${pkgs.system}.nomad;
-    extraPackages = [
-      config.nix.package
-      pkgs.git
-    ];
+    # extraPackages = [
+    #   config.nix.package
+    #   pkgs.git
+    # ];
   };
 
   virtualisation.docker = {
@@ -38,6 +30,8 @@ args @ {
   };
 
   users.groups.docker.members = config.users.groups.wheel.members;
+
+  # vault token create -policy nomad-server -orphan
 
   sops.secrets."nomad_env" = {
     owner = config.systemd.services.nomad.serviceConfig.User or "root";

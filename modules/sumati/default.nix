@@ -33,7 +33,7 @@
           ./services.nix
           # ./nix-serve.nix
           ./gitlab-runner.nix
-          ./nomad
+          ../nomad
           #
           # ./nomad/http-store
           ../../nomad/blog

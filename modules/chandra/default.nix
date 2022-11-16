@@ -31,6 +31,8 @@
         inputs.viperML-dotfiles.nixosModules.xdg-ninja
         ./xdg.nix
         ./hm.nix
+
+        ../nomad
       ];
     };
   });
