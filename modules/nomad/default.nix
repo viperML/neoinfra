@@ -16,10 +16,7 @@ args @ {
     dropPrivileges = false;
     settings = import ./settings.nix args;
     package = self.packages.${pkgs.system}.nomad;
-    # extraPackages = [
-    #   config.nix.package
-    #   pkgs.git
-    # ];
+    extraPackages = [config.nix.package];
   };
 
   virtualisation.docker = {
