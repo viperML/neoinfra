@@ -1,12 +1,15 @@
 # depends on ssh-admin.nix
-{lib, ...}: let
+{
+  lib,
+  config,
+  ...
+}: let
   ca_path = "ssh/ca.d";
 in {
   users.users.ayats = {
     name = "ayats";
     isNormalUser = true;
     extraGroups = [];
-    createHome = true;
   };
 
   environment.etc.
@@ -32,4 +35,9 @@ in {
       }
     ];
   };
+
+  systemd.tmpfiles.rules = with config.users.users.ayats; [
+    "d ${home} 700 ${name} ${group} - -"
+    "z ${home} 700 ${name} ${group} - -"
+  ];
 }

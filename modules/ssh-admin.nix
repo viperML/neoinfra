@@ -16,7 +16,6 @@ in {
     name = "admin";
     isNormalUser = true;
     extraGroups = ["wheel"];
-    createHome = true;
   };
 
   security.sudo.wheelNeedsPassword = false;
@@ -75,10 +74,10 @@ in {
   };
 
   /*
-  Host certificates (validates a host to a user to avoid TOFU) expire after some time.
+   Host certificates (validates a host to a user to avoid TOFU) expire after some time.
 
-  These services clone the certificate loaded by sops-nix, and update it if needed
-  */
+   These services clone the certificate loaded by sops-nix, and update it if needed
+   */
 
   systemd.services."step-renew" = {
     description = "Renew ssh host certificate with step-ca and SSHPOP";
@@ -126,9 +125,16 @@ in {
     '';
   };
 
-  systemd.tmpfiles.rules = [
-    "L+ /var/lib/secrets/ssh_host_ecdsa_key - - - - ${config.sops.secrets."ssh_host_ecdsa_key".path}"
-    "C ${pubCert} - - - - ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}"
-    "z ${pubCert} 0644 root root - -"
-  ];
+  systemd.tmpfiles.rules =
+    [
+      "L+ /var/lib/secrets/ssh_host_ecdsa_key - - - - ${config.sops.secrets."ssh_host_ecdsa_key".path}"
+      "C ${pubCert} - - - - ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}"
+      "z ${pubCert} 0644 root root - -"
+    ]
+    ++ (
+      with config.users.users.admin; [
+        "d ${home} 700 ${name} ${group} - -"
+        "z ${home} 700 ${name} ${group} - -"
+      ]
+    );
 }
