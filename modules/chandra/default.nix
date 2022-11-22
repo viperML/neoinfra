@@ -33,6 +33,7 @@
         ./hm.nix
 
         ../nomad
+        ../mosquitto
       ];
     };
   });
