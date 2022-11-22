@@ -73,6 +73,7 @@ resource "oci_core_security_list" "icmp" {
   }
 }
 
+# https://registry.terraform.io/providers/oracle/oci/4.76.0/docs/resources/core_security_list
 resource "oci_core_security_list" "web" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.terraform_vcn.id
@@ -115,6 +116,30 @@ resource "oci_core_security_list" "web" {
   }
 }
 
+resource "oci_core_security_list" "mqtt" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "TF - Web"
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 1883
+      max = 1883
+    }
+  }
+  ingress_security_rules {
+    protocol  = "17"
+    source    = "0.0.0.0/0"
+    stateless = false
+    udp_options {
+      min = 1883
+      max = 1883
+    }
+  }
+}
+
 
 resource "oci_core_subnet" "terraform_subnet" {
   cidr_block     = "10.0.0.0/24"
@@ -126,6 +151,7 @@ resource "oci_core_subnet" "terraform_subnet" {
     oci_core_security_list.icmp.id,
 
     oci_core_security_list.web.id,
+    oci_core_security_list.mqtt.id,
   ]
   route_table_id = oci_core_route_table.terraform_vcn_route0.id
 }

@@ -167,3 +167,11 @@ resource "oci_core_instance" "chandra" {
     ]
   }
 }
+
+resource "cloudflare_record" "chandra_mqtt" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mqtt"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.chandra.public_ip
+}
