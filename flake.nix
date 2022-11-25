@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,11 +18,11 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nomad-driver-containerd-nix = {
-      # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
-      url = "gitlab:_viperML/nomad-driver-containerd-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nomad-driver-containerd-nix = {
+    #   # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
+    #   url = "gitlab:_viperML/nomad-driver-containerd-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs.follows = "nixpkgs";
