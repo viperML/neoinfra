@@ -25,7 +25,6 @@
     # };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server = {
       url = "github:msteen/nixos-vscode-server";
@@ -52,10 +51,6 @@
         ./modules
       ];
 
-      flake.overlays.openssl = final: prev: {
-        nginxStable = prev.nginxStable.override {openssl = final.openssl_1_1;};
-      };
-
       perSystem = {
         pkgs,
         system,
@@ -66,7 +61,6 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [
-              self.overlays.openssl
             ];
           };
         };
