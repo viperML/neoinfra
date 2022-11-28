@@ -15,7 +15,7 @@
   };
   services.getty.autologinUser = "admin";
   security.sudo.wheelNeedsPassword = false;
-  nix.trustedUsers = ["@wheel"];
+  nix.settings.trusted-users = ["@wheel"];
 
   sops.age = {
     keyFile = "/var/lib/secrets/golden.age";
