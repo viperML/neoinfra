@@ -26,6 +26,7 @@
         ../ld.nix
         inputs.vscode-server.nixosModules.default
         {services.vscode-server.enable = true;}
+        inputs.envfs.nixosModules.envfs
 
         ../direnv.nix
         inputs.viperML-dotfiles.nixosModules.xdg-ninja
