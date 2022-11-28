@@ -1,37 +1,4 @@
 {
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-common = {
-      url = "github:viperML/nix-common";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    viperML-dotfiles.url = "github:viperML/dotfiles";
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # nomad-driver-containerd-nix = {
-    #   # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
-    #   url = "gitlab:_viperML/nomad-driver-containerd-nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-    };
-    vscode-server = {
-      url = "github:msteen/nixos-vscode-server";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
   outputs = {
     self,
     nixpkgs,
@@ -95,4 +62,36 @@
         };
       };
     };
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-common = {
+      url = "github:viperML/nix-common";
+    };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    viperML-dotfiles.url = "github:viperML/dotfiles";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # nomad-driver-containerd-nix = {
+    #   # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
+    #   url = "gitlab:_viperML/nomad-driver-containerd-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+    };
+    vscode-server = {
+      url = "github:msteen/nixos-vscode-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 }

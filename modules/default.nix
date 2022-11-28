@@ -32,6 +32,8 @@
             ++ [
               ./common.nix
               inputs.nix-common.nixosModules.channels-to-flakes
+              inputs.nix-common.nixosModules.hm-standalone-shim
+              inputs.nix-common.nixosModules.xdg
             ];
         };
     };
