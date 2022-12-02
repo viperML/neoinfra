@@ -14,8 +14,8 @@ in {
       };
     };
     initrd = {
-      # systemd.enable = true;
-      availableKernelModules = ["xhci_pci" "virtio_pci" "usbhid"];
+      systemd.enable = true;
+      availableKernelModules = ["xhci_pci"];
     };
   };
 
