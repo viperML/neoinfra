@@ -1,3 +1,15 @@
+# packer init ./config.pkr.hcl
+# packer build -var "system=x86_64" ./config.pkr.hcl
+
+packer {
+  required_plugins {
+    oracle-oci = {
+      version = "~> 1.0"
+      source = "github.com/hashicorp/oracle"
+    }
+  }
+}
+
 variable "oci_compartment_ocid" {
   type      = string
   default   = "${env("OCI_COMPARTMENT_OCID")}"
@@ -10,7 +22,6 @@ variable "oci_subnet_ocid" {
   sensitive = true
 }
 
-# TODO implement x86_64
 variable "system" {
   type = string
 }
