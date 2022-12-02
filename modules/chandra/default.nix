@@ -32,7 +32,7 @@
         inputs.viperML-dotfiles.nixosModules.xdg-ninja
 
         ../nomad
-        ../mosquitto
+        # ../mosquitto
       ];
     };
   });
