@@ -7,7 +7,11 @@ in {
       "console=tty1"
     ];
     loader = {
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        # ESP is 100MB size
+        configurationLimit = 1;
+      };
       efi = {
         efiSysMountPoint = "/efi";
         canTouchEfiVariables = true;
