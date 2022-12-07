@@ -65,6 +65,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -95,6 +96,10 @@
     };
     envfs = {
       url = "github:Mic92/envfs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-overlay-guix = {
+      url = "github:foo-dogsquared/nix-overlay-guix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

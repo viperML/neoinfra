@@ -13,6 +13,7 @@
     ./skadi
     ./chandra
     # ./sumati
+    ./guix
   ];
 
   _module.args.modulesPath = "${inputs.nixpkgs}/nixos/modules";

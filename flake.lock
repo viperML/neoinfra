@@ -495,6 +495,26 @@
         "type": "github"
       }
     },
+    "nix-overlay-guix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1667878135,
+        "narHash": "sha256-NEfvSZg+MAS4UWZ4oWL35SVWjogef8sPc+bVuBOpZf0=",
+        "owner": "foo-dogsquared",
+        "repo": "nix-overlay-guix",
+        "rev": "82b88f9b183ca42174c194072d9d12965e22f4f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "foo-dogsquared",
+        "repo": "nix-overlay-guix",
+        "type": "github"
+      }
+    },
     "nixlib": {
       "locked": {
         "lastModified": 1636849918,
@@ -635,6 +655,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-oldstable": {
+      "locked": {
+        "lastModified": 1670248078,
+        "narHash": "sha256-NljfevA44layMfbGi16VoTak23/195MKazB9984U4L8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7e72265b08d4c60f414a0f3ab162e24648e84342",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-22.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1669542132,
@@ -686,8 +722,10 @@
         "envfs": "envfs",
         "flake-parts": "flake-parts",
         "nix-common": "nix-common",
+        "nix-overlay-guix": "nix-overlay-guix",
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-oldstable": "nixpkgs-oldstable",
         "sops-nix": "sops-nix",
         "viperML-dotfiles": "viperML-dotfiles",
         "vscode-server": "vscode-server_2"

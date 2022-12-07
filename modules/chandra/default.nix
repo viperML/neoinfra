@@ -33,6 +33,7 @@
 
         ../nomad
         # ../mosquitto
+        # self.nixosModules.guix
       ];
     };
   });
