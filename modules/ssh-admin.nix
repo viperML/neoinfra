@@ -82,7 +82,7 @@ in {
   systemd.services."step-renew" = {
     description = "Renew ssh host certificate with step-ca and SSHPOP";
     path = [pkgs.step-cli];
-    environment."STEPPATH" = "/dev/null";
+    environment."STEPPATH" = "/var/empty";
     script = ''
       set -xu
 
