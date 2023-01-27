@@ -128,7 +128,8 @@ in {
   systemd.tmpfiles.rules =
     [
       "L+ /var/lib/secrets/ssh_host_ecdsa_key - - - - ${config.sops.secrets."ssh_host_ecdsa_key".path}"
-      "C ${pubCert} - - - - ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}"
+      # FIXME
+      # "C ${pubCert} - - - - ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}"
       "z ${pubCert} 0644 root root - -"
     ]
     ++ (
