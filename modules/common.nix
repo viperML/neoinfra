@@ -12,10 +12,10 @@
   users.mutableUsers = false;
 
   nix = {
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 14d";
-    };
+    # gc = {
+    #   automatic = true;
+    #   options = "--delete-older-than 14d";
+    # };
 
     settings = {
       extra-experimental-features = [
@@ -28,6 +28,14 @@
       extra-trusted-public-keys = [
         "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
       ];
+    };
+  };
+
+  nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      dates = "weekly";
     };
   };
 }

@@ -166,7 +166,25 @@
     },
     "flake-parts_2": {
       "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib_3"
+        "nixpkgs-lib": "nixpkgs-lib_2"
+      },
+      "locked": {
+        "lastModified": 1674771137,
+        "narHash": "sha256-Zpk1GbEsYrqKmuIZkx+f+8pU0qcCYJoSUwNz1Zk+R00=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "7c7a8bce3dffe71203dcd4276504d1cb49dfe05f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-parts_3": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib_4"
       },
       "locked": {
         "lastModified": 1668450977,
@@ -357,12 +375,34 @@
     },
     "nh": {
       "inputs": {
+        "flake-parts": "flake-parts_2",
+        "nix-filter": "nix-filter",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1675017729,
+        "narHash": "sha256-VoIp40zFMTlb+NnacThCvJbb8kSuMSjDqKOUNgLqJK0=",
+        "owner": "viperML",
+        "repo": "nh",
+        "rev": "8ed3c3e713685b02de0777de63ea0fc0df4e9e9a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "nh",
+        "type": "github"
+      }
+    },
+    "nh_2": {
+      "inputs": {
         "fenix": "fenix",
         "flake-parts": [
           "viperML-dotfiles",
           "flake-parts"
         ],
-        "nix-filter": "nix-filter",
+        "nix-filter": "nix-filter_2",
         "nixpkgs": [
           "viperML-dotfiles",
           "nixpkgs"
@@ -410,7 +450,7 @@
     },
     "nix-common": {
       "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib_2"
+        "nixpkgs-lib": "nixpkgs-lib_3"
       },
       "locked": {
         "lastModified": 1669632523,
@@ -428,7 +468,7 @@
     },
     "nix-common_2": {
       "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib_4"
+        "nixpkgs-lib": "nixpkgs-lib_5"
       },
       "locked": {
         "lastModified": 1669632523,
@@ -445,6 +485,21 @@
       }
     },
     "nix-filter": {
+      "locked": {
+        "lastModified": 1666547822,
+        "narHash": "sha256-razwnAybPHyoAyhkKCwXdxihIqJi1G6e1XP4FQOJTEs=",
+        "owner": "numtide",
+        "repo": "nix-filter",
+        "rev": "1a3b735e13e90a8d2fd5629f2f8363bd7ffbbec7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "nix-filter",
+        "type": "github"
+      }
+    },
+    "nix-filter_2": {
       "locked": {
         "lastModified": 1666547822,
         "narHash": "sha256-razwnAybPHyoAyhkKCwXdxihIqJi1G6e1XP4FQOJTEs=",
@@ -604,6 +659,24 @@
     "nixpkgs-lib_2": {
       "locked": {
         "dir": "lib",
+        "lastModified": 1672350804,
+        "narHash": "sha256-jo6zkiCabUBn3ObuKXHGqqORUMH27gYDIFFfLq5P4wg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "677ed08a50931e38382dbef01cba08a8f7eac8f6",
+        "type": "github"
+      },
+      "original": {
+        "dir": "lib",
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib_3": {
+      "locked": {
+        "dir": "lib",
         "lastModified": 1669411043,
         "narHash": "sha256-LfPd3+EY+jaIHTRIEOUtHXuanxm59YKgUacmSzaqMLc=",
         "owner": "NixOS",
@@ -619,7 +692,7 @@
         "type": "github"
       }
     },
-    "nixpkgs-lib_3": {
+    "nixpkgs-lib_4": {
       "locked": {
         "dir": "lib",
         "lastModified": 1665349835,
@@ -637,7 +710,7 @@
         "type": "github"
       }
     },
-    "nixpkgs-lib_4": {
+    "nixpkgs-lib_5": {
       "locked": {
         "dir": "lib",
         "lastModified": 1669411043,
@@ -721,6 +794,7 @@
         "deploy-rs": "deploy-rs",
         "envfs": "envfs",
         "flake-parts": "flake-parts",
+        "nh": "nh",
         "nix-common": "nix-common",
         "nix-overlay-guix": "nix-overlay-guix",
         "nixos-generators": "nixos-generators",
@@ -861,14 +935,14 @@
         "deploy-rs": "deploy-rs_2",
         "envfs": "envfs_2",
         "flake-compat": "flake-compat_2",
-        "flake-parts": "flake-parts_2",
+        "flake-parts": "flake-parts_3",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "home-manager-wsl": "home-manager-wsl",
         "hyprland": "hyprland",
         "hyprland-contrib": "hyprland-contrib",
         "iosevka": "iosevka",
-        "nh": "nh",
+        "nh": "nh_2",
         "nil": "nil",
         "nix-common": "nix-common_2",
         "nix-gaming": "nix-gaming",
