@@ -382,11 +382,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675017729,
-        "narHash": "sha256-VoIp40zFMTlb+NnacThCvJbb8kSuMSjDqKOUNgLqJK0=",
+        "lastModified": 1675018369,
+        "narHash": "sha256-dhn/wVnYuyNJcux+prsYRXYh8RjPtbTlnmCG4Mo6b44=",
         "owner": "viperML",
         "repo": "nh",
-        "rev": "8ed3c3e713685b02de0777de63ea0fc0df4e9e9a",
+        "rev": "f320c48c461f32cfcc60e67c62bb9ea91f5046d7",
         "type": "github"
       },
       "original": {
