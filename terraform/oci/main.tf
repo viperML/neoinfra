@@ -153,6 +153,7 @@ resource "oci_core_instance" "chandra" {
   source_details {
     source_type = "image"
     source_id   = module.images.golden_aarch64_id
+    boot_volume_size_in_gbs = 90
   }
   create_vnic_details {
     assign_public_ip          = true
@@ -167,10 +168,10 @@ resource "oci_core_instance" "chandra" {
   }
 }
 
-resource "cloudflare_record" "chandra_mqtt" {
-  zone_id = var.cloudflare_zone_id
-  name    = "mqtt"
-  type    = "A"
-  proxied = false
-  value   = oci_core_instance.chandra.public_ip
-}
+// resource "cloudflare_record" "chandra_mqtt" {
+//   zone_id = var.cloudflare_zone_id
+//   name    = "mqtt"
+//   type    = "A"
+//   proxied = false
+//   value   = oci_core_instance.chandra.public_ip
+// }
