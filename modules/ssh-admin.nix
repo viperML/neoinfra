@@ -86,6 +86,12 @@ in {
     script = ''
       set -xu
 
+      if [[ ! -f ${pubCert} ]]; then
+        cp -vfL ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path} ${pubCert}
+        chown root:root ${pubCert}
+        chmod 0644 ${pubCert}
+      fi
+
       step ssh inspect ${pubCert}
 
       set +e
@@ -109,6 +115,9 @@ in {
           exit 1
       fi
     '';
+    wantedBy = ["multi-user.target"];
+    before = ["sshd.service"];
+    serviceConfig.Type = "oneshot";
   };
 
   systemd.timers."step-renew" = {
@@ -121,7 +130,8 @@ in {
     description = "Reset the ssh host certificate to the sops-nix certificate";
     script = ''
       cp -vfL ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path} ${pubCert}
-      chmod 644 ${pubCert}
+      chown root:root ${pubCert}
+      chmod 0644 ${pubCert}
     '';
   };
 
@@ -130,7 +140,7 @@ in {
       "L+ /var/lib/secrets/ssh_host_ecdsa_key - - - - ${config.sops.secrets."ssh_host_ecdsa_key".path}"
       # FIXME
       # "C ${pubCert} - - - - ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}"
-      "z ${pubCert} 0644 root root - -"
+      # "z ${pubCert} 0644 root root - -"
     ]
     ++ (
       with config.users.users.admin; [
