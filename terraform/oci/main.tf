@@ -10,10 +10,10 @@ terraform {
     }
   }
   backend "s3" {
-    bucket                      = "viper-tfstate"
-    key                         = "kalypso.tfstate"
-    region                      = "fr-par"
-    endpoint                    = "https://s3.fr-par.scw.cloud"
+    bucket                      = "viperml-neoinfra"
+    key                         = "oci.tfstate"
+    region                      = "pl-waw"
+    endpoint                    = "https://s3.pl-waw.scw.cloud"
     skip_credentials_validation = true
     skip_region_validation      = true
   }
