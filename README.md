@@ -18,4 +18,3 @@ Configuration files for my servers
 - Hashicorp Vault server
 - Provisions secrets to other nodes
 - @ Oracle Cloud
-- 
