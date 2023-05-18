@@ -6,7 +6,7 @@ terraform {
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
   }
   backend "s3" {
@@ -21,6 +21,12 @@ terraform {
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
+}
+
+provider "oci" {
+  auth = "SecurityToken"
+  config_file_profile = "DEFAULT"
+  region = "eu-marseille-1"
 }
 
 

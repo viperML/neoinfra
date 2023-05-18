@@ -1,11 +1,10 @@
 {
-  outputs = {
-    self,
+  outputs = inputs@{
     nixpkgs,
     flake-parts,
     ...
   }:
-    flake-parts.lib.mkFlake {inherit self;} {
+    flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -40,7 +39,7 @@
             packages = [
               treefmt
               alejandra
-              config.packages.hcl
+              # config.packages.hcl
               black
             ];
           };
@@ -64,8 +63,8 @@
     };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
-    nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -77,7 +76,7 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    viperML-dotfiles.url = "github:viperML/dotfiles";
+    # viperML-dotfiles.url = "github:viperML/dotfiles";
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -96,10 +95,6 @@
     };
     envfs = {
       url = "github:Mic92/envfs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-overlay-guix = {
-      url = "github:foo-dogsquared/nix-overlay-guix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nh = {

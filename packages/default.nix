@@ -1,13 +1,10 @@
-{inputs, ...}: {
+{
   perSystem = {
     pkgs,
     inputs',
     ...
   }: {
-    packages = let
-      guixpkgs = pkgs.extend inputs.nix-overlay-guix.overlays.default;
-      old-guixpkgs = inputs'.nixpkgs-oldstable.legacyPackages.extend inputs.nix-overlay-guix.overlays.default;
-    in {
+    packages = {
       hcl = pkgs.callPackage ./hcl.nix {};
 
       # nomad-driver-containerd-nix = pkgs.buildGoModule {
@@ -22,9 +19,6 @@
       nomad = pkgs.callPackage ./nomad.nix {};
 
       vault-bin = pkgs.callPackage ./vault-bin.nix {};
-
-      inherit (guixpkgs) guix;
-      old-guix = old-guixpkgs.guix;
     };
   };
 }
