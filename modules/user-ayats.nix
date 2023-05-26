@@ -16,8 +16,7 @@ in {
     ];
   };
 
-  environment.etc.
-    "${ca_path}/ayats_principals" = {
+  environment.etc."${ca_path}/ayats_principals" = {
     mode = "0444";
     text = lib.concatStringsSep "\n" [
       "ayats"

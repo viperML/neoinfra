@@ -1,5 +1,6 @@
-let
+{config, ...}: let
   efiSysMountPoint = "/efi";
+  efiSize = "300MiB";
 in {
   services.cloud-init = {
     enable = true;
@@ -74,7 +75,7 @@ in {
   services.qemuGuest.enable = true;
 
   disko.devices.disk."main" = {
-    device = "/dev/sda";
+    device = config.viper.mainDisk;
     type = "disk";
     content = {
       type = "table";
@@ -83,7 +84,7 @@ in {
         {
           name = "ESP";
           start = "1MiB";
-          end = "300MiB";
+          end = efiSize;
           bootable = true;
           content = {
             type = "filesystem";
@@ -92,18 +93,40 @@ in {
           };
         }
         {
-          name = "root";
-          start = "300MiB";
+          name = "MAIN";
+          start = efiSize;
           end = "100%";
-          part-type = "primary";
-          bootable = true;
           content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/";
+            type = "btrfs";
+            extraArgs = ["-f"]; # Override existing partition
+            subvolumes = let
+              mountOptions = ["compress=zstd" "noatime"];
+            in {
+              "@nix" = {
+                mountpoint = "/nix";
+                inherit mountOptions;
+              };
+              "@var" = {
+                mountpoint = "/var";
+                inherit mountOptions;
+              };
+              "@ayats" = {
+                mountpoint = "/home/ayats";
+                inherit mountOptions;
+              };
+            };
           };
         }
       ];
     };
+  };
+
+  disko.devices.nodev."/" = {
+    fsType = "tmpfs";
+    mountOptions = [
+      "size=2G"
+      "defaults"
+      "mode=0755"
+    ];
   };
 }

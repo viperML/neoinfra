@@ -8,13 +8,13 @@
         "path": "/etc/sysconfig/selinux",
         "permissions": "0644",
         "owner": "root:root",
-        "content": "SELINUX=disabled\nSELINUXTYPE=targeted\nSETLOCALDEFS=0\n",
+        "content": "SELINUX=disabled\nSELINUXTYPE=targeted\nSETLOCALDEFS=0\n"
       },
       {
         "path": "/var/lib/secrets/main.age",
         "permissions": "0600",
         "owner": "root:root",
-        "content": ${age_key},
+        "content": ${age_key}
       },
     ],
 }

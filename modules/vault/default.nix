@@ -3,7 +3,6 @@
   lib,
   pkgs,
   rootPath,
-  inputs,
   ...
 }: {
   # https://medium.com/oracledevs/deploying-and-integrating-hashicorp-vault-on-and-with-oci-cf9152b3d1a2
@@ -11,7 +10,7 @@
     enable = true;
     # Includes UI
     # package = pkgs.vault-bin;
-    package = inputs.self.packages.${pkgs.system}.vault-bin;
+    package = pkgs.vault-bin;
   };
 
   systemd.services.vault = {

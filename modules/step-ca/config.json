@@ -33,7 +33,7 @@
       },
       {
         "type": "OIDC",
-        "name": "Google",
+        "name": "Admin-Google",
         "clientID": "578708326236-mt9pnsplbnm6m0b5l10l397mcar3u0rn.apps.googleusercontent.com",
         "clientSecret": "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",
         "configurationEndpoint": "https://accounts.google.com/.well-known/openid-configuration",

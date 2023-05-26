@@ -1,5 +1,20 @@
 {
   "nodes": {
+    "delphix": {
+      "locked": {
+        "lastModified": 1684878045,
+        "narHash": "sha256-oBRUVCs7kD9o8FlODDpVkM2K3pF6sHGPrDdXHrQ+P28=",
+        "owner": "viperML",
+        "repo": "delphix",
+        "rev": "f617f91b14bdc0b2456b4d59f1d43c60d6359eab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "delphix",
+        "type": "github"
+      }
+    },
     "deploy-rs": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -387,6 +402,7 @@
     },
     "root": {
       "inputs": {
+        "delphix": "delphix",
         "deploy-rs": "deploy-rs",
         "disko": "disko",
         "envfs": "envfs",

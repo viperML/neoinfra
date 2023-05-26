@@ -17,8 +17,10 @@
         self.nixosModules.oci
         inputs.nix-common.nixosModules.default
         inputs.sops-nix.nixosModules.sops
-        ../ssh-admin.nix
         ../tailscale.nix
+        ../login-classic.nix
+
+        ../vault
 
         ./configuration.nix
         ../user-ayats.nix

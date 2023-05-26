@@ -3,6 +3,7 @@
   withSystem,
   config,
   lib,
+  self,
   ...
 }: let
   modulesPath = "${inputs.nixpkgs}/nixos/modules";
@@ -10,6 +11,7 @@ in {
   flake = {
     nixosModules.oci.imports = [
       ./hardware.nix
+      ./opts.nix
       inputs.disko.nixosModules.disko
       "${modulesPath}/profiles/minimal.nix"
       "${modulesPath}/profiles/qemu-guest.nix"
@@ -56,5 +58,22 @@ in {
     #     inputs.nixpkgs.lib.nixosSystem {
     #     });
     # });
+  };
+
+  perSystem = {
+    pkgs,
+    system,
+    ...
+  }: {
+    packages.oci-disko-check =
+      (pkgs.nixos [
+        inputs.delphix.nixosModules.installer
+        {delphix.target = self.nixosConfigurations."${system}-oci-installer".extendModules {
+          modules = [{viper.mainDisk="/dev/vda";}];
+        };}
+      ])
+      .config
+      .delphix
+      .vm-interactive;
   };
 }

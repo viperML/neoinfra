@@ -9,8 +9,8 @@
     ./flake-parts.nix
 
     ./shiva
-    # ./kalypso
     # ./skadi
+    # ./kalypso
     # ./chandra
     # ./sumati
     # ./guix

@@ -110,5 +110,8 @@
       url = "github:nix-community/nixos-images";
       inputs.disko.follows = "disko";
     };
+    delphix = {
+      url = "github:viperML/delphix";
+    };
   };
 }
