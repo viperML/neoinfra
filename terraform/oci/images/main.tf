@@ -39,3 +39,22 @@ output "golden_x86_64_id" {
     ["PLACEHOLDER_GOLDEN"]
   ])[0]
 }
+
+# data "oci_core_images" "base" {
+#   compartment_id           = var.compartment_id
+#   operating_system = "Canonical Ubuntu"
+#   operating_system_version = "22.04"
+# }
+
+data "oci_core_images" "base" {
+  compartment_id = var.compartment_id
+  operating_system = "Oracle Linux"
+  operating_system_version = "9"
+}
+
+output "base" {
+  value = flatten([
+    data.oci_core_images.base.images[*].id,
+    ["FIXME"]
+  ])[0]
+}

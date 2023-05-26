@@ -9,7 +9,11 @@ in {
   users.users.ayats = {
     name = "ayats";
     isNormalUser = true;
-    extraGroups = [];
+    extraGroups = [
+      "audio"
+      "video"
+      "kvm"
+    ];
   };
 
   environment.etc.

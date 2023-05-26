@@ -5,39 +5,40 @@
   ...
 }: {
   imports = [
-    ./golden
     ./oci
     ./flake-parts.nix
 
-    ./kalypso
-    ./skadi
-    ./chandra
+    ./shiva
+    # ./kalypso
+    # ./skadi
+    # ./chandra
     # ./sumati
-    ./guix
+    # ./guix
   ];
 
-  _module.args.modulesPath = "${inputs.nixpkgs}/nixos/modules";
-
   perSystem = {pkgs, ...}: {
-    _module.args = {
-      nixosSystem = args:
-        inputs.nixpkgs.lib.nixosSystem {
-          inherit (args) system pkgs;
+    /*
+    Copy this for our nixpkgs
+    https://github.com/nix-community/nixos-images/blob/main/flake.nix
+    */
+    packages.kexec-installer-noninteractive =
+      (pkgs.nixos [
+        inputs.nixos-images.nixosModules.kexec-installer
+        inputs.nixos-images.nixosModules.noninteractive
+        {system.kexec-installer.name = "nixos-kexec-installer-noninteractive";}
+      ])
+      .config
+      .system
+      .build
+      .kexecTarball;
+
+    _module.args.nixosSystem = args:
+      inputs.nixpkgs.lib.nixosSystem (args
+        // {
           specialArgs = {
-            inherit self;
-            inputs = inputs // {inherit self;};
+            inherit self inputs;
             rootPath = ../.;
           };
-          modules =
-            args.modules
-            ++ [
-              ./common.nix
-              inputs.nix-common.nixosModules.channels-to-flakes
-              inputs.nix-common.nixosModules.hm-standalone-shim
-              inputs.nix-common.nixosModules.xdg
-              inputs.nh.nixosModules.default
-            ];
-        };
-    };
+        });
   };
 }

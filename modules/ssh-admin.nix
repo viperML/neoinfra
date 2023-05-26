@@ -21,7 +21,7 @@ in {
   security.sudo.wheelNeedsPassword = false;
   nix.settings.trusted-users = ["@wheel"];
 
-  services.getty.autologinUser = "admin";
+  # services.getty.autologinUser = "admin";
 
   sops.secrets = let
     sopsFile = rootPath + "/secrets/${hostName}-ssh.yaml";
@@ -45,15 +45,15 @@ in {
 
   services.openssh = {
     enable = true;
-    openFirewall = false;
-    passwordAuthentication = false;
-    extraConfig = ''
-      HostKey ${config.sops.secrets."ssh_host_ecdsa_key".path}
-      HostCertificate ${pubCert}
+    # openFirewall = false;
+    settings = {
+      PasswordAuthentication = false;
+      HostKey = config.sops.secrets."ssh_host_ecdsa_key".path;
+      HostCertificate = pubCert;
       # HostCertificate ${config.sops.secrets."ssh_host_ecdsa_key-cert-pub".path}
-      TrustedUserCAKeys /etc/${ca_path}/ssh_user_keys.pub
-      AuthorizedPrincipalsFile /etc/${ca_path}/%u_principals
-    '';
+      TrustedUserCAKeys = "/etc/${ca_path}/ssh_user_keys.pub";
+      AuthorizedPrincipalsFile = "/etc/${ca_path}/%u_principals";
+    };
     hostKeys = [];
   };
 
@@ -74,10 +74,10 @@ in {
   };
 
   /*
-   Host certificates (validates a host to a user to avoid TOFU) expire after some time.
+  Host certificates (validates a host to a user to avoid TOFU) expire after some time.
 
-   These services clone the certificate loaded by sops-nix, and update it if needed
-   */
+  These services clone the certificate loaded by sops-nix, and update it if needed
+  */
 
   systemd.services."step-renew" = {
     description = "Renew ssh host certificate with step-ca and SSHPOP";

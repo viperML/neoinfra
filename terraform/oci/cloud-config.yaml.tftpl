@@ -1,0 +1,20 @@
+{
+  "ssh_pwauth": false,
+  "disable_root": false,
+  "users": [{ "name": "root", "ssh_authorized_keys": [${ssh_public_key}] }],
+  "write_files":
+    [
+      {
+        "path": "/etc/sysconfig/selinux",
+        "permissions": "0644",
+        "owner": "root:root",
+        "content": "SELINUX=disabled\nSELINUXTYPE=targeted\nSETLOCALDEFS=0\n",
+      },
+      {
+        "path": "/var/lib/secrets/main.age",
+        "permissions": "0600",
+        "owner": "root:root",
+        "content": ${age_key},
+      },
+    ],
+}

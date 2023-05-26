@@ -1,4 +1,5 @@
 keys:
+  - &shiva age1r50eexf0zktzqqphv7xt6rez4crkqtjgk28vzx9ntuedtzkux39qmvk66r
   - &chandra age16w5nn75ngyzaf4pyfe49n34tkc667qwpq0c9hfd6etpdx28h2caqu67xjd
   - &golden age1wy33p6caugh3kqlsy70pdq3jre9c4gsf4lhex4nzkpdpqrm4t58sx7dntr
   - &kalypso age1pf6pvnzxwzq3sak9f94rulgd7jttaq5guskfjvszu4vqjm6pnarq8ymsh0
@@ -38,11 +39,11 @@ creation_rules:
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra
 
-  - path_regex: secrets(/|\\).*chandra.*\.yaml$
+  - path_regex: secrets(/|\\).*shiva.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *chandra
+      - *shiva
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra
 
@@ -54,12 +55,13 @@ creation_rules:
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra
 
-  - path_regex: secrets(/|\\)tailscale-server.yaml$
+  - path_regex: secrets(/|\\).*tailscale.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       - *kalypso
       - *chandra
       - *sumati
+      - *shiva
       hc_vault:
       - http://kalypso:8200/v1/sops/keys/neoinfra

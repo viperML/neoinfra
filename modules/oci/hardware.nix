@@ -1,6 +1,43 @@
-{config, ...}: let
-  original = "/old-root";
+let
+  efiSysMountPoint = "/efi";
 in {
+  services.cloud-init = {
+    enable = true;
+    # config = builtins.readFile ./cloud-config.yaml;
+    config =
+      builtins.toJSON
+      {
+        disable_root = false;
+        preserve_hostname = false;
+        system_info = {
+          distro = "nixos";
+          network = {renderers = ["networkd"];};
+        };
+        cloud_init_modules = [
+          # "migrator"
+          "seed_random"
+          "bootcmd"
+          "write-files"
+          # "update_hostname"
+        ];
+        cloud_config_modules = [
+          "runcmd"
+        ];
+        cloud_final_modules = [
+          "scripts-vendor"
+          "scripts-per-once"
+          "scripts-per-boot"
+          "scripts-per-instance"
+          "scripts-user"
+          "power-state-change"
+        ];
+      };
+    network.enable = true;
+  };
+
+  services.getty.autologinUser = "root";
+  users.allowNoPasswordLogin = true;
+
   boot = {
     kernelParams = [
       "console=ttyS0"
@@ -9,11 +46,10 @@ in {
     loader = {
       systemd-boot = {
         enable = true;
-        # ESP is 100MB size
         configurationLimit = 1;
       };
       efi = {
-        efiSysMountPoint = "/efi";
+        inherit efiSysMountPoint;
         canTouchEfiVariables = true;
       };
     };
@@ -37,75 +73,37 @@ in {
 
   services.qemuGuest.enable = true;
 
-  fileSystems = {
-    "/" = {
-      fsType = "tmpfs";
-      device = "none";
-      options = [
-        "defaults"
-        "size=2G"
-        "mode=755"
+  disko.devices.disk."main" = {
+    device = "/dev/sda";
+    type = "disk";
+    content = {
+      type = "table";
+      format = "gpt";
+      partitions = [
+        {
+          name = "ESP";
+          start = "1MiB";
+          end = "300MiB";
+          bootable = true;
+          content = {
+            type = "filesystem";
+            format = "vfat";
+            mountpoint = efiSysMountPoint;
+          };
+        }
+        {
+          name = "root";
+          start = "300MiB";
+          end = "100%";
+          part-type = "primary";
+          bootable = true;
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/";
+          };
+        }
       ];
-    };
-    ${config.boot.loader.efi.efiSysMountPoint} = {
-      device = "/dev/disk/by-label/UEFI";
-      fsType = "vfat";
-    };
-    ${original} = {
-      device = "/dev/disk/by-label/cloudimg-rootfs";
-      fsType = "ext4";
-      neededForBoot = true;
-      options = [
-        "discard"
-        "noatime"
-      ];
-    };
-    "/nix" = {
-      device = "${original}/nix";
-      options = ["bind"];
-      depends = [original];
-    };
-    "/var" = {
-      device = "${original}/new-var";
-      options = ["bind"];
-      depends = [original];
-    };
-    "/home" = {
-      device = "${original}/new-home";
-      options = ["bind"];
-      depends = [original];
     };
   };
-
-  # Prevent OOM because /tmp is on tmpfs
-  systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp/nix";
-
-  systemd.tmpfiles.rules =
-    # Wipe leftovers of Ubuntu
-    (map (f: "R ${original}${f} - - - - -") [
-      "/bin"
-      "/boot"
-      "/dev"
-      "/efi"
-      "/etc"
-      "/home"
-      "/lib"
-      "/media"
-      "/mnt"
-      "/opt"
-      "/proc"
-      "/root"
-      "/run"
-      "/sbin"
-      "/snap"
-      "/srv"
-      "/sys"
-      "/tmp"
-      "/usr"
-      "/var"
-    ])
-    ++ [
-      "d ${config.systemd.services.nix-daemon.environment.TMPDIR} 0775 root nixbld 0 -"
-      "z ${config.systemd.services.nix-daemon.environment.TMPDIR} 0775 root nixbld - -"
-    ];
 }

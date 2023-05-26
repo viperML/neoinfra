@@ -8,8 +8,8 @@
   networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
 
-  sops.secrets."tailscale_key" = {
-    sopsFile = rootPath + "/secrets/tailscale-server.yaml";
+  sops.secrets."tailscale_auth_key" = {
+    sopsFile = rootPath + "/secrets/tailscale.yaml";
   };
 
   # https://tailscale.com/blog/nixos-minecraft/
@@ -30,7 +30,7 @@
       fi
 
       # otherwise authenticate with tailscale
-      ${tailscale}/bin/tailscale up -authkey file:${config.sops.secrets."tailscale_key".path}
+      ${tailscale}/bin/tailscale up -authkey file:${config.sops.secrets."tailscale_auth_key".path}
     '';
   };
 }

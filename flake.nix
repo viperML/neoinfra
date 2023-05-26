@@ -52,6 +52,7 @@
               (python3.withPackages (p: [
                 p.click
               ]))
+              qemu
             ];
             shellHook = ''
               venv="$(cd $(dirname $(which python)); cd ..; pwd)"
@@ -63,7 +64,7 @@
     };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     # nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -100,6 +101,14 @@
     nh = {
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-images = {
+      url = "github:nix-community/nixos-images";
+      inputs.disko.follows = "disko";
     };
   };
 }

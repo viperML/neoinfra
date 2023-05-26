@@ -2,14 +2,13 @@
 !**.envrc
 *.age
 .direnv
-result
+*result*
 *.qcow2
 packer-manifest.json
 *.pem
 lagos-project.json
 temp*yaml
 .venv
-repl-result*
 **/vault.hcl
 *.log
 node_modules
@@ -17,6 +16,7 @@ dist
 .gen
 cdktf.*
 tfschema
+unpack
 
 ### https://raw.github.com/github/gitignore/e5323759e387ba347a9d50f8b0ddd16502eb71d4/Terraform.gitignore
 

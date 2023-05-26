@@ -12,6 +12,9 @@ _: {
           t.cloudflare
           t.hcloud
           t.oci
+          t.null
+          t.local
+          t.cloudinit
         ]))
       ];
     };
