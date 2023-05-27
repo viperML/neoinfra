@@ -31,7 +31,7 @@
       fi
 
       # otherwise authenticate with tailscale
-      ${tailscale}/bin/tailscale up -authkey file:${config.sops.secrets."tailscale_auth_key".path}
+      ${tailscale}/bin/tailscale up --ssh -authkey file:${config.sops.secrets."tailscale_auth_key".path}
     '';
   };
 }
