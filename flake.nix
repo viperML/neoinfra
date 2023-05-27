@@ -20,7 +20,6 @@
       perSystem = {
         pkgs,
         system,
-        config,
         ...
       }: {
         _module.args = {
@@ -41,6 +40,7 @@
               alejandra
               hclfmt
               black
+              deadnix
             ];
           };
 

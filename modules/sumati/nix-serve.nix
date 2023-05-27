@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{config, ...}: let
   inherit (builtins) toString;
   cache-port = 5000;
   # http-store-port = 5444;

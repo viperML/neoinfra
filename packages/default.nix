@@ -1,7 +1,13 @@
 {
   perSystem = {pkgs, ...}: {
     packages = {
-      nomad = pkgs.callPackage ./nomad.nix {};
+      nomad = pkgs.nomad.overrideAttrs (old: {
+        patches =
+          (old.patches or [])
+          ++ [
+            ./0001-Add-Nix-integration.patch
+          ];
+      });
     };
   };
 }
