@@ -93,7 +93,7 @@ resource "oci_core_instance" "shiva" {
   source_details {
     source_type = "image"
     source_id   = module.images.base-aarch64
-    boot_volume_size_in_gbs = 90
+    boot_volume_size_in_gbs = 130
   }
   lifecycle {
     ignore_changes = [
@@ -105,6 +105,7 @@ resource "oci_core_instance" "shiva" {
     user_data = data.cloudinit_config.shiva.rendered
   }
 }
+
 
 # module "aarch64-kexec-installer-noninteractive" {
 #   source = "github.com/numtide/nixos-anywhere//terraform/nix-build"
@@ -146,4 +147,12 @@ resource "oci_identity_policy" "vault_policy" {
     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
   ]
+}
+
+resource "cloudflare_record" "record" {
+  zone_id = var.cloudflare_zone_id
+  name    = "infra"
+  type    = "A"
+  proxied = true
+  value   = oci_core_instance.shiva.public_ip
 }

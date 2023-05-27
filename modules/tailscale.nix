@@ -7,6 +7,7 @@
   services.tailscale.enable = true;
   networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
+  services.openssh.openFirewall = false;
 
   sops.secrets."tailscale_auth_key" = {
     sopsFile = rootPath + "/secrets/tailscale.yaml";

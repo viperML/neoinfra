@@ -28,6 +28,14 @@
         inputs.vscode-server.nixosModules.default
         {services.vscode-server.enable = true;}
 
+        inputs.nh.nixosModules.default
+        {
+          nh = {
+            enable = true;
+            clean.enable = true;
+          };
+        }
+
         # ../direnv.nix
         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
 
