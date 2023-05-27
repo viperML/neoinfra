@@ -1,6 +1,10 @@
-{
+{pkgs, ...}: {
   networking.hostName = "shiva";
   system.stateVersion = "23.05";
+
+  environment.systemPackages = [
+    pkgs.git
+  ];
 
   documentation = {
     enable = true;
