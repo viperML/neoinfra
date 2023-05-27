@@ -5,7 +5,7 @@ packer {
   required_plugins {
     oracle-oci = {
       version = "~> 1.0"
-      source = "github.com/hashicorp/oracle"
+      source  = "github.com/hashicorp/oracle"
     }
   }
 }

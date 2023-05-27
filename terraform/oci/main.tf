@@ -24,9 +24,9 @@ provider "cloudflare" {
 }
 
 provider "oci" {
-  auth = "SecurityToken"
+  auth                = "SecurityToken"
   config_file_profile = "DEFAULT"
-  region = "eu-marseille-1"
+  region              = "eu-marseille-1"
 }
 
 
@@ -42,8 +42,8 @@ module "images" {
 
 
 variable "deploy" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Use big RAM size for deployment"
 }
 
@@ -64,26 +64,26 @@ data "local_file" "shiva_age" {
 }
 
 data "cloudinit_config" "shiva" {
-  gzip = false
+  gzip          = false
   base64_encode = true
   part {
     filename     = "cloud-config.yaml"
     content_type = "text/cloud-config"
     content = templatefile("cloud-config.yaml.tftpl", {
       ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
-      age_key = jsonencode(data.local_file.shiva_age.content)
+      age_key        = jsonencode(data.local_file.shiva_age.content)
     })
   }
 }
 
 resource "oci_core_instance" "shiva" {
-  display_name = "terraform-shiva"
+  display_name        = "terraform-shiva"
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
   compartment_id      = var.compartment_id
   shape               = "VM.Standard.A1.Flex"
   shape_config {
     memory_in_gbs = 24
-    ocpus = 4
+    ocpus         = 4
   }
   create_vnic_details {
     assign_public_ip          = true
@@ -91,8 +91,8 @@ resource "oci_core_instance" "shiva" {
     assign_private_dns_record = false
   }
   source_details {
-    source_type = "image"
-    source_id   = module.images.base-aarch64
+    source_type             = "image"
+    source_id               = module.images.base-aarch64
     boot_volume_size_in_gbs = 130
   }
   lifecycle {

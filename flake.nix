@@ -1,5 +1,5 @@
 {
-  outputs = inputs@{
+  outputs = inputs @ {
     nixpkgs,
     flake-parts,
     ...
@@ -39,7 +39,7 @@
             packages = [
               treefmt
               alejandra
-              # config.packages.hcl
+              hclfmt
               black
             ];
           };
@@ -49,15 +49,8 @@
             packages = [
               sops
               age
-              (python3.withPackages (p: [
-                p.click
-              ]))
               qemu
             ];
-            shellHook = ''
-              venv="$(cd $(dirname $(which python)); cd ..; pwd)"
-              ln -sfvT "$venv" "$PWD/.venv"
-            '';
           };
         };
       };

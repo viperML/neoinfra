@@ -68,9 +68,11 @@ in {
     packages.oci-disko-check =
       (pkgs.nixos [
         inputs.delphix.nixosModules.installer
-        {delphix.target = self.nixosConfigurations."${system}-oci-installer".extendModules {
-          modules = [{viper.mainDisk="/dev/vda";}];
-        };}
+        {
+          delphix.target = self.nixosConfigurations."${system}-oci-installer".extendModules {
+            modules = [{viper.mainDisk = "/dev/vda";}];
+          };
+        }
       ])
       .config
       .delphix

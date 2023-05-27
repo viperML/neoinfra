@@ -12,10 +12,10 @@ variable "compartment_id" {
 }
 
 data "oci_core_images" "base-aarch64" {
-  compartment_id = var.compartment_id
-  operating_system = "Oracle Linux"
+  compartment_id           = var.compartment_id
+  operating_system         = "Oracle Linux"
   operating_system_version = "9"
-  shape = "VM.Standard.A1.Flex"
+  shape                    = "VM.Standard.A1.Flex"
 }
 
 output "base-aarch64" {
@@ -24,10 +24,10 @@ output "base-aarch64" {
 
 
 data "oci_core_images" "base-x86_64" {
-  compartment_id = var.compartment_id
-  operating_system = "Oracle Linux"
+  compartment_id           = var.compartment_id
+  operating_system         = "Oracle Linux"
   operating_system_version = "9"
-  shape = "VM.Standard.E4.Flex"
+  shape                    = "VM.Standard.E4.Flex"
 }
 
 output "base-x86_64" {

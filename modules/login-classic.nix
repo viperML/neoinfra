@@ -3,7 +3,7 @@
   config,
   rootPath,
   ...
-}:{
+}: {
   users.mutableUsers = false;
   users.allowNoPasswordLogin = true; # module system doesn't know about certs
 
