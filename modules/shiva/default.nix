@@ -36,6 +36,7 @@
           };
         }
 
+        ../mosh.nix
         # ../direnv.nix
         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
 
