@@ -1,26 +1,16 @@
 apiVersion: apps/v1
-
 kind: Deployment
-
 metadata:
-  name: nginx-deployment
-
-# Use ngnix container and expose port 80 as 8080
-
+  name: nginx
 spec:
-
   selector:
     matchLabels:
       app: nginx
-
   replicas: 1
-
-
   template:
     metadata:
       labels:
         app: nginx
-
     spec:
       containers:
       - name: nginx
