@@ -37,6 +37,7 @@
         }
 
         ../mosh.nix
+        ../k3s.nix
         # ../direnv.nix
         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
 

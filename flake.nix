@@ -15,6 +15,7 @@
         ./terraform
         ./packer
         ./modules
+        ./kubernetes
       ];
 
       perSystem = {
