@@ -107,5 +107,9 @@
     delphix = {
       url = "github:viperML/delphix";
     };
+    nix-ld = {
+      url = "github:nix-community/nix-ld-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 }

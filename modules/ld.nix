@@ -1,30 +1,24 @@
 {
   pkgs,
-  lib,
+  inputs,
   ...
-}: let
-  env = {
-    NIX_LD_LIBRARY_PATH = lib.makeLibraryPath (with pkgs; [
+}: {
+  services.envfs.enable = true;
+
+  programs.nix-ld = {
+    enable = true;
+    package = inputs.nix-ld.packages.${pkgs.system}.default;
+    libraries = with pkgs; [
       stdenv.cc.cc
       openssl
       curl
       glib
       util-linux
-      glibc
       icu
       libunwind
       libuuid
       zlib
       libsecret
-    ]);
-
-    NIX_LD = "$(${pkgs.coreutils}/bin/cat ${pkgs.stdenv.cc}/nix-support/dynamic-linker)";
-  };
-in {
-  programs.nix-ld.enable = true;
-
-  environment = {
-    sessionVariables = env;
-    variables = env;
+    ];
   };
 }

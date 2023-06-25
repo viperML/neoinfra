@@ -27,6 +27,7 @@
 
         inputs.vscode-server.nixosModules.default
         {services.vscode-server.enable = true;}
+        ../ld.nix
 
         inputs.nh.nixosModules.default
         {
