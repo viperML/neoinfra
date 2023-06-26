@@ -25,9 +25,9 @@
         ./configuration.nix
         ../user-ayats.nix
 
-        inputs.vscode-server.nixosModules.default
-        {services.vscode-server.enable = true;}
-        ../ld.nix
+        # inputs.vscode-server.nixosModules.default
+        # {services.vscode-server.enable = true;}
+        {programs.nix-ld.package = inputs.nix-ld.packages.${pkgs.system}.default;}
 
         inputs.nh.nixosModules.default
         {
