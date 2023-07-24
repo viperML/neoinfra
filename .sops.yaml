@@ -14,7 +14,7 @@ creation_rules:
       - *ayats_gen6
       - *sumati
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*kalypso.*\.yaml$
     key_groups:
@@ -22,7 +22,7 @@ creation_rules:
       - *ayats_gen6
       - *kalypso
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*vault.yaml$
     key_groups:
@@ -31,14 +31,14 @@ creation_rules:
       - *kalypso
       - *shiva
       # hc_vault:
-      # - http://kalypso:8200/v1/sops/keys/neoinfra
+      # - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\)env.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*shiva.*\.yaml$
     key_groups:
@@ -46,7 +46,7 @@ creation_rules:
       - *ayats_gen6
       - *shiva
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*golden.*\.yaml$
     key_groups:
@@ -54,7 +54,7 @@ creation_rules:
       - *ayats_gen6
       - *golden
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*tailscale.*\.yaml$
     key_groups:
@@ -65,4 +65,4 @@ creation_rules:
       - *sumati
       - *shiva
       hc_vault:
-      - http://kalypso:8200/v1/sops/keys/neoinfra
+      - http://shiva:8200/v1/sops/keys/neoinfra
