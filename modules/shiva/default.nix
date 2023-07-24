@@ -46,6 +46,8 @@
         # ../nomad
         # ../mosquitto
         # self.nixosModules.guix
+
+        ../obsidian
       ];
     };
   });

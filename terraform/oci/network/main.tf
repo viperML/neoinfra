@@ -116,10 +116,26 @@ resource "oci_core_security_list" "web" {
   }
 }
 
-resource "oci_core_security_list" "mqtt" {
+resource "oci_core_security_list" "ssh" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.terraform_vcn.id
-  display_name   = "TF - Web"
+  display_name   = "TF - SSH"
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
+}
+
+resource "oci_core_security_list" "misc" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.terraform_vcn.id
+  display_name   = "TF - Misc"
+  // MQTT
   ingress_security_rules {
     protocol  = "6"
     source    = "0.0.0.0/0"
@@ -138,23 +154,17 @@ resource "oci_core_security_list" "mqtt" {
       max = 1883
     }
   }
-}
-
-resource "oci_core_security_list" "ssh" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.terraform_vcn.id
-  display_name   = "TF - SSH"
+  // CouchDB
   ingress_security_rules {
     protocol  = "6"
     source    = "0.0.0.0/0"
     stateless = false
     tcp_options {
-      min = 22
-      max = 22
+      min = 5984
+      max = 5984
     }
   }
 }
-
 
 resource "oci_core_subnet" "terraform_subnet" {
   cidr_block     = "10.0.0.0/24"
@@ -166,8 +176,8 @@ resource "oci_core_subnet" "terraform_subnet" {
     oci_core_security_list.icmp.id,
 
     oci_core_security_list.web.id,
-    oci_core_security_list.mqtt.id,
     oci_core_security_list.ssh.id,
+    oci_core_security_list.misc.id
   ]
   route_table_id = oci_core_route_table.terraform_vcn_route0.id
 }
