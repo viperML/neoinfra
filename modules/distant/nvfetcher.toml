@@ -1,0 +1,4 @@
+[distant]
+src.github = "chipsenkbeil/distant"
+fetch.github = "chipsenkbeil/distant"
+cargo_locks = ["Cargo.lock"]

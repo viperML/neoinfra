@@ -1,0 +1,27 @@
+{
+    "distant": {
+        "cargoLocks": {
+            "Cargo.lock": [
+                "./distant-v0.20.0/Cargo.lock",
+                {}
+            ]
+        },
+        "date": null,
+        "extract": null,
+        "name": "distant",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "chipsenkbeil",
+            "repo": "distant",
+            "rev": "v0.20.0",
+            "sha256": "sha256-DcnleJUAeYg3GSLZljC3gO9ihiFz04dzT/ddMnypr48=",
+            "type": "github"
+        },
+        "version": "v0.20.0"
+    }
+}
