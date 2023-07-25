@@ -164,6 +164,15 @@ resource "oci_core_security_list" "misc" {
       max = 5984
     }
   }
+  ingress_security_rules {
+    protocol  = "17"
+    source    = "0.0.0.0/0"
+    stateless = false
+    udp_options {
+      min = 5984
+      max = 5984
+    }
+  }
 }
 
 resource "oci_core_subnet" "terraform_subnet" {

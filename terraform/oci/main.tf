@@ -153,6 +153,6 @@ resource "cloudflare_record" "record" {
   zone_id = var.cloudflare_zone_id
   name    = "infra"
   type    = "A"
-  proxied = true
+  proxied = false
   value   = oci_core_instance.shiva.public_ip
 }
