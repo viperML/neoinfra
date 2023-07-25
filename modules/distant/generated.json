@@ -1,26 +1,31 @@
 {
-    "distant": {
-        "cargoLocks": {
-            "Cargo.lock": [
-                "./distant-v0.20.0/Cargo.lock",
-                {}
-            ]
-        },
+    "distant-aarch64-linux": {
+        "cargoLocks": null,
         "date": null,
         "extract": null,
-        "name": "distant",
+        "name": "distant-aarch64-linux",
         "passthru": null,
         "pinned": false,
         "src": {
-            "deepClone": false,
-            "fetchSubmodules": false,
-            "leaveDotGit": false,
             "name": null,
-            "owner": "chipsenkbeil",
-            "repo": "distant",
-            "rev": "v0.20.0",
-            "sha256": "sha256-DcnleJUAeYg3GSLZljC3gO9ihiFz04dzT/ddMnypr48=",
-            "type": "github"
+            "sha256": "sha256-92CA33GY8lS4GOun/vbRRChrFbK0yS6iZOoOu21u7V4=",
+            "type": "url",
+            "url": "https://github.com/chipsenkbeil/distant/releases/download/v0.20.0/distant-aarch64-unknown-linux-gnu"
+        },
+        "version": "v0.20.0"
+    },
+    "distant-x86_64-linux": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "distant-x86_64-linux",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-Xhev3SLQ/1xrPL1vBimYbQ7VFog7BqUSXtm/+8pdjmM=",
+            "type": "url",
+            "url": "https://github.com/chipsenkbeil/distant/releases/download/v0.20.0/distant-x86_64-unknown-linux-gnu"
         },
         "version": "v0.20.0"
     }

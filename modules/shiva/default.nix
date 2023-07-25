@@ -48,6 +48,7 @@
         # self.nixosModules.guix
 
         ../obsidian
+        ../distant
       ];
     };
   });

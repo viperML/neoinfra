@@ -1,4 +1,7 @@
-[distant]
+[distant-x86_64-linux]
 src.github = "chipsenkbeil/distant"
-fetch.github = "chipsenkbeil/distant"
-cargo_locks = ["Cargo.lock"]
+fetch.url = "https://github.com/chipsenkbeil/distant/releases/download/$ver/distant-x86_64-unknown-linux-gnu"
+
+[distant-aarch64-linux]
+src.github = "chipsenkbeil/distant"
+fetch.url = "https://github.com/chipsenkbeil/distant/releases/download/$ver/distant-aarch64-unknown-linux-gnu"
