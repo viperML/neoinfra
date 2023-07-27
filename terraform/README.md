@@ -9,4 +9,6 @@
 
 ### Misc
 
-- oci session authenticate --region eu-marseille-1
+```
+rm -rf ~/.oci && oci session authenticate --region eu-marseille-1
+```

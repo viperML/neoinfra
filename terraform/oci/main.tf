@@ -149,9 +149,17 @@ resource "oci_identity_policy" "vault_policy" {
   ]
 }
 
-resource "cloudflare_record" "record" {
+resource "cloudflare_record" "record-infra" {
   zone_id = var.cloudflare_zone_id
   name    = "infra"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}
+
+resource "cloudflare_record" "record-pt" {
+  zone_id = var.cloudflare_zone_id
+  name    = "pt"
   type    = "A"
   proxied = false
   value   = oci_core_instance.shiva.public_ip

@@ -6,7 +6,7 @@ provider "registry.terraform.io/cloudflare/cloudflare" {
   constraints = "~> 4.0"
   hashes = [
     "h1:TmFDmhbGRT6EoteN5pA9QQ5RKqiOorMUKKKF4PNMu50=",
-    "h1:ZX0FtVT9+6TwDbQgjaEcuqLOhzLtYJBlVS9dnOIANVs=",
+    "h1:wvOk9viSg+orWqj+FlyZJoH6QJ49+LmBRJKiFbNDBCA=",
     "zh:06e4321ef21b64960e89e2e939c089b9115bef65e4d013c493678992a3f68a54",
     "zh:0702bee0b7c2f943b09e318bde3e769d852bc3269edabfef51a629c8dff55cc6",
     "zh:1ea5fc79ed52b329ca0b831845dfa00392d969b2c23e7b306053a6792b8296f7",
@@ -28,8 +28,8 @@ provider "registry.terraform.io/cloudflare/cloudflare" {
 provider "registry.terraform.io/hashicorp/cloudinit" {
   version = "2.3.2"
   hashes = [
+    "h1:T8PNlabXsb3bxwz1mMGa+Qx20aj55T22MAqKtUvFbZ4=",
     "h1:Vl0aixAYTV/bjathX7VArC5TVNkxBCsi3Vq7R4z1uvc=",
-    "h1:dYfM5IbEDrjfhiw0jWCA0b93fZsO50EQkc1Nk8W5ERc=",
     "zh:2487e498736ed90f53de8f66fe2b8c05665b9f8ff1506f751c5ee227c7f457d1",
     "zh:3d8627d142942336cf65eea6eb6403692f47e9072ff3fa11c3f774a3b93130b3",
     "zh:434b643054aeafb5df28d5529b72acc20c6f5ded24decad73b98657af2b53f4f",
@@ -49,7 +49,7 @@ provider "registry.terraform.io/hashicorp/local" {
   version = "2.4.0"
   hashes = [
     "h1:R97FTYETo88sT2VHfMgkPU3lzCsZLunPftjSI5vfKe8=",
-    "h1:vdSuYkInGDxCP6JF423nRIYqREUVe30zEgrfNQ9jabo=",
+    "h1:iOND6jfDPkLa+fyYpPf2EO2nStSdDDnretlfTAL6OAY=",
     "zh:53604cd29cb92538668fe09565c739358dc53ca56f9f11312b9d7de81e48fab9",
     "zh:66a46e9c508716a1c98efbf793092f03d50049fa4a83cd6b2251e9a06aca2acf",
     "zh:70a6f6a852dd83768d0778ce9817d81d4b3f073fab8fa570bff92dcb0824f732",
@@ -69,8 +69,8 @@ provider "registry.terraform.io/oracle/oci" {
   version     = "4.121.0"
   constraints = "~> 4.76"
   hashes = [
+    "h1:9Xakavgl2yjP6NhshdT1SlQo/XlcOLJmM4ejjHtO/F4=",
     "h1:9ZjdrKK/lmGQl5uetMVaRja6jxfeJWNd0kR78yQdGWQ=",
-    "h1:bTxKUOHgvk3fYMLj5aub5R1CyN5H8f/PozzEM6zaFxk=",
     "zh:059c3f1c84e614a3b17cec3919b38d4170a8d4a215f7d963f8eef3d49211b2ee",
     "zh:11ec26e80044dbb2bbfa9a0f769c30e4218bdbd08c5eb9ed06802e7ae251c0b1",
     "zh:2eb937c07b7467472460b8a41a5ae97b63ac1d140062b15376e57f88608d2ca8",

@@ -12,7 +12,7 @@ in {
   };
 
   systemd.services."pixel-tracker" = {
-    script = "exec ${inputs.pixel-tracker.packages.${pkgs.system}.default}/bin/pixel-tracker --listen 127.0.0.1:${local_port} --url https://infra.ayats.org/pt/";
+    script = "exec ${inputs.pixel-tracker.packages.${pkgs.system}.default}/bin/pixel-tracker --listen 127.0.0.1:${local_port} --url https://pt.ayats.org/pt/";
     serviceConfig = {
       EnvironmentFile = config.sops.secrets."pixel-tracker".path;
       DynamicUser = true;
