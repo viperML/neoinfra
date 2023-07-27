@@ -1,0 +1,8 @@
+[http.routers.pt]
+  rule = "Host(`infra.ayats.org`)"
+  entrypoints = ["websecure"]
+  service = "pt"
+
+[http.services.pt.loadBalander]
+    [[http.services.pt.loadBalander.servers]]
+    url = "http://localhost:9001"

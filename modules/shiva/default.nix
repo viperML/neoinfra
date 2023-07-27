@@ -38,8 +38,8 @@
           };
         }
 
-        ../mosh.nix
-        ../k3s.nix
+        # ../mosh.nix
+        # ../k3s.nix
         # ../direnv.nix
         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
 
@@ -48,7 +48,8 @@
         # self.nixosModules.guix
 
         ../obsidian
-        ../distant
+        # ../distant
+        # ../reverse-proxy
       ];
     };
   });

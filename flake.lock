@@ -457,6 +457,29 @@
         "type": "github"
       }
     },
+    "pixel-tracker": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1690403423,
+        "narHash": "sha256-wrVWH/QMhYHr1lSug3JDJPFIOYuOl7g/smXnmHlZQR8=",
+        "owner": "viperML",
+        "repo": "pixel-tracker",
+        "rev": "fff5f3d50fd182dc3028ac677444d97dc3bffd1a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "pixel-tracker",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "delphix": "delphix",
@@ -470,6 +493,7 @@
         "nixos-generators": "nixos-generators",
         "nixos-images": "nixos-images",
         "nixpkgs": "nixpkgs",
+        "pixel-tracker": "pixel-tracker",
         "sops-nix": "sops-nix",
         "vscode-server": "vscode-server"
       }
