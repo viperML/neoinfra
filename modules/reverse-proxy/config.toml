@@ -1,3 +1,10 @@
+[log]
+  level = "DEBUG"
+
+[api]
+  dashboard = true
+  insecure = true
+
 [entryPoints]
   [entryPoints.web]
     address = ":80"
@@ -8,10 +15,7 @@
   [entryPoints.websecure]
     address = ":443"
 
-[api]
-  dashboard = false
-
 [certificatesResolvers.lets-encrypt.acme]
   email = "ayatsfer@gmail.com"
-#   storage = "acme.json"
+  storage = "/var/lib/traefik/acme.json"
   [certificatesResolvers.lets-encrypt.acme.tlsChallenge]

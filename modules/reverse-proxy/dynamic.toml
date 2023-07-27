@@ -6,3 +6,7 @@
 [http.services.pt.loadBalander]
     [[http.services.pt.loadBalander.servers]]
     url = "http://localhost:9001"
+
+[http.routers.api]
+  rule = "Host(`traefik.ayats.org`)"
+  service = "api@internal"

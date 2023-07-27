@@ -49,7 +49,8 @@
 
         ../obsidian
         # ../distant
-        # ../reverse-proxy
+        ../reverse-proxy
+        ../pixel-tracker
       ];
     };
   });
