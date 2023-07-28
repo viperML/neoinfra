@@ -75,3 +75,10 @@ creation_rules:
       - *shiva
       hc_vault:
       - http://shiva:8200/v1/sops/keys/neoinfra
+
+  - path_regex: secrets(/|\\).*chandra.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      # hc_vault:
+      # - http://shiva:8200/v1/sops/keys/neoinfra

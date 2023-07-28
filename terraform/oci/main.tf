@@ -164,3 +164,11 @@ resource "cloudflare_record" "record-pt" {
   proxied = false
   value   = oci_core_instance.shiva.public_ip
 }
+
+resource "cloudflare_record" "record-demo" {
+  zone_id = var.cloudflare_zone_id
+  name    = "demo"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}

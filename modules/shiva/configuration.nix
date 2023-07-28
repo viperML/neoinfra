@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   networking.hostName = "shiva";
@@ -30,4 +31,24 @@
     if lib.versionAtLeast base.version min.version
     then base
     else min;
+
+  # virtualisation.oci-containers.backend = "podman";
+  # virtualisation.podman = {
+  #   enable = true;
+  #   autoPrune = {
+  #     enable = true;
+  #     dates = "weekly";
+  #   };
+  # };
+  virtualisation.oci-containers.backend = "docker";
+  virtualisation.docker = {
+    enable = true;
+    daemon.settings = {
+      iptables = false;
+    };
+    autoPrune = {
+      enable = true;
+      dates = "weekly";
+    };
+  };
 }

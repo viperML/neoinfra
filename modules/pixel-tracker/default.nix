@@ -33,11 +33,11 @@ in {
   };
 
 
-  services.nginx.virtualHosts."pt.ayats.org" = {
-    useACMEHost = "wildcard.ayats.org";
-    forceSSL = true;
-    locations."/" = {
-      proxyPass = "http://localhost:${local_port}";
-    };
-  };
+  # services.nginx.virtualHosts."pt.ayats.org" = {
+  #   useACMEHost = "wildcard.ayats.org";
+  #   forceSSL = true;
+  #   locations."/" = {
+  #     proxyPass = "http://localhost:${local_port}";
+  #   };
+  # };
 }

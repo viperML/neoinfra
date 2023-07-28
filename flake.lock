@@ -464,11 +464,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1690403423,
-        "narHash": "sha256-wrVWH/QMhYHr1lSug3JDJPFIOYuOl7g/smXnmHlZQR8=",
+        "lastModified": 1690465957,
+        "narHash": "sha256-dJwVTwXXUuLQA505gzjSVSe1l0jJQFn70Sckt8WBScs=",
         "owner": "viperML",
         "repo": "pixel-tracker",
-        "rev": "fff5f3d50fd182dc3028ac677444d97dc3bffd1a",
+        "rev": "02c91c37a50fbbff636e5cd4391a300b86f54e88",
         "type": "github"
       },
       "original": {

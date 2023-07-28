@@ -43,11 +43,11 @@
         # ../direnv.nix
         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
 
-        # ../nomad
+        ../nomad
         # ../mosquitto
         # self.nixosModules.guix
 
-        ../obsidian
+        # ../obsidian
         # ../distant
         ../reverse-proxy
         ../pixel-tracker

@@ -51,6 +51,7 @@
               sops
               age
               qemu
+              nomad
             ];
           };
         };
