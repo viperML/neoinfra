@@ -1,0 +1,2 @@
+policy:
+    vault policy write nomad-obsidian policy.hcl

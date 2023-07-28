@@ -28,7 +28,7 @@ in {
     ];
   };
 
-  # vault token create -policy nomad-server -orphan
+  # vault token create -policy nomad-server -period 72h
   sops.secrets."nomad" = {
     restartUnits = [
       "nomad.service"

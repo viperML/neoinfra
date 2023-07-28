@@ -25,11 +25,13 @@
       cni_path = "${pkgs.cni-plugins}/bin";
     };
 
-    # vault = {
-    #   enabled = true;
-    #   address = "http://kalypso:8200";
-    #   create_from_role = "nomad-cluster";
-    # };
+    vault = {
+      enabled = true;
+      address = "http://localhost:8200";
+      create_from_role = "nomad-cluster";
+      task_token_ttl = "1h";
+    };
+
     # plugin."raw_exec".config.enabled = true;
     # plugin."docker".config = {
     #   volumes.enabled = true;

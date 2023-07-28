@@ -172,3 +172,11 @@ resource "cloudflare_record" "record-demo" {
   proxied = false
   value   = oci_core_instance.shiva.public_ip
 }
+
+resource "cloudflare_record" "record-obsidian" {
+  zone_id = var.cloudflare_zone_id
+  name    = "obsidian"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}
