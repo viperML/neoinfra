@@ -4,6 +4,28 @@
     {{- range service .Name }}
       {{- $domain := (index .ServiceMeta "domain") -}}
       {{- if $domain -}}
+{{printf "\n" -}}
+# Configuration for {{.Name}}
+        {{- $proxy_port := (index .ServiceMeta "proxy_port") -}}
+        {{- if $proxy_port -}}
+
+{{printf "\n" -}}
+server {
+        listen 0.0.0.0:{{$proxy_port}} ;
+        listen [::0]:{{$proxy_port}} ;
+        server_name {{$domain}} ;
+        location / {
+                proxy_pass http://{{.Address}}:{{.Port}};
+                proxy_set_header        Host $host;
+                proxy_set_header        X-Real-IP $remote_addr;
+                proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header        X-Forwarded-Proto $scheme;
+                proxy_set_header        X-Forwarded-Host $host;
+                proxy_set_header        X-Forwarded-Server $host;
+        }
+}
+
+        {{- else -}}
 
 {{printf "\n" -}}
 server {
@@ -32,6 +54,8 @@ server {
                 proxy_set_header        X-Forwarded-Server $host;
         }
 }
+
+        {{- end -}}
 
        {{- end -}}
     {{- end -}}

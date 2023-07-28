@@ -15,7 +15,8 @@ job "obsidian" {
       port = "db"
       tags = ["public"]
       meta {
-        domain = "obsidian.ayats.org"
+        domain     = "obsidian.ayats.org"
+        proxy_port = "5984"
       }
     }
 
