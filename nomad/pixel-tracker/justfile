@@ -1,0 +1,2 @@
+policy:
+    vault policy write nomad-pixel-tracker policy.hcl

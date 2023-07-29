@@ -8,8 +8,14 @@ job "demo-nix" {
       attempts = 0
     }
 
+    volume "nix" {
+      type      = "host"
+      source    = "nix"
+      read_only = true
+    }
+
     task "build" {
-      driver = "raw_exec"
+      driver = "exec"
       lifecycle {
         hook    = "prestart"
         sidecar = false
@@ -18,51 +24,37 @@ job "demo-nix" {
         attempts = 0
       }
       env {
-        HOME = "/root"
+        HOME       = "${NOMAD_TASK_DIR}"
+        NIX_REMOTE = "daemon"
       }
       config {
-        command = "nix"
-        args    = ["build", "nixpkgs#gitoxide^out", "-L", "--profile", "/var/lib/nomad/nix/${NOMAD_JOB_NAME}"]
+        command = "/bin/sh"
+        args = ["-c", <<-EOH
+            set -x
+            nix build \
+              --out-link ${NOMAD_ALLOC_DIR}/result \
+              --tarball-ttl 300 \
+              --print-build-logs \
+              nixpkgs#coreutils^out
+          EOH
+        ]
+      }
+      volume_mount {
+        volume      = "nix"
+        destination = "/nix"
       }
     }
 
-    // task "run" {
-    //   driver = "docker"
-    //   config {
-    //     image   = "busybox"
-    //     command = "/nix/nomad/${NOMAD_JOB_NAME}/bin/gix"
-    //     args    = ["--help"]
-    //     mount {
-    //       type     = "bind"
-    //       target   = "/nix/store"
-    //       source   = "/nix/store"
-    //       readonly = true
-    //       bind_options {
-    //         propagation = "rshared"
-    //       }
-    //     }
-    //     mount {
-    //       type     = "bind"
-    //       target   = "/nix/nomad"
-    //       source   = "/var/lib/nomad/nix"
-    //       readonly = true
-    //       bind_options {
-    //         propagation = "rshared"
-    //       }
-    //     }
-    //   }
-    // }
-
     task "run" {
-      driver = "podman"
+      driver = "docker"
       config {
         image   = "busybox"
-        command = "/nix/nomad/${NOMAD_JOB_NAME}/bin/gix"
+        command = "${NOMAD_ALLOC_DIR}/result/bin/ls"
         args    = ["--help"]
-        volumes = [
-          "/nix/store:/nix/store:ro",
-          "/var/lib/nomad/nix:/nix/nomad:ro"
-        ]
+      }
+      volume_mount {
+        volume      = "nix"
+        destination = "/nix"
       }
     }
   }
