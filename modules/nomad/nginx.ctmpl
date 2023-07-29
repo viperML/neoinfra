@@ -1,3 +1,24 @@
+server {
+        listen 0.0.0.0:80 ;
+        listen [::0]:80 ;
+        server_name _ ;
+        location / {
+                return 301 https://$host$request_uri;
+        }
+}
+
+server {
+        listen 0.0.0.0:443 http2 ssl ;
+        listen [::0]:443 http2 ssl ;
+        server_name _ ;
+        ssl_certificate /var/lib/acme/wildcard.ayats.org/fullchain.pem;
+        ssl_certificate_key /var/lib/acme/wildcard.ayats.org/key.pem;
+        ssl_trusted_certificate /var/lib/acme/wildcard.ayats.org/chain.pem;
+        location / {
+                return 503;
+        }
+}
+
 {{- $allowedTags := parseJSON `["public"]` -}}
 {{ range services }}
   {{- if and (.Name | contains "sidecar" | not) (containsAny $allowedTags .Tags) }}

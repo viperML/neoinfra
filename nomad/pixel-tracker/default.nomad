@@ -4,9 +4,6 @@ job "pixel-tracker" {
 
   group "main" {
     count = 1
-    restart {
-      attempts = 0
-    }
 
     network {
       port "http" {}
@@ -32,9 +29,6 @@ job "pixel-tracker" {
       lifecycle {
         hook    = "prestart"
         sidecar = false
-      }
-      restart {
-        attempts = 0
       }
       env {
         HOME       = "${NOMAD_TASK_DIR}"
