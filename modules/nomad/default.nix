@@ -6,10 +6,6 @@
 }: let
   nginx_consul = "/etc/nginx/consul.conf";
 in {
-  imports = [
-    ./settings.nix
-  ];
-
   networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
     # Nomad
     4646
@@ -25,8 +21,49 @@ in {
     enableDocker = true;
     extraPackages = [
       config.nix.package
+      pkgs.git
     ];
+    settings = {
+      bind_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }}'';
+
+      server = {
+        enabled = true;
+        bootstrap_expect = 1;
+      };
+
+      client = {
+        enabled = true;
+        cni_path = "${pkgs.cni-plugins}/bin";
+        host_volume = {
+          "nix" = {
+            path = "/nix";
+            read_only = true;
+          };
+        };
+      };
+
+      vault = {
+        enabled = true;
+        address = "http://localhost:8200";
+        create_from_role = "nomad-cluster";
+        task_token_ttl = "1h";
+      };
+
+      plugin = [
+        {raw_exec = [{config = [{enabled = true;}];}];}
+        {docker = [{config = [{volumes = [{enabled = true;}];}];}];}
+      ];
+
+      consul = {
+        address = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }}:8500'';
+      };
+    };
   };
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/nomad 755 root root - -"
+    "d /var/lib/nomad/nix 755 root root - -"
+  ];
 
   # vault token create -policy nomad-server -period 72h
   sops.secrets."nomad" = {
@@ -36,50 +73,21 @@ in {
   };
 
   systemd.services.nomad = {
-    # after = [
-    #   "vault-token-renew.service"
-    # ];
     serviceConfig.EnvironmentFile = config.sops.secrets."nomad".path;
   };
 
-  # systemd.services."vault-token-reset" = {
-  #   description = "Reset the vault token to the bundled one";
-  #   script = ''
-  #     set -eux
-  #     cp -vfL ${config.sops.secrets."vault_token".path} ${vault_token_path}
-  #     chmod 600 ${vault_token_path}
-  #   '';
-  # };
-
-  # systemd.services."vault-token-renew" = {
-  #   path = with pkgs; [
-  #     vault
-  #     glibc
-  #   ];
-  #   # serviceConfig = {
-  #   #   PrivateTmp = true;
-  #   # };
-  #   environment.VAULT_ADDR = config.services.nomad.settings.vault.address;
-  #   script = ''
-  #     set -eux
-  #     VAULT_TOKEN=$(<${vault_token_path})
-  #     vault token renew
-  #   '';
-  # };
-
-  # systemd.timers."vault-token-renew" = {
-  #   timerConfig.OnCalendar = "daily";
-  #   timerConfig.Persistent = true;
-  #   wantedBy = ["timers.target"];
-  # };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/nomad 755 root root - -"
-    "d /var/lib/nomad/nix 755 root root - -"
-  ];
-
   services.consul = {
     enable = true;
+    webUi = true;
+    interface = {
+      bind = config.services.tailscale.interfaceName;
+      advertise = config.services.tailscale.interfaceName;
+    };
+    extraConfig = {
+      server = true;
+      bootstrap_expect = 1;
+      client_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }} {{ GetAllInterfaces | include "flags" "loopback" | join "address" " " }}'';
+    };
   };
 
   services.consul-template.instances = {

@@ -52,6 +52,7 @@
               age
               qemu
               nomad
+              just
             ];
           };
         };

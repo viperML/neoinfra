@@ -15,6 +15,9 @@
       domain = "*.ayats.org";
       dnsProvider = "cloudflare";
       credentialsFile = config.sops.secrets."lets-encrypt-credentials".path;
+      extraDomainNames = [
+        "*.infra.ayats.org"
+      ];
     };
   };
 

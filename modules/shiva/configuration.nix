@@ -51,4 +51,6 @@
       dates = "weekly";
     };
   };
+
+  services.envfs.enable = lib.mkForce false;
 }

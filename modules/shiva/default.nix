@@ -50,7 +50,7 @@
         # ../obsidian
         # ../distant
         ../reverse-proxy
-        ../pixel-tracker
+        # ../pixel-tracker
       ];
     };
   });

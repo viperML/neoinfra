@@ -3,9 +3,6 @@ job "obsidian" {
 
   group "main" {
     count = 1
-    restart {
-      attempts = 0
-    }
 
     network {
       port "db" { to = "5984" }
@@ -21,9 +18,6 @@ job "obsidian" {
 
     task "couchdb" {
       driver = "docker"
-      restart {
-        attempts = 0
-      }
 
       config {
         image = "docker.io/library/couchdb:3"

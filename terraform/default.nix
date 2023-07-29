@@ -17,6 +17,7 @@ _: {
           t.cloudinit
         ]))
         shellcheck
+        just
       ];
     };
   };

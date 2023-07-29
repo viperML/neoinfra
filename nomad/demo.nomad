@@ -12,7 +12,7 @@ job "demo" {
       port = "http"
       tags = ["public"]
       meta {
-        domain = "demo.ayats.org"
+        domain = "demo.infra.ayats.org"
       }
     }
 
