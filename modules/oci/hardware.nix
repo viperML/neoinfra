@@ -58,6 +58,7 @@ in {
       systemd.enable = true;
       availableKernelModules = ["xhci_pci"];
     };
+    tmp.useTmpfs = true;
   };
 
   systemd.network = {
