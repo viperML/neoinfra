@@ -2,20 +2,12 @@ terraform {
   required_providers {
     oci = {
       source  = "oracle/oci"
-      version = "~> 4.76"
+      version = "~> 5.17"
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4.0"
+      version = "~> 4.17"
     }
-  }
-  backend "s3" {
-    bucket                      = "viperml-neoinfra"
-    key                         = "oci.tfstate"
-    region                      = "pl-waw"
-    endpoint                    = "https://s3.pl-waw.scw.cloud"
-    skip_credentials_validation = true
-    skip_region_validation      = true
   }
 }
 
@@ -60,7 +52,7 @@ data "local_file" "ssh_public_key" {
 #                        ▐     ▀
 
 data "local_file" "shiva_age" {
-  filename = "../../secrets/shiva.age"
+  filename = "../secrets/shiva.age"
 }
 
 data "cloudinit_config" "shiva" {
@@ -122,45 +114,72 @@ resource "oci_core_instance" "shiva" {
 #   instance_id = oci_core_instance.shiva.id
 # }
 
-output "shiva_ip" {
-  value = oci_core_instance.shiva.public_ip
-}
+# output "shiva_ip" {
+#   value = oci_core_instance.shiva.public_ip
+# }
 
-resource "oci_identity_dynamic_group" "vault_dynamic_group" {
-  compartment_id = var.compartment_id
-  name           = "TerraformVault"
-  description    = "Group holding instances that should access Vault"
-  matching_rule  = "instance.id = '${oci_core_instance.shiva.id}'"
-}
+# resource "oci_identity_dynamic_group" "vault_dynamic_group" {
+#   compartment_id = var.compartment_id
+#   name           = "TerraformVault"
+#   description    = "Group holding instances that should access Vault"
+#   matching_rule  = "instance.id = '${oci_core_instance.shiva.id}'"
+# }
 
-resource "oci_identity_policy" "vault_policy" {
-  compartment_id = var.compartment_id
-  description    = "Policies to access Vault"
-  name           = "TerraformVault"
-  statements = [
-    # ocikms
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use keys in compartment id ${var.compartment_id} where target.key.id = '${var.oci_key_id}'",
-    # object storage
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {AUTHENTICATION_INSPECT} in tenancy",
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {GROUP_MEMBERSHIP_INSPECT} in tenancy",
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage buckets in compartment id ${var.compartment_id}",
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
-    "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
-  ]
-}
+# resource "oci_identity_policy" "vault_policy" {
+#   compartment_id = var.compartment_id
+#   description    = "Policies to access Vault"
+#   name           = "TerraformVault"
+#   statements = [
+#     # ocikms
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use keys in compartment id ${var.compartment_id} where target.key.id = '${var.oci_key_id}'",
+#     # object storage
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {AUTHENTICATION_INSPECT} in tenancy",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {GROUP_MEMBERSHIP_INSPECT} in tenancy",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage buckets in compartment id ${var.compartment_id}",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
+#   ]
+# }
 
-resource "cloudflare_record" "record-infra" {
-  zone_id = var.cloudflare_zone_id
-  name    = "*.infra"
-  type    = "A"
-  proxied = false
-  value   = oci_core_instance.shiva.public_ip
-}
+# resource "cloudflare_record" "record-infra" {
+#   zone_id = var.cloudflare_zone_id
+#   name    = "*.infra"
+#   type    = "A"
+#   proxied = false
+#   value   = oci_core_instance.shiva.public_ip
+# }
 
-resource "cloudflare_record" "record-obsidian" {
-  zone_id = var.cloudflare_zone_id
-  name    = "obsidian"
-  type    = "A"
-  proxied = false
-  value   = oci_core_instance.shiva.public_ip
+# resource "cloudflare_record" "record-obsidian" {
+#   zone_id = var.cloudflare_zone_id
+#   name    = "obsidian"
+#   type    = "A"
+#   proxied = false
+#   value   = oci_core_instance.shiva.public_ip
+# }
+
+# vishnu
+resource "oci_core_instance" "vishnu" {
+  display_name        = "terraform-visnhu"
+  availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
+  compartment_id      = var.compartment_id
+  shape               = "VM.Standard.E2.1.Micro"
+  create_vnic_details {
+    assign_public_ip          = true
+    subnet_id                 = module.network.terraform_subnet.id
+    assign_private_dns_record = false
+  }
+  source_details {
+    source_type             = "image"
+    source_id               = module.images.always-free
+    # boot_volume_size_in_gbs =
+  }
+  lifecycle {
+    ignore_changes = [
+      source_details,
+      metadata
+    ]
+  }
+  # metadata = {
+  #   user_data = data.cloudinit_config.shiva.rendered
+  # }
 }

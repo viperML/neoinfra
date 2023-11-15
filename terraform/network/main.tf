@@ -13,11 +13,11 @@ variable "compartment_id" {
 
 resource "oci_core_vcn" "terraform_vcn" {
   compartment_id = var.compartment_id
-  display_name   = "terraform0"
+  display_name   = "neoinfra"
   cidr_blocks = [
     "10.0.0.0/16"
   ]
-  dns_label = "terraform0"
+  dns_label = "neoinfra"
 }
 
 resource "oci_core_internet_gateway" "terraform_vcn_gateway" {

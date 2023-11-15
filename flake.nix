@@ -4,18 +4,18 @@
     flake-parts,
     ...
   }:
-    flake-parts.lib.mkFlake {inherit inputs;} {
+    flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
 
       imports = [
-        ./packages
-        ./terraform
-        ./packer
-        ./modules
-        ./kubernetes
+        # ./packages
+        # ./terraform
+        # ./packer
+        # ./modules
+        # ./kubernetes
       ];
 
       perSystem = {
@@ -28,39 +28,49 @@
             inherit system;
             overlays = [
             ];
+            config.allowUnfreePredicate = pkg:
+              builtins.elem (lib.getName pkg) [
+                "terraform"
+              ];
           };
         };
 
         legacyPackages = pkgs;
 
-        devShells = with pkgs; {
-          format = mkShellNoCC {
-            name = "neoinfra-format";
-            packages = [
-              treefmt
-              alejandra
-              hclfmt
-              black
-              deadnix
-            ];
-          };
-
-          default = mkShellNoCC {
-            name = "neoinfra-shell";
+        devShells.default = with pkgs;
+          mkShell.override {stdenv = stdenvNoCC;} {
             packages = [
               sops
+              rclone
+              (inputs.wrapper-manager.lib.build {
+                inherit pkgs;
+                modules = [
+                  {
+                    wrappers.rustic = {
+                      basePackage = pkgs.rustic-rs;
+                      extraWrapperFlags = ''--run 'cd "$ROOT"' '';
+                    };
+                  }
+                ];
+              })
+              (terraform.withPlugins (t: [
+                t.external
+                t.cloudflare
+                t.oci
+                t.null
+                t.local
+                t.cloudinit
+              ]))
+              oci-cli
+              shellcheck
               age
-              qemu
-              nomad
-              just
             ];
           };
-        };
       };
-    };
+    });
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -117,6 +127,10 @@
       url = "github:viperML/pixel-tracker";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
+    };
+    wrapper-manager = {
+      url = "github:viperML/wrapper-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }

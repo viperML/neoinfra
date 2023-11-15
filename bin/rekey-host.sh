@@ -7,57 +7,12 @@ HOST="$1"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[@]}")"; cd ..; pwd)"
 pushd "$ROOT"
 
-: "$CA_FINGERPRINT"
 
 export TEMP="$XDG_RUNTIME_DIR/ca-bootstrap-$HOST"
 export STEPPATH=$TEMP
 
-step_rekey() {
-    step ca bootstrap \
-        --ca-url https://ca.ayats.org \
-        --fingerprint "$CA_FINGERPRINT" \
-        --force
-
-    step ssh certificate \
-        --host \
-        --force \
-        --insecure \
-        --no-password \
-        "$HOST" "$TEMP/ssh_host_ecdsa_key"
-
-    step ssh config \
-        --force \
-        --roots > "$ROOT/secrets/$HOST-ssh_user_key.pub"
-}
-
-if [[ -d "$TEMP" ]]; then
-    read -p "Regen age key? [y/N] " -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        step_rekey
-    fi
-else
-    step_rekey
-fi
 
 
-
-dd status=none of="$TEMP/result.toml" <<EOF
-ssh_host_ecdsa_key = '''
-$(<"$TEMP"/ssh_host_ecdsa_key)
-'''
-
-ssh_host_ecdsa_key-cert-pub = '''
-$(<"$TEMP"/ssh_host_ecdsa_key-cert.pub)
-'''
-
-root_ca_crt = '''
-$(<"$TEMP"/certs/root_ca.crt)
-'''
-
-step-defaults = '''
-$(<"$TEMP"/config/defaults.json)
-'''
-EOF
 
 read -p "Regen age key? [y/N] " -n 1 -r
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
