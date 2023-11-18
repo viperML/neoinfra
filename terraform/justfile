@@ -1,6 +1,0 @@
-default:
-  @just --list
-
-login:
-  rm -rf ~/.oci
-  oci session authenticate --region eu-marseille-1

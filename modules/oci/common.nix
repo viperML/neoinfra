@@ -62,19 +62,24 @@
       kernelModules = [
         "dm-snapshot"
       ];
-      systemd.enable = true;
+      systemd = {
+        enable = true;
+        emergencyAccess = true;
+      };
+      services = {
+        lvm.enable = true;
+      };
     };
     loader = {
       systemd-boot = {
         enable = true;
-        configurationLimit = 2;
+        configurationLimit = 1; # can't use the boot menu anyways
       };
       efi = {
         # efiSysMountPoint = "";
         canTouchEfiVariables = true;
       };
     };
-    # tmp.useTmpfs = true;
   };
 
   systemd.network = {

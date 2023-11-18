@@ -72,6 +72,9 @@
               perlPackages.PLS
               perlPackages.Exporter
               perlPackages.TermANSIColor
+              perlPackages.JSON
+              perlPackages.NetOpenSSH
+              perlPackages.StringUtil
               pls
            ];
           };

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+umount /dev/sda1
+umount /dev/sda2
+
 sgdisk --delete 1 /dev/sda
 sgdisk --delete 2 /dev/sda
 
@@ -19,3 +22,5 @@ sgdisk --change-name 2:swap /dev/sda
 mkswap /dev/disk/by-partlabel/swap
 
 partprobe
+
+mount /dev/disk/by-partlabel/esp /boot
