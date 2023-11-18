@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+use v5.38;
+use strict;
+use warnings;
+
+use FindBin;
+use File::Spec::Functions qw(catdir);
+
+use lib catdir($FindBin::Bin);
+
+use Neoinfra;
+Neoinfra->run;

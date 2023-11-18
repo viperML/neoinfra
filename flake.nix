@@ -14,7 +14,7 @@
         # ./packages
         # ./terraform
         # ./packer
-        # ./modules
+        ./modules
         # ./kubernetes
       ];
 
@@ -64,14 +64,22 @@
               oci-cli
               shellcheck
               age
-            ];
+
+              perlPackages.perl
+              perlPackages.PerlLanguageServer
+              perlPackages.AppCmd
+              perlPackages.DataDumper
+              perlPackages.PLS
+              perlPackages.Exporter
+              perlPackages.TermANSIColor
+              pls
+           ];
           };
       };
     });
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # nixpkgs-oldstable.url = "github:NixOS/nixpkgs/nixos-22.05";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -79,22 +87,9 @@
     nix-common = {
       url = "github:viperML/nix-common";
     };
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # viperML-dotfiles.url = "github:viperML/dotfiles";
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # nomad-driver-containerd-nix = {
-    #   # url = "git+https://gitea.redalder.org/Magic_RB/nomad-driver-containerd-nix.git";
-    #   url = "gitlab:_viperML/nomad-driver-containerd-nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server = {
       url = "github:msteen/nixos-vscode-server";
@@ -113,21 +108,21 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-images = {
-      url = "github:nix-community/nixos-images";
-    };
-    delphix = {
-      url = "github:viperML/delphix";
-    };
+    # nixos-images = {
+    #   url = "github:nix-community/nixos-images";
+    # };
+    # delphix = {
+    #   url = "github:viperML/delphix";
+    # };
     nix-ld = {
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    pixel-tracker = {
-      url = "github:viperML/pixel-tracker";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
+    # pixel-tracker = {
+    #   url = "github:viperML/pixel-tracker";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.flake-parts.follows = "flake-parts";
+    # };
     wrapper-manager = {
       url = "github:viperML/wrapper-manager";
       inputs.nixpkgs.follows = "nixpkgs";

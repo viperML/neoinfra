@@ -1,13 +1,14 @@
 {
   inputs,
   self,
+  withSystem,
+  lib,
   ...
 }: {
   imports = [
-    ./oci
-    ./flake-parts.nix
+    # ./oci
 
-    ./shiva
+    # ./shiva
     # ./skadi
     # ./kalypso
     # ./chandra
@@ -15,21 +16,39 @@
     # ./guix
   ];
 
+  flake.nixosConfigurations = {
+    "vishnu" = withSystem "x86_64-linux" ({
+      system,
+      pkgs,
+      ...
+    }:
+      inputs.nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+        };
+        modules = [
+          inputs.nixpkgs.nixosModules.readOnlyPkgs
+          {nixpkgs.pkgs = pkgs;}
+          ./oci-lustrate-oracle9
+        ];
+      });
+  };
+
   perSystem = {pkgs, ...}: {
     /*
     Copy this for our nixpkgs
     https://github.com/nix-community/nixos-images/blob/main/flake.nix
     */
-    packages.kexec-installer-noninteractive =
-      (pkgs.nixos [
-        inputs.nixos-images.nixosModules.kexec-installer
-        inputs.nixos-images.nixosModules.noninteractive
-        {system.kexec-installer.name = "nixos-kexec-installer-noninteractive";}
-      ])
-      .config
-      .system
-      .build
-      .kexecTarball;
+    # packages.kexec-installer-noninteractive =
+    #   (pkgs.nixos [
+    #     inputs.nixos-images.nixosModules.kexec-installer
+    #     inputs.nixos-images.nixosModules.noninteractive
+    #     {system.kexec-installer.name = "nixos-kexec-installer-noninteractive";}
+    #   ])
+    #   .config
+    #   .system
+    #   .build
+    #   .kexecTarball;
 
     _module.args.nixosSystem = args:
       inputs.nixpkgs.lib.nixosSystem (args

@@ -18,6 +18,7 @@ cdktf.*
 tfschema
 unpack
 kubernetes/.*.yaml
+perl-lang
 
 # rustic
 rustic/**
