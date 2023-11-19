@@ -45,23 +45,6 @@ data "local_file" "ssh_public_key" {
 
 # shiva
 
-data "local_file" "shiva_age" {
-  filename = "../secrets/shiva.age"
-}
-
-data "cloudinit_config" "shiva" {
-  gzip          = false
-  base64_encode = true
-  part {
-    filename     = "cloud-config.yaml"
-    content_type = "text/cloud-config"
-    content = templatefile("cloud-config.yaml.tftpl", {
-      ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
-      age_key        = jsonencode(data.local_file.shiva_age.content)
-    })
-  }
-}
-
 resource "oci_core_instance" "shiva" {
   display_name        = "terraform-shiva"
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
@@ -79,7 +62,7 @@ resource "oci_core_instance" "shiva" {
   source_details {
     source_type             = "image"
     source_id               = module.images.base-aarch64
-    boot_volume_size_in_gbs = 130
+    boot_volume_size_in_gbs = 140
   }
   lifecycle {
     ignore_changes = [
@@ -95,6 +78,33 @@ resource "oci_core_instance" "shiva" {
 output "shiva_ip" {
   value = oci_core_instance.shiva.public_ip
 }
+
+data "local_file" "shiva_age" {
+  filename = "../secrets/shiva.age"
+}
+
+data "cloudinit_config" "shiva" {
+  gzip          = false
+  base64_encode = true
+  part {
+    filename     = "cloud-config.yaml"
+    content_type = "text/cloud-config"
+    content = templatefile("cloud-config.yaml.tftpl", {
+      ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
+      age_key        = jsonencode(data.local_file.shiva_age.content)
+    })
+  }
+}
+
+output "cloudinit_config_shiva_raw" {
+  value = templatefile("cloud-config.yaml.tftpl", {
+    ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
+    age_key        = jsonencode(data.local_file.shiva_age.content)
+  })
+  sensitive = true
+}
+
+
 
 # module "aarch64-kexec-installer-noninteractive" {
 #   source = "github.com/numtide/nixos-anywhere//terraform/nix-build"
@@ -171,12 +181,16 @@ resource "oci_core_instance" "vishnu" {
   lifecycle {
     ignore_changes = [
       source_details,
-      # metadata
+      metadata
     ]
   }
   metadata = {
     user_data = data.cloudinit_config.visnhu.rendered
   }
+}
+
+output "vishnu_ip" {
+  value = oci_core_instance.vishnu.public_ip
 }
 
 data "local_file" "vishnu_age" {
@@ -196,6 +210,3 @@ data "cloudinit_config" "visnhu" {
   }
 }
 
-output "vishnu_ip" {
-  value = oci_core_instance.vishnu.public_ip
-}

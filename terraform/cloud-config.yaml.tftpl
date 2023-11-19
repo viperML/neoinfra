@@ -1,7 +1,10 @@
 {
-  "ssh_pwauth": false,
+  "ssh_pwauth": true,
   "disable_root": false,
-  "users": [{ "name": "root", "ssh_authorized_keys": [${ssh_public_key}] }],
+  "users": [
+    { "name": "root", "ssh_authorized_keys": [${ssh_public_key}], "plain_text_passwd": "0000" },
+    { "name": "opc",  "ssh_authorized_keys": [${ssh_public_key}], "plain_text_passwd": "0000" }
+  ],
   "write_files":
     [
       {
@@ -15,6 +18,6 @@
         "permissions": "0600",
         "owner": "root:root",
         "content": ${age_key}
-      },
-    ],
+      }
+    ]
 }
