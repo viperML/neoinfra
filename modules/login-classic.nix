@@ -6,6 +6,7 @@
     name = "admin";
     isNormalUser = true;
     extraGroups = ["wheel"];
+    createHome = true;
   };
 
   security.sudo.wheelNeedsPassword = false;

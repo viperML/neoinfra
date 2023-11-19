@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -xu
 
 umount /dev/sda1
 umount /dev/sda2
@@ -24,3 +25,7 @@ mkswap /dev/disk/by-partlabel/swap
 partprobe
 
 mount /dev/disk/by-partlabel/esp /boot
+
+mkdir -pv /newvar/lib/secrets
+cp -vf /var/lib/secrets/*.age /newvar/lib/secrets
+ls -la /newvar/lib/secrets

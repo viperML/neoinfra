@@ -171,7 +171,7 @@ resource "oci_core_instance" "vishnu" {
   lifecycle {
     ignore_changes = [
       source_details,
-      metadata
+      # metadata
     ]
   }
   metadata = {

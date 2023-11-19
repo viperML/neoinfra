@@ -61,13 +61,37 @@ in {
     };
   };
 
-  # swapDevices = [
-  #   {
-  #     device = "/dev/disk/by-partlabel/swap";
-  #   }
-  # ];
+  swapDevices = [
+    {
+      device = "/dev/disk/by-partlabel/swap";
+    }
+  ];
+
   environment.etc."format".source = pkgs.writeShellScript "format" ''
     export PATH="${lib.makeBinPath (with pkgs; [gptfdisk parted dosfstools util-linux])}:''${PATH}"
     ${lib.fileContents ./partition.sh}
   '';
+
+  systemd.tmpfiles.rules = builtins.map (d: "R ${oldroot}/${d} - - - - -") [
+    "afs"
+    "bin"
+    "boot"
+    "dev"
+    "etc"
+    "lib"
+    "lib64"
+    "media"
+    "mnt"
+    "opt"
+    "proc"
+    "root"
+    "run"
+    "sbin"
+    "srv"
+    "sys"
+    "tmp"
+    "usr"
+    "var"
+    ".swapfile"
+  ];
 }

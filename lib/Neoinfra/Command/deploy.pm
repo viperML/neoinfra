@@ -9,6 +9,7 @@ use Data::Dumper;
 use JSON;
 use Net::OpenSSH;
 use String::Util qw(trim);
+use File::Spec::Functions qw(catdir);
 
 sub abstract { "deploy NixOS configuration" }
 

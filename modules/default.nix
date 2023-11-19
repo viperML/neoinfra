@@ -5,17 +5,6 @@
   lib,
   ...
 }: {
-  imports = [
-    # ./oci
-
-    # ./shiva
-    # ./skadi
-    # ./kalypso
-    # ./chandra
-    # ./sumati
-    # ./guix
-  ];
-
   flake.nixosConfigurations = {
     "vishnu" = withSystem "x86_64-linux" ({
       system,
@@ -29,8 +18,7 @@
         modules = [
           inputs.nixpkgs.nixosModules.readOnlyPkgs
           {nixpkgs.pkgs = pkgs;}
-          ./oci-lustrate-oracle9
-          ./oci/installer.nix
+          ./host-vishnu
         ];
       });
   };
