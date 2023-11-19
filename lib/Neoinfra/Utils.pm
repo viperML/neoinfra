@@ -1,8 +1,7 @@
+package Neoinfra::Utils;
 use v5.38;
 use strict;
 use warnings;
-
-package Neoinfra::Utils;
 use Exporter 'import';
 use Term::ANSIColor;
 use Net::OpenSSH;

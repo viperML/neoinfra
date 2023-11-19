@@ -1,8 +1,8 @@
 {
     "perl.perlInc": [
-        "./bin"
+        "./lib"
     ],
-    "pls.inc": [
-        "$ROOT_PATH/bin"
+    "perlnavigator.includePaths": [
+        "${workspaceFolder}/bin"
     ]
 }

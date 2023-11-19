@@ -1,12 +1,9 @@
+package Neoinfra::Command::deploy;
 use v5.38;
 use strict;
 use warnings;
-
-package Neoinfra::Command::deploy;
 use Neoinfra -command;
 use Neoinfra::Utils qw(ex sayb exssh exout);
-use FindBin;
-use File::Spec::Functions qw(catdir);
 
 use Data::Dumper;
 use JSON;
@@ -22,7 +19,7 @@ sub opt_spec {
 }
 
 sub execute {
-  my $root = catdir($FindBin::Bin, '..');
+  my $root = $ENV{ROOT};
   chdir catdir($root, "terraform");
 
   my ($self, $opt, $args) = @_;
@@ -69,3 +66,5 @@ sub InstallNix {
   exssh $ssh, "curl --proto '=https' --tlsv1.2 -sSf -o nix-installer -L https://install.determinate.systems/nix/tag/v0.14.0";
   exssh $ssh, "sh ./nix-installer install --no-confirm";
 }
+
+1;

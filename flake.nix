@@ -75,6 +75,10 @@
               perlPackages.JSON
               perlPackages.NetOpenSSH
               perlPackages.StringUtil
+              perlPackages.YAMLLibYAML
+              perlPackages.PerlCritic
+              perlPackages.PadWalker
+              perlPackages.FileSlurp
               pls
            ];
           };

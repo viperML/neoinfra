@@ -1,9 +1,7 @@
+package Neoinfra::Command::blort;
 use v5.38;
 use strict;
 use warnings;
-
-
-package Neoinfra::Command::blort;
 use Neoinfra -command;
 
 sub abstract { "blortex algorithm" }

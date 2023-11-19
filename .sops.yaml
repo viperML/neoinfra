@@ -1,84 +1,56 @@
 keys:
-  - &shiva age1lyatv60lhmwlmdxv5078elmsaj8kz9vydgwr2mvfwdmq3rtctv7shetfl0
-  - &chandra age16w5nn75ngyzaf4pyfe49n34tkc667qwpq0c9hfd6etpdx28h2caqu67xjd
-  - &golden age1wy33p6caugh3kqlsy70pdq3jre9c4gsf4lhex4nzkpdpqrm4t58sx7dntr
-  - &kalypso age1pf6pvnzxwzq3sak9f94rulgd7jttaq5guskfjvszu4vqjm6pnarq8ymsh0
+  - &vishnu age104lcupy4elzeq66thtafahxdh6d94rfcyc4e6m0j5zqk43eup9fq6862ve
   - &ayats_gen6 age14u2cyhdlpf6zuvew6aq0k2y5rsvzzsgvs39p8n0dqftktmm73d2shzktn8
-  - &sumati age1dnmwd637md9tpwqkj5608skuu583w02xmex9lg4k5dyx3c8eef8qhmqf33
-
 
 creation_rules:
   - path_regex: secrets(/|\\).*sumati.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *sumati
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*kalypso.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *kalypso
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*vault.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *kalypso
-      - *shiva
-      # hc_vault:
-      # - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\)env.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*shiva.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *shiva
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*lets-encrypt.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *shiva
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
-
 
   - path_regex: secrets(/|\\).*golden.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *golden
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
 
   - path_regex: secrets(/|\\).*tailscale.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      - *kalypso
-      - *chandra
-      - *sumati
-      - *shiva
-      hc_vault:
-      - http://shiva:8200/v1/sops/keys/neoinfra
+      - *vishnu
 
   - path_regex: secrets(/|\\).*chandra.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
-      # hc_vault:
-      # - http://shiva:8200/v1/sops/keys/neoinfra
+
+  - path_regex: secrets(/|\\).*vishnu.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *vishnu

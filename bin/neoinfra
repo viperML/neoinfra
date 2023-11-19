@@ -6,7 +6,7 @@ use warnings;
 use FindBin;
 use File::Spec::Functions qw(catdir);
 
-use lib catdir($FindBin::Bin);
+use lib catdir($FindBin::Bin, "..", "lib");
 
 use Neoinfra;
 Neoinfra->run;

@@ -5,13 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "type": "perl",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["chandra"]
+            "name": "Perl Debug",
+            "program": "${workspaceFolder}/${relativeFile}",
+            "stopOnEntry": true,
+            "args": [
+                // "keygen", "-H", "vishnu"
+            ]
         }
     ]
 }

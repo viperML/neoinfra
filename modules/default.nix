@@ -30,6 +30,7 @@
           inputs.nixpkgs.nixosModules.readOnlyPkgs
           {nixpkgs.pkgs = pkgs;}
           ./oci-lustrate-oracle9
+          ./oci/installer.nix
         ];
       });
   };
