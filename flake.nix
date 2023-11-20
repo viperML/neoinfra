@@ -66,21 +66,17 @@
               age
 
               perlPackages.perl
-              perlPackages.PerlLanguageServer
               perlPackages.AppCmd
               perlPackages.DataDumper
-              perlPackages.PLS
               perlPackages.Exporter
               perlPackages.TermANSIColor
               perlPackages.JSON
               perlPackages.NetOpenSSH
               perlPackages.StringUtil
-              perlPackages.YAMLLibYAML
               perlPackages.PerlCritic
               perlPackages.PadWalker
               perlPackages.FileSlurp
-              pls
-           ];
+            ];
           };
       };
     });
@@ -93,43 +89,30 @@
     };
     nix-common = {
       url = "github:viperML/nix-common";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    vscode-server = {
-      url = "github:msteen/nixos-vscode-server";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
     envfs = {
       url = "github:Mic92/envfs";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     nh = {
       url = "github:viperML/nh";
-      # Broken in 23.05
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nixos-images = {
-    #   url = "github:nix-community/nixos-images";
-    # };
-    # delphix = {
-    #   url = "github:viperML/delphix";
-    # };
     nix-ld = {
       url = "github:nix-community/nix-ld-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # pixel-tracker = {
-    #   url = "github:viperML/pixel-tracker";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    #   inputs.flake-parts.follows = "flake-parts";
-    # };
     wrapper-manager = {
       url = "github:viperML/wrapper-manager";
       inputs.nixpkgs.follows = "nixpkgs";

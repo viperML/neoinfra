@@ -104,8 +104,6 @@ output "cloudinit_config_shiva_raw" {
   sensitive = true
 }
 
-
-
 # module "aarch64-kexec-installer-noninteractive" {
 #   source = "github.com/numtide/nixos-anywhere//terraform/nix-build"
 #   attribute = ".#packages.aarch64-linux.kexec-installer-noninteractive"
@@ -121,46 +119,14 @@ output "cloudinit_config_shiva_raw" {
 #   instance_id = oci_core_instance.shiva.id
 # }
 
+resource "cloudflare_record" "record-infra" {
+  zone_id = var.cloudflare_zone_id
+  name    = "*.infra"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}
 
-
-# resource "oci_identity_dynamic_group" "vault_dynamic_group" {
-#   compartment_id = var.compartment_id
-#   name           = "TerraformVault"
-#   description    = "Group holding instances that should access Vault"
-#   matching_rule  = "instance.id = '${oci_core_instance.shiva.id}'"
-# }
-
-# resource "oci_identity_policy" "vault_policy" {
-#   compartment_id = var.compartment_id
-#   description    = "Policies to access Vault"
-#   name           = "TerraformVault"
-#   statements = [
-#     # ocikms
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use keys in compartment id ${var.compartment_id} where target.key.id = '${var.oci_key_id}'",
-#     # object storage
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {AUTHENTICATION_INSPECT} in tenancy",
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {GROUP_MEMBERSHIP_INSPECT} in tenancy",
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage buckets in compartment id ${var.compartment_id}",
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
-#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
-#   ]
-# }
-
-# resource "cloudflare_record" "record-infra" {
-#   zone_id = var.cloudflare_zone_id
-#   name    = "*.infra"
-#   type    = "A"
-#   proxied = false
-#   value   = oci_core_instance.shiva.public_ip
-# }
-
-# resource "cloudflare_record" "record-obsidian" {
-#   zone_id = var.cloudflare_zone_id
-#   name    = "obsidian"
-#   type    = "A"
-#   proxied = false
-#   value   = oci_core_instance.shiva.public_ip
-# }
 
 # vishnu
 
@@ -209,4 +175,27 @@ data "cloudinit_config" "visnhu" {
     })
   }
 }
+
+# resource "oci_identity_dynamic_group" "vault_dynamic_group" {
+#   compartment_id = var.compartment_id
+#   name           = "TerraformVaultGroup"
+#   description    = "Group holding instances that should access Vault"
+#   matching_rule  = "instance.id = '${oci_core_instance.vishnu.id}'"
+# }
+
+# resource "oci_identity_policy" "vault_policy" {
+#   compartment_id = var.compartment_id
+#   description    = "Policies to access Vault"
+#   name           = "TerraformVaultPolicy"
+#   statements = [
+#     # ocikms
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use keys in compartment id ${var.compartment_id} where target.key.id = '${var.oci_key_id}'",
+#     # object storage
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {AUTHENTICATION_INSPECT} in tenancy",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to {GROUP_MEMBERSHIP_INSPECT} in tenancy",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage buckets in compartment id ${var.compartment_id}",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to manage objects in compartment id ${var.compartment_id}",
+#     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
+#   ]
+# }
 

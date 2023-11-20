@@ -7,6 +7,9 @@
     ../tailscale.nix
 
     inputs.nix-common.nixosModules.default
+
+    #-- Services
+    ../vault
   ];
 
   disabledModules = [

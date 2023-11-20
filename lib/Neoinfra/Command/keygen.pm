@@ -67,7 +67,6 @@ sub execute {
     sayb "updating $file";
     ex "sops updatekeys $file --yes";
   }
-
 }
 
 1;
