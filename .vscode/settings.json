@@ -1,7 +1,4 @@
 {
-    "perl.perlInc": [
-        "./lib"
-    ],
     "perlnavigator.includePaths": [
         "${workspaceFolder}/bin"
     ]

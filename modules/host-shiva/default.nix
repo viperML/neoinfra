@@ -1,62 +1,9 @@
-# {
-#   inputs,
-#   self,
-#   withSystem,
-#   ...
-# }: {
-#   flake.nixosConfigurations = withSystem "aarch64-linux" ({
-#     pkgs,
-#     system,
-#     nixosSystem,
-#     ...
-#   }: {
-#     "shiva" = nixosSystem {
-#       inherit system pkgs;
-
-#       modules = [
-#         self.nixosModules.oci
-#         inputs.nix-common.nixosModules.default
-#         inputs.sops-nix.nixosModules.sops
-#         ../tailscale.nix
-#         ../login-classic.nix
-
-#         ../vault
-
-#         ./configuration.nix
-#         ../user-ayats.nix
-
-#         # inputs.vscode-server.nixosModules.default
-#         # {services.vscode-server.enable = true;}
-#         {programs.nix-ld.package = inputs.nix-ld.packages.${pkgs.system}.default;}
-
-#         inputs.nh.nixosModules.default
-#         {
-#           nh = {
-#             enable = true;
-#             clean.enable = true;
-#             clean.extraArgs = "--keep 3 --keep-since 1w";
-#           };
-#         }
-
-#         # ../mosh.nix
-#         # ../k3s.nix
-#         # ../direnv.nix
-#         # inputs.viperML-dotfiles.nixosModules.xdg-ninja
-
-#         ../nomad
-#         # ../mosquitto
-#         # self.nixosModules.guix
-
-#         # ../obsidian
-#         # ../distant
-#         ../reverse-proxy
-#         # ../pixel-tracker
-#       ];
-#     };
-#   });
-# }
-
-{pkgs, inputs, ...}: {
+{
+  pkgs,
+  inputs,
+  lib,
+  ...
+}: {
   imports = [
     inputs.sops-nix.nixosModules.default
     ../oci-lustrate-oracle9
@@ -65,11 +12,15 @@
     ../tailscale.nix
 
     inputs.nix-common.nixosModules.default
+    inputs.nh.nixosModules.default
+
+    #-- Services
+    ../direnv.nix
+    ../login-ayats.nix
   ];
 
-  disabledModules = [
-    inputs.nix-common.nixosModules.fhs
-  ];
+  # was broken
+  services.envfs.enable = lib.mkForce false;
 
   documentation.enable = true;
 
@@ -86,4 +37,9 @@
 
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = ../../secrets/shiva.yaml;
+
+  nh = {
+    enable = true;
+    clean.enable = true;
+  };
 }

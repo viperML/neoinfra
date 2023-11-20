@@ -9,7 +9,7 @@
   oldroot = "/.oldroot";
 in {
   imports = [
-    ../oci/common.nix
+    ../oci
   ];
 
   fileSystems = {
@@ -52,12 +52,20 @@ in {
       device = "${oldroot}/home";
       options = ["bind"];
       depends = [oldroot];
+      neededForBoot = true;
     };
 
     "/var" = {
       device = "${oldroot}/newvar";
       options = ["bind"];
       depends = [oldroot];
+    };
+
+    "/tmp" = {
+      device = "${oldroot}/tmp";
+      options = ["bind"];
+      depends = [oldroot];
+      neededForBoot = true;
     };
   };
 
@@ -89,7 +97,6 @@ in {
     "sbin"
     "srv"
     "sys"
-    "tmp"
     "usr"
     "var"
     ".swapfile"

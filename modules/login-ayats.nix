@@ -14,6 +14,7 @@ in {
       "video"
       "kvm"
     ];
+    createHome = true;
   };
 
   environment.etc."${ca_path}/ayats_principals" = {

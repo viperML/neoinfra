@@ -1,4 +1,8 @@
-{pkgs, inputs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.sops-nix.nixosModules.default
     ../oci-lustrate-oracle9
@@ -7,6 +11,7 @@
     ../tailscale.nix
 
     inputs.nix-common.nixosModules.default
+    inputs.nh.nixosModules.default
 
     #-- Services
     ../vault
@@ -31,4 +36,9 @@
 
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = ../../secrets/vishnu.yaml;
+
+  nh = {
+    enable = true;
+    clean.enable = true;
+  };
 }
