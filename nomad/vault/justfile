@@ -1,8 +1,0 @@
-default:
-  @just --list
-
-apply-role:
-    vault write /auth/token/roles/nomad-cluster @nomad-cluster-role.json
-
-apply-policy:
-    vault policy write nomad-server nomad-server-policy.hcl

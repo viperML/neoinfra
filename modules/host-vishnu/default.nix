@@ -15,6 +15,7 @@
 
     #-- Services
     ../vault
+    ../consul-server
   ];
 
   disabledModules = [
@@ -41,4 +42,6 @@
     enable = true;
     clean.enable = true;
   };
+
+  networking.hostName = "vishnu";
 }

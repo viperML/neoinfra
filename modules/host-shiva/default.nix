@@ -17,6 +17,10 @@
     #-- Services
     ../direnv.nix
     ../login-ayats.nix
+    ../consul-server
+    {services.consul.webUi = true;}
+    ../nomad
+    ../docker
   ];
 
   # was broken
@@ -42,4 +46,6 @@
     enable = true;
     clean.enable = true;
   };
+
+  networking.hostName = "shiva";
 }

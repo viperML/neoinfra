@@ -36,7 +36,9 @@
           DataDumper
         ];
       } (lib.fileContents ./unseal.pl);
-      RestartSec = "1s";
+      RestartSec = "5s";
+      Restart = "on-failure";
+      StartLimitIntervalSec = "0";
       Type = "oneshot";
       EnvironmentFile = config.sops.secrets."vault_unseal_env".path;
     };

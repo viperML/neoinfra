@@ -4,17 +4,37 @@
   lib,
   ...
 }: let
-  nginx_consul = "/etc/nginx/consul.conf";
+  nginx_consul_config = "/etc/nginx/consul.conf";
 in {
-  networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
-    # Nomad
-    4646
-    4647
-    4648
-    # Consul
-    8500
-  ];
+  #-- Firewall
+  networking.firewall = {
+    allowedTCPPorts = [
+      80
+      443
+    ];
 
+    interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
+      # Nomad
+      4646
+      4647
+      4648
+    ];
+  };
+
+  #-- Secrets
+  sops.secrets = {
+    "nomad_env" = {
+      restartUnits = [
+        "nomad.service"
+      ];
+      sopsFile = ../../secrets/nomad.yaml;
+    };
+    "letsencrypt_env" = {
+      sopsFile = ../../secrets/letsencrypt.yaml;
+    };
+  };
+
+  #-- Nomad
   services.nomad = {
     enable = true;
     dropPrivileges = false;
@@ -44,14 +64,14 @@ in {
 
       vault = {
         enabled = true;
-        address = "http://localhost:8200";
+        address = "http://vishnu:8200";
         create_from_role = "nomad-cluster";
         task_token_ttl = "1h";
       };
 
       plugin = [
         {raw_exec = [{config = [{enabled = true;}];}];}
-        {docker = [{config = [{volumes = [{enabled = true;}];}];}];}
+        # {docker = [{config = [{volumes = [{enabled = true;}];}];}];}
       ];
 
       consul = {
@@ -65,38 +85,18 @@ in {
     "d /var/lib/nomad/nix 755 root root - -"
   ];
 
-  # vault token create -policy nomad-server -period 72h
-  sops.secrets."nomad" = {
-    restartUnits = [
-      "nomad.service"
-    ];
-  };
-
   systemd.services.nomad = {
-    serviceConfig.EnvironmentFile = config.sops.secrets."nomad".path;
+    serviceConfig.EnvironmentFile = config.sops.secrets."nomad_env".path;
   };
 
-  services.consul = {
-    enable = true;
-    webUi = true;
-    interface = {
-      bind = config.services.tailscale.interfaceName;
-      advertise = config.services.tailscale.interfaceName;
-    };
-    extraConfig = {
-      server = true;
-      bootstrap_expect = 1;
-      client_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }} {{ GetAllInterfaces | include "flags" "loopback" | join "address" " " }}'';
-    };
-  };
-
+  #-- Consul
   services.consul-template.instances = {
     "nginx" = {
       settings = {
         template = [
           {
             contents = lib.fileContents ./nginx.ctmpl;
-            destination = nginx_consul;
+            destination = nginx_consul_config;
             exec = [
               {
                 command = ["systemctl" "kill" "-s" "SIGHUP" "nginx.service"];
@@ -109,11 +109,49 @@ in {
     };
   };
 
-  services.nginx.appendHttpConfig = ''
-    include ${nginx_consul};
-  '';
-
   systemd.services."nginx" = {
     after = ["consul-template-nginx.service"];
   };
+
+  #-- Nginx
+  services.nginx = {
+    enable = true;
+    recommendedTlsSettings = true;
+    recommendedOptimisation = true;
+    recommendedBrotliSettings = true;
+    recommendedGzipSettings = true;
+    recommendedProxySettings = true;
+  };
+
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "ayatsfer@gmail.com";
+    # defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
+    certs."wildcard.infra.ayats.org" = {
+      domain = "*.infra.ayats.org";
+      dnsProvider = "cloudflare";
+      credentialsFile = config.sops.secrets."letsencrypt_env".path;
+    };
+  };
+
+  services.nginx.appendHttpConfig = ''
+    include ${nginx_consul_config};
+  '';
+
+  users.users."nginx".extraGroups = ["acme"];
+
+  assertions = [
+    {
+      assertion = config.services.consul.enable;
+      message = "nomad requires consul";
+    }
+    {
+      assertion = config.services.tailscale.enable;
+      message = "nomad requires tailscale";
+    }
+    {
+      assertion = config.virtualisation.docker.enable;
+      message = "nomad requires docker";
+    }
+  ];
 }

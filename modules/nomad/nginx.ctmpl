@@ -11,9 +11,9 @@ server {
         listen 0.0.0.0:443 http2 ssl ;
         listen [::0]:443 http2 ssl ;
         server_name _ ;
-        ssl_certificate /var/lib/acme/wildcard.ayats.org/fullchain.pem;
-        ssl_certificate_key /var/lib/acme/wildcard.ayats.org/key.pem;
-        ssl_trusted_certificate /var/lib/acme/wildcard.ayats.org/chain.pem;
+        ssl_certificate /var/lib/acme/wildcard.infra.ayats.org/fullchain.pem;
+        ssl_certificate_key /var/lib/acme/wildcard.infra.ayats.org/key.pem;
+        ssl_trusted_certificate /var/lib/acme/wildcard.infra.ayats.org/chain.pem;
         location / {
                 return 503;
         }
@@ -62,9 +62,9 @@ server {
         listen 0.0.0.0:443 http2 ssl ;
         listen [::0]:443 http2 ssl ;
         server_name {{$domain}} ;
-        ssl_certificate /var/lib/acme/wildcard.ayats.org/fullchain.pem;
-        ssl_certificate_key /var/lib/acme/wildcard.ayats.org/key.pem;
-        ssl_trusted_certificate /var/lib/acme/wildcard.ayats.org/chain.pem;
+        ssl_certificate /var/lib/acme/wildcard.infra.ayats.org/fullchain.pem;
+        ssl_certificate_key /var/lib/acme/wildcard.infra.ayats.org/key.pem;
+        ssl_trusted_certificate /var/lib/acme/wildcard.infra.ayats.org/chain.pem;
         location / {
                 proxy_pass http://{{.Address}}:{{.Port}};
                 proxy_set_header        Host $host;

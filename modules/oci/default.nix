@@ -101,12 +101,16 @@
     enable = true;
     networks.default = {
       matchConfig.Name = "en*";
-      networkConfig.DHCP = "yes";
+      DHCP = "yes";
+      dhcpV4Config = {
+        UseHostname = true;
+      };
     };
   };
   networking = {
     useNetworkd = false;
     useDHCP = false;
+    domain = "cluster.local";
   };
 
   services.qemuGuest.enable = true;

@@ -64,6 +64,7 @@
               oci-cli
               shellcheck
               age
+              just
 
               perlPackages.perl
               perlPackages.AppCmd

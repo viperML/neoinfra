@@ -4,28 +4,42 @@ keys:
   - &ayats_gen6 age14u2cyhdlpf6zuvew6aq0k2y5rsvzzsgvs39p8n0dqftktmm73d2shzktn8
 
 creation_rules:
+  #-- Services
+  - path_regex: secrets(/|\\)env.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+
   - path_regex: secrets(/|\\).*vault.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       - *vishnu
 
-  - path_regex: secrets(/|\\)env.yaml$
-    key_groups:
-    - age:
-      - *ayats_gen6
-
-  - path_regex: secrets(/|\\).*shiva.*\.yaml$
-    key_groups:
-    - age:
-      - *ayats_gen6
-      - *shiva
-
   - path_regex: secrets(/|\\).*tailscale.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6
       - *vishnu
+      - *shiva
+
+  - path_regex: secrets(/|\\).*nomad.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *shiva
+
+  - path_regex: secrets(/|\\).*lets.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *shiva
+
+  #-- Hosts
+  - path_regex: secrets(/|\\).*shiva.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
       - *shiva
 
   - path_regex: secrets(/|\\).*vishnu.*\.yaml$
