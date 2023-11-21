@@ -60,4 +60,31 @@
       8200
     ];
   };
+
+  environment.etc."consul.d/vault.json".source = pkgs.writers.writeJSON "vault.json" {
+    service = {
+      id = "vault";
+      name = "vault";
+      meta = {};
+      tags = [];
+      port = 8200;
+      # enable_tag_override = false;
+      checks = [
+        {
+          http = "http://localhost:8200/v1/sys/health";
+          id = "port";
+          interval = "10s";
+          name = "vault running on port 8200";
+          timeout = "1s";
+        }
+      ];
+    };
+  };
+
+  assertions = [
+    {
+      assertion = config.services.consul.enable;
+      description = "vault requies consul to register the service";
+    }
+  ];
 }

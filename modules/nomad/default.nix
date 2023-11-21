@@ -64,7 +64,7 @@ in {
 
       vault = {
         enabled = true;
-        address = "http://vishnu:8200";
+        address = "http://vault.service.consul:8200";
         create_from_role = "nomad-cluster";
         task_token_ttl = "1h";
       };
