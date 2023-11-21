@@ -39,10 +39,12 @@ in {
     enable = true;
     dropPrivileges = false;
     enableDocker = true;
-    extraPackages = [
-      config.nix.package
-      pkgs.git
-    ];
+    extraPackages =
+      [
+        config.nix.package
+        pkgs.git
+      ]
+      ++ pkgs.stdenv.initiaPath;
     settings = {
       bind_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }}'';
 
@@ -71,7 +73,7 @@ in {
 
       plugin = [
         {raw_exec = [{config = [{enabled = true;}];}];}
-        # {docker = [{config = [{volumes = [{enabled = true;}];}];}];}
+        {docker = [{config = [{volumes = [{enabled = true;}];}];}];}
       ];
 
       consul = {

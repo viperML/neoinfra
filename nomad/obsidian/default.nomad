@@ -12,7 +12,20 @@ job "obsidian" {
       port = "db"
       tags = ["public"]
       meta {
-        domain = "obsidian.ayats.org"
+        domain = "obsidian.infra.ayats.org"
+      }
+    }
+
+    task "prepare" {
+      lifecycle {
+        hook    = "prestart"
+        sidecar = false
+      }
+
+      driver = "raw_exec"
+      config {
+        command = "/bin/sh"
+        args    = ["-c", "printenv; mkdir -pv /var/lib/obsidian"]
       }
     }
 
@@ -23,12 +36,16 @@ job "obsidian" {
         image = "docker.io/library/couchdb:3"
         ports = ["db"]
         volumes = [
-          "local/config.ini:/opt/couchdb/etc/local.d/config.ini"
+          "local/config.ini:/opt/couchdb/etc/local.d/config.ini",
         ]
         mount {
-          type   = "volume"
-          target = "/opt/couchdb/data"
-          source = "obsidian"
+          type     = "bind"
+          source   = "/var/lib/obsidian"
+          target   = "/opt/couchdb/data"
+          readonly = false
+          bind_options = {
+            propagation = "rshared"
+          }
         }
       }
 

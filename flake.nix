@@ -65,6 +65,8 @@
               shellcheck
               age
               just
+              nomad
+              hclfmt
 
               perlPackages.perl
               perlPackages.AppCmd
