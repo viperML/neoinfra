@@ -1,5 +1,5 @@
 path "kv/*" {
-  capabilities = [ "list" ]
+  capabilities = ["list"]
 }
 
 path "kv/data/obsidian" {
