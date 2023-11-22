@@ -1,3 +1,9 @@
+variables {
+  state_mountpoint = "/state"
+  port             = "5984"
+}
+
+
 job "obsidian" {
   datacenters = ["dc1"]
 
@@ -8,7 +14,7 @@ job "obsidian" {
     }
 
     network {
-      port "db" { to = "5984" }
+      port "db" { to = var.port }
     }
 
     service {
@@ -25,7 +31,6 @@ job "obsidian" {
       read_only = true
     }
 
-
     task "build" {
       driver = "exec"
       env {
@@ -35,17 +40,12 @@ job "obsidian" {
       config {
         command = "/bin/sh"
         args = ["-c", <<-EOH
-            set -x
+            set -ex
             nix build \
               --out-link ${NOMAD_ALLOC_DIR}/result \
               --tarball-ttl 300 \
               --print-build-logs \
               nixpkgs#couchdb3^out
-
-              touch ${NOMAD_ALLOC_DIR}/couchdb.log
-              touch ${NOMAD_ALLOC_DIR}/.erlang.cookie
-              chmod 600 ${NOMAD_ALLOC_DIR}/.erlang.cookie
-              dd if=/dev/random bs=16 count=1 | base64 > ${NOMAD_ALLOC_DIR}/.erlang.cookie
           EOH
         ]
       }
@@ -68,20 +68,34 @@ job "obsidian" {
         attempts = 0
       }
       config {
-        image   = "busybox"
-        command = "${NOMAD_ALLOC_DIR}/result/bin/couchdb"
-        // command = "/bin/sh"
-        // args = ["-c", <<-EOH
-        //     set -x
-        //     env
-        //     cat ${NOMAD_ALLOC_DIR}/result/etc/default.ini ${NOMAD_TASK_DIR}/config.ini ${NOMAD_SECRETS_DIR}/admin.ini
-        //     ${NOMAD_ALLOC_DIR}/result/bin/couchdb
-        //   EOH
-        // ]
+        image = "busybox"
+        // command = "${NOMAD_ALLOC_DIR}/result/bin/couchdb"
+        command = "/bin/sh"
+        args = ["-c", <<-EOH
+            set -ex
+            touch ${NOMAD_ALLOC_DIR}/couchdb.log
+            touch ${var.state_mountpoint}/.erlang.cookie
+            chmod 600 ${var.state_mountpoint}/.erlang.cookie
+            dd if=/dev/random bs=16 count=1 | base64 > ${var.state_mountpoint}/.erlang.cookie
+
+            ${NOMAD_ALLOC_DIR}/result/bin/couchdb
+          EOH
+        ]
+        mount {
+          type   = "volume"
+          source = "nomad-obsidian"
+          target = var.state_mountpoint
+          volume_options {
+            labels {
+              backup = "obsidian"
+            }
+          }
+        }
       }
       env {
-        ERL_FLAGS = "-couch_ini ${NOMAD_ALLOC_DIR}/result/etc/default.ini ${NOMAD_TASK_DIR}/config.ini ${NOMAD_TASK_DIR}/nomad.ini ${NOMAD_SECRETS_DIR}/admin.ini"
-        HOME      = "${NOMAD_ALLOC_DIR}"
+        ERL_FLAGS  = "-couch_ini ${NOMAD_ALLOC_DIR}/result/etc/default.ini ${NOMAD_TASK_DIR}/config.ini ${NOMAD_TASK_DIR}/nomad.ini ${NOMAD_SECRETS_DIR}/admin.ini"
+        HOME       = "${NOMAD_TASK_DIR}"
+        NIX_REMOTE = "daemon"
       }
       volume_mount {
         volume      = "nix"
@@ -119,9 +133,11 @@ job "obsidian" {
         destination = "local/nomad.ini"
         data        = <<-EOH
           [couchdb]
-          database_dir={{ env "NOMAD_ALLOC_DIR" }}
+          database_dir=${var.state_mountpoint}
+          view_index_dir=${var.state_mountpoint}
           uri_file={{ env "NOMAD_ALLOC_DIR" }}/couchdb.uri
-          view_index_dir={{ env "NOMAD_ALLOC_DIR" }}
+          [chttpd]
+          port = ${var.port}
           [log]
           file={{ env "NOMAD_ALLOC_DIR" }}/couchdb.log
         EOH
