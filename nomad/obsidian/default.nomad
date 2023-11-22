@@ -14,11 +14,11 @@ job "obsidian" {
     }
 
     network {
-      port "db" { to = var.port }
+      port "http" {}
     }
 
     service {
-      port = "db"
+      port = "http"
       tags = ["public"]
       meta {
         domain = "obsidian.infra.ayats.org"
@@ -69,6 +69,7 @@ job "obsidian" {
       }
       config {
         image = "busybox"
+        ports = ["http"]
         // command = "${NOMAD_ALLOC_DIR}/result/bin/couchdb"
         command = "/bin/sh"
         args = ["-c", <<-EOH
@@ -137,7 +138,8 @@ job "obsidian" {
           view_index_dir=${var.state_mountpoint}
           uri_file={{ env "NOMAD_ALLOC_DIR" }}/couchdb.uri
           [chttpd]
-          port = ${var.port}
+          bind_address = 0.0.0.0
+          port={{ env "NOMAD_PORT_http" }}
           [log]
           file={{ env "NOMAD_ALLOC_DIR" }}/couchdb.log
         EOH

@@ -13,12 +13,24 @@ in {
       443
     ];
 
-    interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
-      # Nomad
-      4646
-      4647
-      4648
-    ];
+    interfaces.${config.services.tailscale.interfaceName} = {
+      allowedTCPPorts = [
+        # Nomad
+        4646
+        4647
+        4648
+        # Vault
+        8200
+      ];
+
+      allowedTCPPortRanges = [
+        # https://developer.hashicorp.com/nomad/docs/job-specification/network#dynamic-ports
+        {
+          from = 20000;
+          to = 32000;
+        }
+      ];
+    };
   };
 
   #-- Secrets
@@ -44,7 +56,7 @@ in {
         config.nix.package
         pkgs.git
       ]
-      ++ pkgs.stdenv.initiaPath;
+      ++ pkgs.stdenv.initialPath;
     settings = {
       bind_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }}'';
 
@@ -62,6 +74,7 @@ in {
             read_only = true;
           };
         };
+        network_interface = config.services.tailscale.interfaceName;
       };
 
       vault = {
