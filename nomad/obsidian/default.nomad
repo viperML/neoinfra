@@ -199,7 +199,7 @@ job "obsidian" {
         data        = <<-EOF
           {{ with secret "kv/data/obsidian" }}
           [admins]
-          {{ .Data.data.COUCHDB_USER }} = "{{ .Data.data.COUCHDB_PASSWORD }}"
+          {{ .Data.data.COUCHDB_USER }}={{ .Data.data.COUCHDB_PASSWORD }}
           {{ end }}
         EOF
       }
