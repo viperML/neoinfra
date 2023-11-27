@@ -1,6 +1,5 @@
 variables {
   state_mountpoint = "/state"
-  port             = "5984"
 }
 
 

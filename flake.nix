@@ -11,11 +11,7 @@
       ];
 
       imports = [
-        # ./packages
-        # ./terraform
-        # ./packer
         ./modules
-        # ./kubernetes
       ];
 
       perSystem = {
