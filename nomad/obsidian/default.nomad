@@ -40,11 +40,23 @@ job "obsidian" {
         command = "/bin/sh"
         args = ["-c", <<-EOH
             set -ex
-            nix build \
-              --out-link ${NOMAD_ALLOC_DIR}/result \
+            nix profile install \
+              --profile ${NOMAD_ALLOC_DIR}/profile \
               --tarball-ttl 300 \
               --print-build-logs \
               nixpkgs#couchdb3^out
+
+            nix profile install \
+              --profile ${NOMAD_ALLOC_DIR}/profile \
+              --tarball-ttl 300 \
+              --print-build-logs \
+              nixpkgs#rustic-rs^out
+
+            nix profile install \
+              --profile ${NOMAD_ALLOC_DIR}/profile \
+              --tarball-ttl 300 \
+              --print-build-logs \
+              nixpkgs#rclone^out
           EOH
         ]
       }
@@ -67,18 +79,26 @@ job "obsidian" {
         attempts = 0
       }
       config {
-        image = "busybox"
+        image = "debian"
         ports = ["http"]
         // command = "${NOMAD_ALLOC_DIR}/result/bin/couchdb"
-        command = "/bin/sh"
+        command = "/bin/bash"
         args = ["-c", <<-EOH
             set -ex
+            export PATH="${NOMAD_ALLOC_DIR}/profile/bin:$(printenv PATH)"
+
+            if [[ ! -f ${var.state_mountpoint}/.erlang.cookie ]]; then
+              rclone ls obsidian:obsidian -vv
+              rustic restore latest ${var.state_mountpoint}
+            fi
+
             touch ${NOMAD_ALLOC_DIR}/couchdb.log
+            touch ${var.state_mountpoint}/local.ini
             touch ${var.state_mountpoint}/.erlang.cookie
             chmod 600 ${var.state_mountpoint}/.erlang.cookie
             dd if=/dev/random bs=16 count=1 | base64 > ${var.state_mountpoint}/.erlang.cookie
 
-            ${NOMAD_ALLOC_DIR}/result/bin/couchdb
+            couchdb
           EOH
         ]
         mount {
@@ -91,11 +111,17 @@ job "obsidian" {
             }
           }
         }
+        volumes = [
+          "/etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt"
+        ]
       }
       env {
-        ERL_FLAGS  = "-couch_ini ${NOMAD_ALLOC_DIR}/result/etc/default.ini ${NOMAD_TASK_DIR}/config.ini ${NOMAD_TASK_DIR}/nomad.ini ${NOMAD_SECRETS_DIR}/admin.ini"
-        HOME       = "${NOMAD_TASK_DIR}"
-        NIX_REMOTE = "daemon"
+        ERL_FLAGS         = "-couch_ini ${NOMAD_ALLOC_DIR}/profile/etc/default.ini ${NOMAD_TASK_DIR}/config.ini ${NOMAD_TASK_DIR}/nomad.ini ${NOMAD_SECRETS_DIR}/admin.ini ${var.state_mountpoint}/local.ini"
+        HOME              = "${NOMAD_TASK_DIR}"
+        NIX_REMOTE        = "daemon"
+        RCLONE_CONFIG     = "${NOMAD_TASK_DIR}/rclone.conf"
+        RUSTIC_REPOSITORY = "rclone:obsidian:obsidian"
+        SSL_CERT_FILE     = "/etc/ssl/certs/ca-bundle.crt"
       }
       volume_mount {
         volume      = "nix"
@@ -143,6 +169,27 @@ job "obsidian" {
           file={{ env "NOMAD_ALLOC_DIR" }}/couchdb.log
         EOH
       }
+      template {
+        destination = "local/rclone.conf"
+        data        = <<-EOF
+          [obsidian]
+          type = s3
+          provider = Cloudflare
+          env_auth = true
+          acl = private
+          no_check_bucket = true
+        EOF
+      }
+      template {
+        destination = "local/rustic.toml"
+        data        = <<-EOF
+          [forget]
+          keep-daily = 14
+          keep-weekly = 5
+          [[backup.sources]]
+          source = "${var.state_mountpoint}"
+        EOF
+      }
       vault {
         policies = ["nomad-obsidian"]
       }
@@ -153,6 +200,19 @@ job "obsidian" {
           {{ with secret "kv/data/obsidian" }}
           [admins]
           {{ .Data.data.COUCHDB_USER }} = "{{ .Data.data.COUCHDB_PASSWORD }}"
+          {{ end }}
+        EOF
+      }
+      template {
+        destination = "${NOMAD_SECRETS_DIR}/env"
+        env         = true
+        data        = <<-EOF
+          {{ with secret "kv/data/obsidian" }}
+          AWS_ACCESS_KEY_ID={{ .Data.data.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY={{ .Data.data.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION={{ .Data.data.AWS_DEFAULT_REGION }}
+          RCLONE_S3_ENDPOINT={{ .Data.data.RCLONE_S3_ENDPOINT }}
+          RUSTIC_PASSWORD={{ .Data.data.RUSTIC_PASSWORD }}
           {{ end }}
         EOF
       }
