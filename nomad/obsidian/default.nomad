@@ -75,13 +75,14 @@ job "obsidian" {
 
     task "run" {
       driver = "docker"
-      restart {
-        attempts = 0
+      resources {
+        memory = 500
       }
       config {
         image = "debian"
         ports = ["http"]
         // command = "${NOMAD_ALLOC_DIR}/result/bin/couchdb"
+        memory_hard_limit = 3000
         command = "/bin/bash"
         args = ["-c", <<-EOH
             set -ex

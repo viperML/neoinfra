@@ -1,32 +1,38 @@
-{config, ...}: {
+{
+  config,
+  lib,
+  ...
+}: let
+  keyNames = [
+    "ssh_host_rsa_key"
+    "ssh_host_ed25519_key"
+    "ssh_host_ecdsa_key"
+  ];
+  prefix = "/var/lib/tailscale/ssh";
+in {
   services.tailscale.enable = true;
   networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
   networking.firewall.checkReversePath = "loose";
-  services.openssh.openFirewall = false;
 
-  # FIXME key expires
-  # sops.secrets."tailscale_auth_key" = {
-  #   sopsFile = ../secrets/tailscale.yaml;
-  # };
-  # # https://tailscale.com/blog/nixos-minecraft/
-  # systemd.services.tailscale-autoconnect = {
-  #   description = "Automatic connection to Tailscale";
-  #   after = ["network-pre.target" "tailscale.service"];
-  #   wants = ["network-pre.target" "tailscale.service"];
-  #   wantedBy = ["multi-user.target"];
-  #   serviceConfig.Type = "oneshot";
-  #   script = with pkgs; ''
-  #     # wait for tailscaled to settle
-  #     sleep 2
+  services.openssh = {
+    openFirewall = false;
+    extraConfig = lib.mkOrder 0 ''
+      ${lib.concatMapStringsSep "\n" (k: "HostKey ${prefix}/${k}") keyNames}
+    '';
+  };
 
-  #     # check if we are already authenticated to tailscale
-  #     status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
-  #     if [ $status = "Running" ]; then # if so, then do nothing
-  #       exit 0
-  #     fi
+  systemd.paths = lib.mapAttrs' (name: value: lib.nameValuePair "tailscale-${name}" value) (lib.genAttrs keyNames (key: {
+    wantedBy = ["paths.target"];
+    pathConfig = {
+      Unit = "sshd-restart-tailscale.service";
+      PathModified = "${prefix}/${key}";
+    };
+  }));
 
-  #     # otherwise authenticate with tailscale
-  #     ${tailscale}/bin/tailscale up --ssh -authkey file:${config.sops.secrets."tailscale_auth_key".path}
-  #   '';
-  # };
+  systemd.services."sshd-restart-tailscale" = {
+    serviceConfig.Type = "oneshot";
+    script = ''
+      systemctl try-restart sshd.service
+    '';
+  };
 }

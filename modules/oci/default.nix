@@ -64,6 +64,10 @@
       "rd.iscsi.param=node.session.timeo.replacement_timeout=6000"
       "rd.net.timeout.carrier=5"
       "rd.net.timeout.dhcp=10"
+
+      "systemd.unified_cgroup_hierarchy=1"
+      "cgroup_enable=memory"
+      "swapaccount=1"
     ];
     kernelModules = ["kvm-amd"];
     initrd = {
