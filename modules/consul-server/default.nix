@@ -14,6 +14,7 @@
       server = true;
       bootstrap_expect = 2;
       client_addr = ''{{ GetInterfaceIP "${config.services.tailscale.interfaceName}" }} {{ GetAllInterfaces | include "flags" "loopback" | join "address" " " }}'';
+      enable_script_checks = true;
     };
   };
 

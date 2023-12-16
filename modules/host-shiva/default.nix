@@ -21,6 +21,8 @@
     {services.consul.webUi = true;}
     ../nomad
     ../docker
+
+    ../obsidian
   ];
 
   # was broken
@@ -48,4 +50,6 @@
   };
 
   networking.hostName = "shiva";
+
+  boot.enableContainers = true;
 }
