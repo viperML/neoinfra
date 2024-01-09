@@ -127,6 +127,14 @@ resource "cloudflare_record" "record-infra" {
   value   = oci_core_instance.shiva.public_ip
 }
 
+resource "cloudflare_record" "record-matrix" {
+  zone_id = var.cloudflare_zone_id
+  name    = "matrix"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}
+
 
 # vishnu
 

@@ -28,7 +28,13 @@ creation_rules:
       - *ayats_gen6
       - *shiva
 
-  - path_regex: secrets(/|\\)obsidian.yaml$
+  - path_regex: secrets(/|\\)obsidian\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *shiva
+
+  - path_regex: secrets(/|\\)matrix.*\.yaml$
     key_groups:
     - age:
       - *ayats_gen6

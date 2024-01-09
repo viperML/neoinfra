@@ -23,6 +23,8 @@
     ../docker
 
     ../obsidian
+
+    ../matrix
   ];
 
   # was broken
