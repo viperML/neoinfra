@@ -25,6 +25,7 @@
     ../obsidian
 
     ../matrix
+    ../postgres
   ];
 
   # was broken

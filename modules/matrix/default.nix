@@ -6,7 +6,58 @@
   ...
 }: let
   virtualHost = "matrix.ayats.org";
+  writeTOML = (pkgs.formats.toml {}).generate;
   synapsePort = 8008;
+  mkSynapseRestic = {
+    systemdArgs,
+    extraScript,
+  }:
+    lib.mkMerge [
+      {
+        serviceConfig = {
+          EnvironmentFile = config.sops.secrets.matrix-backup-env.path;
+          Type = "oneshot";
+          PrivateTmp = true;
+          User = "matrix-synapse";
+          Group = "matrix-synapse";
+        };
+        environment = {
+          RCLONE_CONFIG = pkgs.writeText "rclone.conf" ''
+            [matrix]
+            type = s3
+            provider = Cloudflare
+            env_auth = true
+            acl = private
+            no_check_bucket = true
+          '';
+        };
+        path = with pkgs; [
+          rclone
+          rustic-rs
+        ];
+        script = ''
+          # rustic reads the config from $HOME/rustic.toml
+          set -xu pipefail
+
+          export HOME=/tmp
+          cd $HOME
+          ln -vsfT ${writeTOML "rustic.toml" {
+            forget = {
+              keep-monthly = 1;
+            };
+            # backup.sources = [
+            #   {
+            #     source = "/var/lib/matrix-synapse";
+            #   }
+            # ];
+          }} ./rustic.toml
+          cat ./rustic.toml
+
+          ${extraScript}
+        '';
+      }
+      systemdArgs
+    ];
 in {
   sops.secrets.matrix-synapse-config = {
     sopsFile = ../../secrets/matrix.yaml;
@@ -14,10 +65,11 @@ in {
     group = config.systemd.services.matrix-synapse.serviceConfig.Group;
   };
 
+  sops.secrets.matrix-backup-env = {
+    sopsFile = ../../secrets/matrix.yaml;
+  };
+
   services.postgresql = {
-    enable = true;
-    # package = pkgs.postgresql_14; # 15 requires some public schema access not supported by module (ownership works...)
-    settings.listen_addresses = lib.mkForce "";
     ensureUsers = [
       {
         name = "matrix-synapse";
@@ -26,10 +78,6 @@ in {
     ];
     ensureDatabases = [
       "matrix-synapse"
-    ];
-    initdbArgs = [
-      "--locale=C"
-      "--encoding=UTF8"
     ];
   };
 
@@ -46,7 +94,7 @@ in {
       enable_metrics = true;
       listeners = [
         {
-          port = 8008;
+          port = synapsePort;
           bind_addresses = ["::1"];
           type = "http";
           tls = false;
@@ -58,13 +106,13 @@ in {
             }
           ];
         }
-        {
-          port = 9008;
-          resources = [];
-          tls = false;
-          bind_addresses = ["127.0.0.1"];
-          type = "metrics";
-        }
+        # {
+        #   port = 9008;
+        #   resources = [];
+        #   tls = false;
+        #   bind_addresses = ["127.0.0.1"];
+        #   type = "metrics";
+        # }
       ];
 
       # we'll trust matrix.org implicitly
@@ -96,8 +144,8 @@ in {
         "/".extraConfig = ''
           return 404;
         '';
-        "/_matrix".proxyPass = "http://[::1]:8008";
-        "/_synapse/client".proxyPass = "http://[::1]:8008";
+        "/_matrix".proxyPass = "http://[::1]:${toString synapsePort}";
+        "/_synapse/client".proxyPass = "http://[::1]:${toString synapsePort}";
 
         "= /.well-known/matrix/server".extraConfig = mkWellKnown {"m.server" = "${virtualHost}:443";};
         "= /.well-known/matrix/client".extraConfig = mkWellKnown {"m.homeserver".base_url = "https:://${virtualHost}";};
@@ -105,8 +153,66 @@ in {
     };
   };
 
-  # neoinfra.consul-service.matrix-synapse = {
-  #   domain = virtualHost;
-  #   port = synapsePort;
-  # };
+  systemd.services = {
+    matrix-synapse-backup = mkSynapseRestic {
+      extraScript = ''
+        export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-data"
+        set +e
+        rustic init || :
+        set -e
+        rustic backup /var/lib/matrix-synapse
+
+        export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-db"
+        set +e
+        rustic init || :
+        set -e
+        pg_dump --format=custom --compress=0 --clean matrix-synapse | rustic backup --stdin-filename matrix-synapse.dump -
+      '';
+      systemdArgs = {
+        path = [
+          config.services.postgresql.package
+        ];
+        startAt = "*-*-* 03:00:00";
+      };
+    };
+
+    matrix-synapse-restore = mkSynapseRestic {
+      extraScript = ''
+        if [[ ! -f /var/lib/matrix-synapse/homeserver.signing.key ]]; then
+          export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-data"
+          rustic restore latest:/var/lib/matrix-synapse /var/lib/matrix-synapse
+
+          export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-db"
+          rustic dump latest:matrix-synapse.dump | pg_restore --clean --if-exists -d matrix-synapse -e
+        fi
+      '';
+      systemdArgs = {
+        path = [
+          config.services.postgresql.package
+        ];
+        requiredBy = ["matrix-synapse.service"];
+        before = ["matrix-synapse.service"];
+      };
+    };
+  };
+
+  systemd.timers."matrix-synapse-backup" = {
+    timerConfig.Persistent = true;
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/matrix-synapse 0700 matrix-synapse matrix-synapse - -"
+    "z /var/lib/matrix-synapse 0700 matrix-synapse matrix-synapse - -"
+  ];
+
+  assertions = [
+    {
+      assertion = config.services.postgresql.enable;
+      message = "matrix needs postgres";
+    }
+    {
+      assertion = config.services.nginx.enable;
+      message = "matrix needs nginx";
+    }
+  ];
 }
