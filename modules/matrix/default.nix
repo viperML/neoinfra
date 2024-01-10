@@ -8,6 +8,8 @@
   virtualHost = "matrix.ayats.org";
   writeTOML = (pkgs.formats.toml {}).generate;
   synapsePort = 8008;
+  slidingSyncPort = 8009;
+
   mkSynapseRestic = {
     systemdArgs,
     extraScript,
@@ -95,7 +97,6 @@ in {
       server_name = virtualHost;
       public_baseurl = "https://${virtualHost}/";
       web_client_location = "https://${virtualHost}/";
-      # serve_server_wellknown = true; # doesn't support matrix.zone
 
       database.name = "psycopg2";
       enable_metrics = true;
@@ -142,12 +143,13 @@ in {
       createDatabase = true;
       settings = {
         SYNCV3_SERVER = "https://${virtualHost}";
+        SYNCV3_BINDADDR =  "127.0.0.1:${toString slidingSyncPort}";
       };
     };
   };
 
   services.nginx.virtualHosts = {
-    "matrix.ayats.org" = {
+    ${virtualHost} = {
       useACMEHost = "wildcard.ayats.org";
       forceSSL = true;
       locations = let
@@ -160,17 +162,16 @@ in {
         "/".extraConfig = ''
           return 404;
         '';
-        "/_matrix".proxyPass = "http://localhost:${toString synapsePort}";
-        "/_synapse/client".proxyPass = "http://localhost:${toString synapsePort}";
+        "~ ^(/_matrix|/_synapse/client)".proxyPass = "http://localhost:${toString synapsePort}";
 
         "= /.well-known/matrix/server".extraConfig = mkWellKnown {
           "m.server" = "${virtualHost}:443";
         };
         "= /.well-known/matrix/client".extraConfig = mkWellKnown {
           "m.homeserver".base_url = "https://${virtualHost}";
-          "org.matrix.msc3575.proxy".url = "https://matrix.ayats.org";
+          "org.matrix.msc3575.proxy".url = "https://${virtualHost}";
         };
-        "~ ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)".proxyPass = "http://localhost:8009";
+        "~ ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)".proxyPass = "http://localhost:${toString slidingSyncPort}";
       };
     };
   };
@@ -220,12 +221,6 @@ in {
     "d /var/lib/matrix-synapse 0700 matrix-synapse matrix-synapse - -"
     "z /var/lib/matrix-synapse 0700 matrix-synapse matrix-synapse - -"
   ];
-
-  users.groups.matrix-sliding-sync = {};
-  users.users.matrix-sliding-sync = {
-    isSystemUser = true;
-    group = "matrix-sliding-sync";
-  };
 
   assertions = [
     {
