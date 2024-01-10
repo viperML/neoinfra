@@ -160,8 +160,9 @@ in {
         '';
       in {
         "/".extraConfig = ''
-          return 404;
+          return 301 https://ayats.org;
         '';
+
         "~ ^(/_matrix|/_synapse/client)".proxyPass = "http://localhost:${toString synapsePort}";
 
         "= /.well-known/matrix/server".extraConfig = mkWellKnown {
