@@ -31,9 +31,10 @@
             no_check_bucket = true
           '';
         };
-        path = with pkgs; [
-          rclone
-          rustic-rs
+        path = [
+          pkgs.rclone
+          pkgs.rustic-rs
+          config.services.postgresql.package
         ];
         script = ''
           # rustic reads the config from $HOME/rustic.toml
@@ -169,9 +170,6 @@ in {
         pg_dump --format=custom --compress=0 --clean matrix-synapse | rustic backup --stdin-filename matrix-synapse.dump -
       '';
       systemdArgs = {
-        path = [
-          config.services.postgresql.package
-        ];
         startAt = "*-*-* 03:00:00";
       };
     };
@@ -187,9 +185,6 @@ in {
         fi
       '';
       systemdArgs = {
-        path = [
-          config.services.postgresql.package
-        ];
         requiredBy = ["matrix-synapse.service"];
         before = ["matrix-synapse.service"];
       };
