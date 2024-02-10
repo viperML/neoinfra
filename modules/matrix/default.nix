@@ -62,6 +62,10 @@
       systemdArgs
     ];
 in {
+  imports = [
+    ../irc-bridge
+  ];
+
   sops.secrets.matrix-synapse-config = {
     sopsFile = ../../secrets/matrix.yaml;
     owner = config.systemd.services.matrix-synapse.serviceConfig.User;
