@@ -63,7 +63,7 @@
     ];
 in {
   imports = [
-    ../irc-bridge
+    ../matrix-bridge-irc
   ];
 
   sops.secrets.matrix-synapse-config = {
