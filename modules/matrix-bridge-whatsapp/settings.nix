@@ -13,12 +13,13 @@
       ping_interval_seconds = 0;
     };
     appservice = {
+      # hardcoded in secrets/matrix.yaml
       address = "http://localhost:29318";
       hostname = "0.0.0.0";
       port = 29318;
       database = {
         type = "postgres";
-        uri = "postgresql:///mautrix_whatsapp?host=/run/postgresql";
+        uri = "postgresql:///mautrix-whatsapp?host=/run/postgresql";
         max_open_conns = 20;
         max_idle_conns = 2;
         max_conn_idle_time = null;
@@ -32,6 +33,7 @@
       };
       ephemeral_events = true;
       async_transactions = false;
+      # secret
       as_token = "";
       hs_token = "";
     };
@@ -110,11 +112,11 @@
       send_presence_on_typing = false;
       force_active_delivery_receipts = false;
       double_puppet_server_map = {
-        "example.com" = "https://example.com";
+        "matrix.ayats.org" = "https://matrix.ayats.org";
       };
       double_puppet_allow_discovery = false;
       login_shared_secret_map = {
-        "example.com" = "foobar";
+        # secret
       };
       private_chat_portal_meta = "default";
       parallel_member_sync = false;
@@ -133,7 +135,7 @@
       federate_rooms = true;
       disable_bridge_alerts = false;
       crash_on_stream_replaced = false;
-      url_previews = false;
+      url_previews = true;
       caption_in_message = false;
       beeper_galleries = false;
       extev_polls = false;
@@ -188,8 +190,8 @@
       };
       permissions = {
         "*" = "relay";
-        "example.com" = "user";
-        "@admin:example.com" = "admin";
+        "matrix.ayats.org" = "user";
+        "@viperml:matrix.ayats.org" = "admin";
       };
       relay = {
         enabled = false;
