@@ -53,7 +53,7 @@
     bridge = {
       username_template = "whatsapp_{{.}}";
       displayname_template = "{{or .BusinessName .PushName .JID}} (WA)";
-      personal_filtering_spaces = false;
+      personal_filtering_spaces = true; # use spaces for categories
       delivery_receipts = false;
       message_status_events = false;
       message_error_notices = true;
