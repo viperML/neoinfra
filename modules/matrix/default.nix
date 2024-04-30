@@ -172,8 +172,12 @@ in
           # "/".extraConfig = ''
           #   return 301 https://ayats.org;
           # '';
-          "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
+
+          # IMPORTANT: sliding-sync rules needs to be before synapse rules
+          # the precedence is based on alphabetical sorting, not the nix value sorting
+
           "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
+          "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
           "= /.well-known/matrix/server".extraConfig = mkWellKnown { "m.server" = "${virtualHost}:443"; };
           "= /.well-known/matrix/client".extraConfig = mkWellKnown {
             "m.homeserver".base_url = "https://${virtualHost}";
