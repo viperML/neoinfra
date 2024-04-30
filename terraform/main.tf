@@ -138,6 +138,7 @@ resource "cloudflare_record" "record-matrix" {
 
 # vishnu
 
+/*
 resource "oci_core_instance" "vishnu" {
   display_name        = "terraform-visnhu"
   availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
@@ -183,6 +184,7 @@ data "cloudinit_config" "visnhu" {
     })
   }
 }
+*/
 
 # resource "oci_identity_dynamic_group" "vault_dynamic_group" {
 #   compartment_id = var.compartment_id
