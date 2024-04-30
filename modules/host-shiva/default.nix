@@ -16,9 +16,7 @@
     #-- Services
     ../direnv.nix
     ../login-ayats.nix
-    ../consul-server
-    {services.consul.webUi = true;}
-    ../nomad
+    ./nginx.nix
     ../docker
 
     # ../obsidian

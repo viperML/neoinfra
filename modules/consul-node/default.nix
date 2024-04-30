@@ -11,7 +11,7 @@
     ;
 in {
   options.neoinfra = {
-    consul-service = mkOption {
+    consul-services = mkOption {
       default = {};
       type = types.attrsOf (types.submodule ({
         config,
@@ -65,7 +65,7 @@ in {
           8302
           8300
         ]
-        ++ (lib.pipe config.neoinfra.consul-service [
+        ++ (lib.pipe config.neoinfra.consul-services [
           lib.attrsToList
           (map (x: x.value.port))
         ]);
@@ -114,7 +114,7 @@ in {
           }} http://localhost:8500/v1/agent/service/register
         '';
       })
-    config.neoinfra.consul-service;
+    config.neoinfra.consul-services;
 
     assertions = [
       {

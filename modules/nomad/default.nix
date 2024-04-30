@@ -8,11 +8,6 @@
 in {
   #-- Firewall
   networking.firewall = {
-    allowedTCPPorts = [
-      80
-      443
-    ];
-
     interfaces.${config.services.tailscale.interfaceName} = {
       allowedTCPPorts = [
         # Nomad
@@ -40,9 +35,6 @@ in {
         "nomad.service"
       ];
       sopsFile = ../../secrets/nomad.yaml;
-    };
-    "letsencrypt_env" = {
-      sopsFile = ../../secrets/letsencrypt.yaml;
     };
   };
 
@@ -129,36 +121,9 @@ in {
   };
 
   #-- Nginx
-  services.nginx = {
-    enable = true;
-    recommendedTlsSettings = true;
-    recommendedOptimisation = true;
-    recommendedBrotliSettings = true;
-    recommendedGzipSettings = true;
-    recommendedProxySettings = true;
-  };
-
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "ayatsfer@gmail.com";
-    # defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
-    certs."wildcard.ayats.org" = {
-      domain = "*.ayats.org";
-      dnsProvider = "cloudflare";
-      credentialsFile = config.sops.secrets."letsencrypt_env".path;
-    };
-    certs."wildcard.infra.ayats.org" = {
-      domain = "*.infra.ayats.org";
-      dnsProvider = "cloudflare";
-      credentialsFile = config.sops.secrets."letsencrypt_env".path;
-    };
-  };
-
   services.nginx.appendHttpConfig = ''
     include ${nginx_consul_config};
   '';
-
-  users.users."nginx".extraGroups = ["acme"];
 
   assertions = [
     {
