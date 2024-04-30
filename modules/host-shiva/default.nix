@@ -21,7 +21,7 @@
     ../nomad
     ../docker
 
-    ../obsidian
+    # ../obsidian
 
     ../matrix
     ../postgres
