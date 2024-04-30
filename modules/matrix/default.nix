@@ -4,16 +4,15 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   virtualHost = "matrix.ayats.org";
-  writeTOML = (pkgs.formats.toml {}).generate;
+  writeTOML = (pkgs.formats.toml { }).generate;
   synapsePort = 8008;
   slidingSyncPort = 8009;
 
-  mkSynapseRestic = {
-    systemdArgs,
-    extraScript,
-  }:
+  mkSynapseRestic =
+    { systemdArgs, extraScript }:
     lib.mkMerge [
       {
         serviceConfig = {
@@ -44,16 +43,18 @@
 
           export HOME=/tmp
           cd $HOME
-          ln -vsfT ${writeTOML "rustic.toml" {
-            forget = {
-              keep-monthly = 1;
-            };
-            # backup.sources = [
-            #   {
-            #     source = "/var/lib/matrix-synapse";
-            #   }
-            # ];
-          }} ./rustic.toml
+          ln -vsfT ${
+            writeTOML "rustic.toml" {
+              forget = {
+                keep-monthly = 1;
+              };
+              # backup.sources = [
+              #   {
+              #     source = "/var/lib/matrix-synapse";
+              #   }
+              # ];
+            }
+          } ./rustic.toml
           cat ./rustic.toml
 
           ${extraScript}
@@ -61,7 +62,8 @@
       }
       systemdArgs
     ];
-in {
+in
+{
   imports = [
     ../matrix-bridge-irc
     ../matrix-bridge-whatsapp
@@ -79,8 +81,8 @@ in {
 
   sops.secrets.matrix-sliding-sync-env = {
     sopsFile = ../../secrets/matrix.yaml;
-    owner = "matrix-sliding-sync";
-    group = "matrix-sliding-sync";
+    # owner = "matrix-sliding-sync";
+    # group = "matrix-sliding-sync";
   };
 
   services.postgresql = {
@@ -90,9 +92,7 @@ in {
         ensureDBOwnership = true;
       }
     ];
-    ensureDatabases = [
-      "matrix-synapse"
-    ];
+    ensureDatabases = [ "matrix-synapse" ];
   };
 
   services.matrix-synapse = {
@@ -108,13 +108,16 @@ in {
       listeners = [
         {
           port = synapsePort;
-          bind_addresses = ["127.0.0.1"];
+          bind_addresses = [ "127.0.0.1" ];
           type = "http";
           tls = false;
           x_forwarded = true;
           resources = [
             {
-              names = ["client" "federation"];
+              names = [
+                "client"
+                "federation"
+              ];
               compress = true;
             }
           ];
@@ -138,18 +141,18 @@ in {
       expire_access_token = true;
     };
 
-    extras = ["oidc"];
+    extras = [ "oidc" ];
 
-    extraConfigFiles = [config.sops.secrets.matrix-synapse-config.path];
+    extraConfigFiles = [ config.sops.secrets.matrix-synapse-config.path ];
+  };
 
-    sliding-sync = {
-      enable = true;
-      environmentFile = config.sops.secrets.matrix-sliding-sync-env.path;
-      createDatabase = true;
-      settings = {
-        SYNCV3_SERVER = "https://${virtualHost}";
-        SYNCV3_BINDADDR =  "127.0.0.1:${toString slidingSyncPort}";
-      };
+  services.matrix-sliding-sync = {
+    enable = true;
+    environmentFile = config.sops.secrets.matrix-sliding-sync-env.path;
+    createDatabase = true;
+    settings = {
+      SYNCV3_SERVER = "https://${virtualHost}";
+      SYNCV3_BINDADDR = "127.0.0.1:${toString slidingSyncPort}";
     };
   };
 
@@ -157,28 +160,26 @@ in {
     ${virtualHost} = {
       useACMEHost = "wildcard.ayats.org";
       forceSSL = true;
-      locations = let
-        mkWellKnown = data: ''
-          default_type application/json;
-          add_header Access-Control-Allow-Origin *;
-          return 200 '${builtins.toJSON data}';
-        '';
-      in {
-        "/".extraConfig = ''
-          return 301 https://ayats.org;
-        '';
-
-        "~ ^(/_matrix|/_synapse/client)".proxyPass = "http://localhost:${toString synapsePort}";
-
-        "= /.well-known/matrix/server".extraConfig = mkWellKnown {
-          "m.server" = "${virtualHost}:443";
+      locations =
+        let
+          mkWellKnown = data: ''
+            default_type application/json;
+            add_header Access-Control-Allow-Origin *;
+            return 200 '${builtins.toJSON data}';
+          '';
+        in
+        {
+          # "/".extraConfig = ''
+          #   return 301 https://ayats.org;
+          # '';
+          "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
+          "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
+          "= /.well-known/matrix/server".extraConfig = mkWellKnown { "m.server" = "${virtualHost}:443"; };
+          "= /.well-known/matrix/client".extraConfig = mkWellKnown {
+            "m.homeserver".base_url = "https://${virtualHost}";
+            "org.matrix.msc3575.proxy".url = "https://${virtualHost}";
+          };
         };
-        "= /.well-known/matrix/client".extraConfig = mkWellKnown {
-          "m.homeserver".base_url = "https://${virtualHost}";
-          "org.matrix.msc3575.proxy".url = "https://${virtualHost}";
-        };
-        "~ ^/(client/|_matrix/client/unstable/org.matrix.msc3575/sync)".proxyPass = "http://localhost:${toString slidingSyncPort}";
-      };
     };
   };
 
@@ -213,8 +214,8 @@ in {
         fi
       '';
       systemdArgs = {
-        requiredBy = ["matrix-synapse.service"];
-        before = ["matrix-synapse.service"];
+        requiredBy = [ "matrix-synapse.service" ];
+        before = [ "matrix-synapse.service" ];
       };
     };
   };

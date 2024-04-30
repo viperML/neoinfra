@@ -27,6 +27,8 @@
             config.allowUnfreePredicate = pkg:
               builtins.elem (lib.getName pkg) [
                 "terraform"
+                "consul"
+                "nomad"
               ];
           };
         };
@@ -81,7 +83,7 @@
     });
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -97,7 +99,6 @@
     nh = {
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
     };
     disko = {
       url = "github:nix-community/disko";

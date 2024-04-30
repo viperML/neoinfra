@@ -12,7 +12,6 @@
     ../tailscale.nix
 
     inputs.nix-common.nixosModules.default
-    inputs.nh.nixosModules.default
 
     #-- Services
     ../direnv.nix
@@ -47,7 +46,7 @@
   sops.gnupg.sshKeyPaths = [];
   sops.defaultSopsFile = ../../secrets/shiva.yaml;
 
-  nh = {
+  programs.nh = {
     enable = true;
     clean.enable = true;
   };
