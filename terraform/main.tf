@@ -209,3 +209,60 @@ data "cloudinit_config" "visnhu" {
 #   ]
 # }
 
+
+# mail
+
+resource "cloudflare_record" "record-mail-a" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+}
+
+resource "cloudflare_record" "record-mail-mx" {
+  zone_id = var.cloudflare_zone_id
+  name    = "@"
+  type    = "MX"
+  value   = "mail.ayats.org"
+  priority = 10
+}
+
+resource "cloudflare_record" "record-mail-spx" {
+  zone_id = var.cloudflare_zone_id
+  name    = "@"
+  type    = "TXT"
+  value   = "v=spf1 a:mail.ayats.org -all"
+}
+
+resource "cloudflare_record" "record-mail-dmarc" {
+  zone_id = var.cloudflare_zone_id
+  name    = "_dmarc"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none"
+}
+
+resource "oci_dns_zone" "dns-zone" {
+  compartment_id = var.compartment_id
+  name           = "ayats.org"
+  zone_type      = "PRIMARY"
+}
+
+/*
+resource "oci_dns_rrset" "rrset-mail" {
+    compartment_id = var.compartment_id
+    domain = "mail.ayats.org"
+    rtype = "PTR"
+    zone_name_or_id = oci_dns_zone.dns-zone.id
+
+    items {
+        #Required
+        domain = var.rrset_items_domain
+        rdata = var.rrset_items_rdata
+        rtype = var.rrset_items_rtype
+        ttl = var.rrset_items_ttl
+    }
+    # scope = var.rrset_scope
+    # view_id = oci_dns_view.test_view.id
+}
+*/
