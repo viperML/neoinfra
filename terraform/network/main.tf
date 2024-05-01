@@ -173,6 +173,43 @@ resource "oci_core_security_list" "misc" {
       max = 5984
     }
   }
+  // SNM
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 25
+      max = 25
+    }
+  }
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 587
+      max = 587
+    }
+  }
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 993
+      max = 993
+    }
+  }
+  ingress_security_rules {
+    protocol  = "6"
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 143
+      max = 143
+    }
+  }
 }
 
 resource "oci_core_subnet" "terraform_subnet" {
