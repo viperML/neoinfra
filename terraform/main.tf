@@ -211,35 +211,58 @@ data "cloudinit_config" "visnhu" {
 
 
 # mail
-
 resource "cloudflare_record" "record-mail-a" {
   zone_id = var.cloudflare_zone_id
   name    = "mail"
   type    = "A"
   proxied = false
   value   = oci_core_instance.shiva.public_ip
+  ttl     = 10800
 }
 
-resource "cloudflare_record" "record-mail-mx" {
+resource "cloudflare_record" "record-webmail-a" {
   zone_id = var.cloudflare_zone_id
-  name    = "@"
-  type    = "MX"
-  value   = "mail.ayats.org"
+  name    = "webmail"
+  type    = "A"
+  proxied = false
+  value   = oci_core_instance.shiva.public_ip
+  # ttl     = 10800
+}
+
+
+## rdns managed by oracle
+
+resource "cloudflare_record" "record-mail-mx" {
+  zone_id  = var.cloudflare_zone_id
+  name     = "@"
+  type     = "MX"
+  value    = "mail.ayats.org"
   priority = 10
 }
 
-resource "cloudflare_record" "record-mail-spx" {
+resource "cloudflare_record" "record-mail-spf" {
   zone_id = var.cloudflare_zone_id
   name    = "@"
   type    = "TXT"
   value   = "v=spf1 a:mail.ayats.org -all"
+  ttl     = 10800
 }
+
+resource "cloudflare_record" "record-mail-dkim" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail._domainkey"
+  type    = "TXT"
+  value   = "v=DKIM1; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF1CJldwrRKOLokhmDBgEuPtmo4G38D6DWVwFxarP7ethdcEQxQwty4nOFdwYxtjHcgeupJjv1/YT1oUVCWVHdy4tCUKCeVNb0FJt5cyLonma8jhv7PAMo+7hjQPqsZcteS6DXO3Dv+GhrOfIAHzT2e/gisvXq4a8LI+S7nGUcqQIDAQAB"
+  ttl     = 10800
+}
+
 
 resource "cloudflare_record" "record-mail-dmarc" {
   zone_id = var.cloudflare_zone_id
   name    = "_dmarc"
   type    = "TXT"
   value   = "v=DMARC1; p=none"
+  ttl     = 10800
 }
 
 resource "oci_dns_zone" "dns-zone" {
@@ -247,22 +270,3 @@ resource "oci_dns_zone" "dns-zone" {
   name           = "ayats.org"
   zone_type      = "PRIMARY"
 }
-
-/*
-resource "oci_dns_rrset" "rrset-mail" {
-    compartment_id = var.compartment_id
-    domain = "mail.ayats.org"
-    rtype = "PTR"
-    zone_name_or_id = oci_dns_zone.dns-zone.id
-
-    items {
-        #Required
-        domain = var.rrset_items_domain
-        rdata = var.rrset_items_rdata
-        rtype = var.rrset_items_rtype
-        ttl = var.rrset_items_ttl
-    }
-    # scope = var.rrset_scope
-    # view_id = oci_dns_view.test_view.id
-}
-*/

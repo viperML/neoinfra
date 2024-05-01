@@ -42,6 +42,12 @@ creation_rules:
       - *shiva
       - *ayats_zorah
 
+  - path_regex: secrets(/|\\)mail.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *shiva
+
   #-- Hosts
   - path_regex: secrets(/|\\).*shiva.*\.yaml$
     key_groups:

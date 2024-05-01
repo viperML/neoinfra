@@ -23,6 +23,8 @@
 
     ../matrix
     ../postgres
+
+    ../mail
   ];
 
   # was broken
