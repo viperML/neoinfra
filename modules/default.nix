@@ -1,8 +1,6 @@
 {
   inputs,
-  self,
   withSystem,
-  lib,
   ...
 }: let
   mkSystem = system: hostname:
@@ -15,6 +13,9 @@
           inputs.nixpkgs.nixosModules.readOnlyPkgs
           {nixpkgs.pkgs = pkgs;}
           ./host-${hostname}
+
+          inputs.noshell.nixosModules.default
+          {programs.noshell.enable = true;}
         ];
       });
 in {

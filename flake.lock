@@ -144,6 +144,26 @@
         "type": "github"
       }
     },
+    "noshell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1714819199,
+        "narHash": "sha256-v883HtHheE/kAsiZB2n8TXq6+WZDpwjqBDZmCBajyVs=",
+        "owner": "viperML",
+        "repo": "noshell",
+        "rev": "3bfedd9a64ac747fb1629e3eaca7e110c5442eea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "noshell",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "disko": "disko",
@@ -151,6 +171,7 @@
         "nh": "nh",
         "nix-common": "nix-common",
         "nixpkgs": "nixpkgs",
+        "noshell": "noshell",
         "snm": "snm",
         "sops-nix": "sops-nix",
         "wrapper-manager": "wrapper-manager"
