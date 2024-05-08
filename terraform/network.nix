@@ -1,0 +1,235 @@
+{lib, ...}: let
+  inherit (lib) tfRef;
+in {
+  resource."oci_core_vcn"."terraform_vcn" = {
+    compartment_id = tfRef "var.compartment_id";
+    display_name = "neoinfra";
+    cidr_blocks = [
+      "10.0.0.0/16"
+    ];
+    dns_label = "neoinfra";
+  };
+
+  resource."oci_core_internet_gateway"."terraform_vcn_gateway" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    enabled = true;
+    display_name = "terraform gateway";
+  };
+
+  resource."oci_core_route_table"."terraform_vcn_route0" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "Internet Gateway";
+    route_rules = {
+      network_entity_id = tfRef "oci_core_internet_gateway.terraform_vcn_gateway.id";
+      destination = "0.0.0.0/0";
+      destination_type = "CIDR_BLOCK";
+    };
+  };
+
+  # https://github.com/oracle/terraform-provider-oci/issues/1324
+
+  resource."oci_core_security_list"."all_egress" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - All egress";
+    egress_security_rules = {
+      protocol = "all";
+      destination = "0.0.0.0/0";
+      stateless = false;
+    };
+  };
+
+  resource."oci_core_security_list"."all_ingress" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - All ingress";
+    ingress_security_rules = {
+      protocol = "all";
+      source = "0.0.0.0/0";
+      stateless = false;
+    };
+  };
+
+  resource."oci_core_security_list"."icmp" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - ICMP";
+    ingress_security_rules = {
+      protocol = "1";
+      source = "0.0.0.0/0";
+      stateless = false;
+    };
+  };
+
+  # https://registry.terraform.io/providers/oracle/oci/4.76.0/docs/resources/core_security_list
+  resource."oci_core_security_list"."web" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - Web";
+    ingress_security_rules = [
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 80;
+          max = 80;
+        };
+      }
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 443;
+          max = 443;
+        };
+      }
+      {
+        protocol = "17";
+        source = "0.0.0.0/0";
+        stateless = false;
+        udp_options = {
+          min = 80;
+          max = 80;
+        };
+      }
+      {
+        protocol = "17";
+        source = "0.0.0.0/0";
+        stateless = false;
+        udp_options = {
+          min = 443;
+          max = 443;
+        };
+      }
+    ];
+  };
+
+  resource."oci_core_security_list"."ssh" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - SSH";
+    ingress_security_rules = {
+      protocol = "6";
+      source = "0.0.0.0/0";
+      stateless = false;
+      tcp_options = {
+        min = 22;
+        max = 22;
+      };
+    };
+  };
+
+  resource."oci_core_security_list"."misc" = {
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "TF - Misc";
+    # MQTT
+    ingress_security_rules = [
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 1883;
+          max = 1883;
+        };
+      }
+      {
+        protocol = "17";
+        source = "0.0.0.0/0";
+        stateless = false;
+        udp_options = {
+          min = 1883;
+          max = 1883;
+        };
+      }
+      # CouchDB
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 5984;
+          max = 5984;
+        };
+      }
+      {
+        protocol = "17";
+        source = "0.0.0.0/0";
+        stateless = false;
+        udp_options = {
+          min = 5984;
+          max = 5984;
+        };
+      }
+      # SNM
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 25;
+          max = 25;
+        };
+      }
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 587;
+          max = 587;
+        };
+      }
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 993;
+          max = 993;
+        };
+      }
+      {
+        protocol = "6";
+        source = "0.0.0.0/0";
+        stateless = false;
+        tcp_options = {
+          min = 143;
+          max = 143;
+        };
+      }
+    ];
+  };
+
+  resource."oci_core_subnet"."terraform_subnet" = {
+    cidr_block = "10.0.0.0/24";
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "terraform_subnet";
+    security_list_ids = [
+      (tfRef "oci_core_security_list.all_egress.id")
+      (tfRef "oci_core_security_list.icmp.id")
+      (tfRef "oci_core_security_list.web.id")
+      (tfRef "oci_core_security_list.ssh.id")
+      (tfRef "oci_core_security_list.misc.id")
+    ];
+    route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
+  };
+
+  resource."oci_core_subnet"."all_ingress_egress" = {
+    cidr_block = "10.0.1.0/24";
+    compartment_id = tfRef "var.compartment_id";
+    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+    display_name = "All ingress egress";
+    security_list_ids = [
+      (tfRef "oci_core_security_list.all_egress.id")
+      (tfRef "oci_core_security_list.all_ingress.id")
+    ];
+    route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
+  };
+}

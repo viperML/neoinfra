@@ -7,6 +7,8 @@ perl-lang
 # rustic
 rustic/**
 
+*.tf.json
+
 # Created by https://www.toptal.com/developers/gitignore/api/perl,python,terraform,packer
 # Edit at https://www.toptal.com/developers/gitignore?templates=perl,python,terraform,packer
 
