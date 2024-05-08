@@ -4,7 +4,11 @@
     flake-parts,
     ...
   }:
-    flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
+    flake-parts.lib.mkFlake {inherit inputs;} (out @ {
+      lib,
+      config,
+      ...
+    }: {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -40,6 +44,11 @@
           inherit system;
           modules = [
             ./terraform/main.nix
+            {
+              _module.args = {
+                inherit (out.config.flake) nixosConfigurations;
+              };
+            }
           ];
         };
 
@@ -72,10 +81,6 @@
                 if [[ ! -f .terraform.lock.hcl ]]; then
                   echo "Please run this in a folder with a .terraform.lock.hcl"
                   exit 127
-                fi
-
-                if [[ "$(realpath "${config.packages.terranix}")" != "$(realpath config.tf.json)" ]]; then
-                  ln -vsfT ${config.packages.terranix} config.tf.json
                 fi
 
                 exec -a "$0" "${myTerraform}/bin/terraform" "$@"

@@ -1,8 +1,21 @@
-{lib, ...}: let
+{
+  lib,
+  nixosConfigurations,
+  ...
+}: let
   inherit (lib) tfRef;
+  withCID = module:
+    lib.mkMerge [
+      {compartment_id = tfRef "var.compartment_id";}
+      module
+    ];
+  withVCN = module:
+    lib.mkMerge [
+      (withCID {vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";})
+      module
+    ];
 in {
-  resource."oci_core_vcn"."terraform_vcn" = {
-    compartment_id = tfRef "var.compartment_id";
+  resource."oci_core_vcn"."terraform_vcn" = withCID {
     display_name = "neoinfra";
     cidr_blocks = [
       "10.0.0.0/16"
@@ -10,16 +23,12 @@ in {
     dns_label = "neoinfra";
   };
 
-  resource."oci_core_internet_gateway"."terraform_vcn_gateway" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+  resource."oci_core_internet_gateway"."terraform_vcn_gateway" = withVCN {
     enabled = true;
     display_name = "terraform gateway";
   };
 
-  resource."oci_core_route_table"."terraform_vcn_route0" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+  resource."oci_core_route_table"."terraform_vcn_route0" = withVCN {
     display_name = "Internet Gateway";
     route_rules = {
       network_entity_id = tfRef "oci_core_internet_gateway.terraform_vcn_gateway.id";
@@ -30,20 +39,7 @@ in {
 
   # https://github.com/oracle/terraform-provider-oci/issues/1324
 
-  resource."oci_core_security_list"."all_egress" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "TF - All egress";
-    egress_security_rules = {
-      protocol = "all";
-      destination = "0.0.0.0/0";
-      stateless = false;
-    };
-  };
-
-  resource."oci_core_security_list"."all_ingress" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+  resource."oci_core_security_list"."all_ingress" = withVCN {
     display_name = "TF - All ingress";
     ingress_security_rules = {
       protocol = "all";
@@ -52,184 +48,106 @@ in {
     };
   };
 
-  resource."oci_core_security_list"."icmp" = {
+  resource."oci_core_security_list"."core" = {
     compartment_id = tfRef "var.compartment_id";
     vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "TF - ICMP";
-    ingress_security_rules = {
-      protocol = "1";
-      source = "0.0.0.0/0";
-      stateless = false;
-    };
-  };
-
-  # https://registry.terraform.io/providers/oracle/oci/4.76.0/docs/resources/core_security_list
-  resource."oci_core_security_list"."web" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "TF - Web";
+    display_name = "TF - Core";
     ingress_security_rules = [
       {
-        protocol = "6";
+        # ICMP
+        protocol = "1";
         source = "0.0.0.0/0";
         stateless = false;
-        tcp_options = {
-          min = 80;
-          max = 80;
-        };
       }
+    ];
+    egress_security_rules = [
       {
-        protocol = "6";
-        source = "0.0.0.0/0";
+        # All egress
+        protocol = "all";
+        destination = "0.0.0.0/0";
         stateless = false;
-        tcp_options = {
-          min = 443;
-          max = 443;
-        };
-      }
-      {
-        protocol = "17";
-        source = "0.0.0.0/0";
-        stateless = false;
-        udp_options = {
-          min = 80;
-          max = 80;
-        };
-      }
-      {
-        protocol = "17";
-        source = "0.0.0.0/0";
-        stateless = false;
-        udp_options = {
-          min = 443;
-          max = 443;
-        };
       }
     ];
   };
 
-  resource."oci_core_security_list"."ssh" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "TF - SSH";
-    ingress_security_rules = {
-      protocol = "6";
-      source = "0.0.0.0/0";
-      stateless = false;
-      tcp_options = {
-        min = 22;
-        max = 22;
-      };
-    };
+  resource."oci_core_security_list"."nixos" = withVCN {
+    display_name = "TF - Main";
+    ingress_security_rules = lib.mkMerge (map (
+      nixos: let
+        inherit
+          (nixos.config.networking.firewall)
+          allowedTCPPorts
+          allowedTCPPortRanges
+          allowedUDPPorts
+          allowedUDPPortRanges
+          ;
+      in
+        (map (port: {
+            protocol = "6";
+            source = "0.0.0.0/0";
+            stateless = false;
+            tcp_options = {
+              min = port;
+              max = port;
+            };
+          })
+          allowedTCPPorts)
+        ++ (map ({
+            from,
+            to,
+          }: {
+            protocol = "6";
+            source = "0.0.0.0/0";
+            stateless = false;
+            tcp_options = {
+              min = from;
+              max = to;
+            };
+          })
+          allowedTCPPortRanges)
+        ++ (map (port: {
+            protocol = "17";
+            source = "0.0.0.0/0";
+            stateless = false;
+            tcp_options = {
+              min = port;
+              max = port;
+            };
+          })
+          allowedUDPPorts)
+        ++ (map ({
+            from,
+            to,
+          }: {
+            protocol = "17";
+            source = "0.0.0.0/0";
+            stateless = false;
+            tcp_options = {
+              min = from;
+              max = to;
+            };
+          })
+          allowedUDPPortRanges)
+    ) (builtins.attrValues nixosConfigurations));
   };
 
-  resource."oci_core_security_list"."misc" = {
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "TF - Misc";
-    # MQTT
-    ingress_security_rules = [
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 1883;
-          max = 1883;
-        };
-      }
-      {
-        protocol = "17";
-        source = "0.0.0.0/0";
-        stateless = false;
-        udp_options = {
-          min = 1883;
-          max = 1883;
-        };
-      }
-      # CouchDB
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 5984;
-          max = 5984;
-        };
-      }
-      {
-        protocol = "17";
-        source = "0.0.0.0/0";
-        stateless = false;
-        udp_options = {
-          min = 5984;
-          max = 5984;
-        };
-      }
-      # SNM
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 25;
-          max = 25;
-        };
-      }
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 587;
-          max = 587;
-        };
-      }
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 993;
-          max = 993;
-        };
-      }
-      {
-        protocol = "6";
-        source = "0.0.0.0/0";
-        stateless = false;
-        tcp_options = {
-          min = 143;
-          max = 143;
-        };
-      }
-    ];
-  };
-
-  resource."oci_core_subnet"."terraform_subnet" = {
-    cidr_block = "10.0.0.0/24";
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
+  resource."oci_core_subnet"."terraform_subnet" = withVCN {
     display_name = "terraform_subnet";
+    cidr_block = "10.0.0.0/24";
     security_list_ids = [
-      (tfRef "oci_core_security_list.all_egress.id")
-      (tfRef "oci_core_security_list.icmp.id")
-      (tfRef "oci_core_security_list.web.id")
-      (tfRef "oci_core_security_list.ssh.id")
-      (tfRef "oci_core_security_list.misc.id")
+      (tfRef "oci_core_security_list.core.id")
+      (tfRef "oci_core_security_list.nixos.id")
     ];
     route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
   };
 
-  resource."oci_core_subnet"."all_ingress_egress" = {
-    cidr_block = "10.0.1.0/24";
-    compartment_id = tfRef "var.compartment_id";
-    vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
-    display_name = "All ingress egress";
-    security_list_ids = [
-      (tfRef "oci_core_security_list.all_egress.id")
-      (tfRef "oci_core_security_list.all_ingress.id")
-    ];
-    route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
-  };
+  # resource."oci_core_subnet"."all_ingress_egress" = withVCN {
+  #   display_name = "All ingress egress";
+  #   cidr_block = "10.0.1.0/24";
+  #   security_list_ids = [
+  #     (tfRef "oci_core_security_list.core.id")
+  #     (tfRef "oci_core_security_list.all_ingress.id")
+  #   ];
+  #   route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
+  # };
 }

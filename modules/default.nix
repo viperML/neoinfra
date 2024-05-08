@@ -20,7 +20,7 @@
       });
 in {
   flake.nixosConfigurations = {
-    "vishnu" = mkSystem "x86_64-linux" "vishnu";
+    # "vishnu" = mkSystem "x86_64-linux" "vishnu";
     "shiva" = mkSystem "aarch64-linux" "shiva";
   };
 }
