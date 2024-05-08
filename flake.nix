@@ -12,12 +12,12 @@
 
       imports = [
         ./modules
-        ./terraform
       ];
 
       perSystem = {
         pkgs,
         system,
+        config,
         ...
       }: {
         _module.args = {
@@ -36,7 +36,23 @@
 
         legacyPackages = pkgs;
 
-        devShells.default = with pkgs;
+        packages.terranix = inputs.terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [
+            ./terraform/main.nix
+          ];
+        };
+
+        devShells.default = with pkgs; let
+          myTerraform = terraform.withPlugins (t: [
+            t.external
+            t.cloudflare
+            t.oci
+            t.null
+            t.local
+            t.cloudinit
+          ]);
+        in
           mkShell.override {stdenv = stdenvNoCC;} {
             packages = [
               sops
@@ -52,14 +68,19 @@
                   }
                 ];
               })
-              (terraform.withPlugins (t: [
-                t.external
-                t.cloudflare
-                t.oci
-                t.null
-                t.local
-                t.cloudinit
-              ]))
+              (pkgs.writeShellScriptBin "terraform" ''
+                if [[ ! -f .terraform.lock.hcl ]]; then
+                  echo "Please run this in a folder with a .terraform.lock.hcl"
+                  exit 127
+                fi
+
+                if [[ "$(realpath "${config.packages.terranix}")" != "$(realpath config.tf.json)" ]]; then
+                  ln -vsfT ${config.packages.terranix} config.tf.json
+                fi
+
+                exec -a "$0" "${myTerraform}/bin/terraform" "$@"
+              '')
+              myTerraform
               oci-cli
               shellcheck
               age
