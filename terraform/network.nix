@@ -48,6 +48,48 @@ in {
     };
   };
 
+  resource."oci_core_security_list"."all-ingress-deploy" = withVCN {
+    display_name = "TF - All ingress deploy";
+    ingress_security_rules = {
+      protocol = "all";
+      source = "${tfRef "var.deploy_ip"}/32";
+      stateless = false;
+    };
+  };
+
+  data."cloudflare_ip_ranges"."cloudflare" = {};
+
+  resource."oci_core_security_list"."all-ingress-cloudflare" = let
+    # https://www.cloudflare.com/ips-v4/#
+    blocks = [
+      "173.245.48.0/20"
+      "103.21.244.0/22"
+      "103.22.200.0/22"
+      "103.31.4.0/22"
+      "141.101.64.0/18"
+      "108.162.192.0/18"
+      "190.93.240.0/20"
+      "188.114.96.0/20"
+      "197.234.240.0/22"
+      "198.41.128.0/17"
+      "162.158.0.0/15"
+      "104.16.0.0/13"
+      "104.24.0.0/14"
+      "172.64.0.0/13"
+      "131.0.72.0/22"
+    ];
+  in
+    withVCN {
+      display_name = "TF - All ingress cloudflare";
+      ingress_security_rules =
+        map (source: {
+          inherit source;
+          protocol = "all";
+          stateless = false;
+        })
+        blocks;
+    };
+
   resource."oci_core_security_list"."core" = {
     compartment_id = tfRef "var.compartment_id";
     vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";
@@ -137,6 +179,8 @@ in {
     security_list_ids = [
       (tfRef "oci_core_security_list.core.id")
       (tfRef "oci_core_security_list.nixos.id")
+      # (tfRef "oci_core_security_list.all-ingress-deploy.id")
+      (tfRef "oci_core_security_list.all-ingress-cloudflare.id")
     ];
     route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
   };

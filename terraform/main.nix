@@ -5,6 +5,7 @@ in {
     ./variables.nix
     ./network.nix
     ./images.nix
+    ./dns.nix
   ];
 
   terraform = {
@@ -136,21 +137,6 @@ in {
   #   instance_id = oci_core_instance.shiva.id
   # }
 
-  resource."cloudflare_record"."record-infra" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "*.infra";
-    type = "A";
-    proxied = false;
-    value = tfRef "oci_core_instance.shiva.public_ip";
-  };
-
-  resource."cloudflare_record"."record-matrix" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "matrix";
-    type = "A";
-    proxied = false;
-    value = tfRef "oci_core_instance.shiva.public_ip";
-  };
 
   # vishnu
 
@@ -225,62 +211,4 @@ in {
   #   ]
   # }
 
-  # mail
-  resource."cloudflare_record"."record-mail-a" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "mail";
-    type = "A";
-    proxied = false;
-    value = tfRef "oci_core_instance.shiva.public_ip";
-    ttl = 10800;
-  };
-
-  resource."cloudflare_record"."record-webmail-a" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "webmail";
-    type = "A";
-    proxied = false;
-    value = tfRef "oci_core_instance.shiva.public_ip";
-    # ttl     = 10800;
-  };
-
-  ## rdns managed by oracle
-
-  resource."cloudflare_record"."record-mail-mx" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "@";
-    type = "MX";
-    value = "mail.ayats.org";
-    priority = 10;
-  };
-
-  resource."cloudflare_record"."record-mail-spf" = {
-    zone_id = lib.tfRef "var.cloudflare_zone_id";
-    name = "@";
-    type = "TXT";
-    value = "v=spf1 a:mail.ayats.org -all";
-    ttl = 10800;
-  };
-
-  resource."cloudflare_record"."record-mail-dkim" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "mail._domainkey";
-    type = "TXT";
-    value = "v=DKIM1; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF1CJldwrRKOLokhmDBgEuPtmo4G38D6DWVwFxarP7ethdcEQxQwty4nOFdwYxtjHcgeupJjv1/YT1oUVCWVHdy4tCUKCeVNb0FJt5cyLonma8jhv7PAMo+7hjQPqsZcteS6DXO3Dv+GhrOfIAHzT2e/gisvXq4a8LI+S7nGUcqQIDAQAB";
-    ttl = 10800;
-  };
-
-  resource."cloudflare_record"."record-mail-dmarc" = {
-    zone_id = tfRef "var.cloudflare_zone_id";
-    name = "_dmarc";
-    type = "TXT";
-    value = "v=DMARC1; p=none";
-    ttl = 10800;
-  };
-
-  resource."oci_dns_zone"."dns-zone" = {
-    compartment_id = tfRef "var.compartment_id";
-    name = "ayats.org";
-    zone_type = "PRIMARY";
-  };
 }

@@ -13,5 +13,7 @@ in {
     "cloudflare_email" = mkStringVar "Email of the Cloudflare account";
     "cloudflare_api_token" = mkStringVar "API Key for Cloudflare DNS";
     "cloudflare_zone_id" = mkStringVar "Zone ID for Cloudflare";
+
+    "deploy_ip" = mkStringVar "Test IP of the deploy machine, for testing purposes";
   };
 }

@@ -83,6 +83,9 @@
                   exit 127
                 fi
 
+                set -ex
+                nix build "$ROOT#terranix" -L -o config.tf.json
+
                 exec -a "$0" "${myTerraform}/bin/terraform" "$@"
               '')
               myTerraform
