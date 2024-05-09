@@ -98,7 +98,7 @@ in {
   };
 
   services.matrix-synapse = {
-    enable = false;
+    enable = true;
 
     settings = {
       inherit server_name;

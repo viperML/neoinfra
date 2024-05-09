@@ -21,7 +21,7 @@
 
     # ../obsidian
 
-    ../matrix
+    # ../matrix
     ../postgres
 
     ../mail
