@@ -162,7 +162,7 @@ in {
   };
 
   services.nginx.virtualHosts = {
-    ${host} = {
+    ${server_name} = {
       useACMEHost = "ayats.org";
       forceSSL = true;
       locations = let
@@ -178,7 +178,6 @@ in {
         # "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
         "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
 
-        # routed from ayats.org via dns rules
         "= /.well-known/matrix/server".extraConfig = mkWellKnown {
           "m.server" = "${host}:443";
         };

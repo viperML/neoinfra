@@ -14,6 +14,21 @@ in {
       value = ref "oci_core_instance.shiva.public_ip";
     };
 
+    "record-matrix-wellknown" = withZone {
+      type = "SRV";
+      name = "_matrix._tcp";
+
+      data = {
+        service = "_matrix";
+        proto = "_tcp";
+        name = "ayats.org";
+        priority = 0;
+        weight = 0;
+        port = 443;
+        target = "matrix.ayats.org";
+      };
+    };
+
     # mail
     "record-mail-a" = withZone {
       name = "mail";
@@ -67,33 +82,5 @@ in {
     name = "ayats.org";
     compartment_id = ref "var.compartment_id";
     zone_type = "PRIMARY";
-  };
-
-  # Rewrite the URI query component to a static query
-  resource."cloudflare_ruleset"."ruleset-matrix-dynamic" = withZone {
-    name = "matrix";
-    # description = "description";
-    kind = "zone";
-    phase = "http_request_dynamic_redirect";
-
-    rules = [
-      {
-        action = "redirect";
-        action_parameters = {
-          from_value = {
-            status_code = 301;
-            target_url = {
-              # value = "https://matrix.ayats.org/.well-known/matrix/server";
-              expression = "concat(\"https://matrix.ayats.org\", http.request.uri.path)";
-            };
-            preserve_query_string = false;
-          };
-        };
-
-        expression = "(starts_with(http.request.full_uri, \"https://ayats.org/.well-known/matrix\"))";
-        description = "Route well-known to matrix host";
-        enabled = true;
-      }
-    ];
   };
 }
