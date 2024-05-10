@@ -31,8 +31,9 @@
       dnsProvider = "cloudflare";
       credentialsFile = config.sops.secrets."letsencrypt_env".path;
     };
-    certs."wildcard.infra.ayats.org" = {
-      domain = "*.infra.ayats.org";
+    certs."ayats.org" = {
+      domain = "ayats.org";
+      extraDomainNames = ["*.ayats.org"];
       dnsProvider = "cloudflare";
       credentialsFile = config.sops.secrets."letsencrypt_env".path;
     };

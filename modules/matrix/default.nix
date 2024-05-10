@@ -103,8 +103,8 @@ in {
     settings = {
       inherit server_name;
       public_baseurl = "https://${host}/";
-      # web_client_location = "https://${host}/";
-      web_client_location = null;
+      web_client_location = "https://${host}/";
+      # web_client_location = null;
 
       database.name = "psycopg2";
       enable_metrics = true;
@@ -163,7 +163,7 @@ in {
 
   services.nginx.virtualHosts = {
     ${host} = {
-      useACMEHost = "wildcard.ayats.org";
+      useACMEHost = "ayats.org";
       forceSSL = true;
       locations = let
         mkWellKnown = data: ''
@@ -176,7 +176,7 @@ in {
         # the precedence is based on alphabetical sorting, not the nix value sorting
 
         # "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
-        # "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
+        "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
 
         # routed from ayats.org via dns rules
         "= /.well-known/matrix/server".extraConfig = mkWellKnown {
@@ -190,8 +190,6 @@ in {
             "org.matrix.msc3575.proxy".url = "https://${host}";
           })
         );
-
-        "/".proxyPass = "http://localhost:${toString synapsePort}";
       };
     };
   };
