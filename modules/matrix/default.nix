@@ -6,7 +6,7 @@
   ...
 }: let
   server_name = "ayats.org";
-  host = "matrix.ayats.org";
+  virtualhost = server_name;
 
   writeTOML = (pkgs.formats.toml {}).generate;
   synapsePort = 8008;
@@ -102,8 +102,8 @@ in {
 
     settings = {
       inherit server_name;
-      public_baseurl = "https://${host}/";
-      web_client_location = "https://${host}/";
+      public_baseurl = "https://${virtualhost}/";
+      web_client_location = "https://${virtualhost}/";
       # web_client_location = null;
 
       database.name = "psycopg2";
@@ -156,13 +156,13 @@ in {
     environmentFile = config.sops.secrets.matrix-sliding-sync-env.path;
     createDatabase = true;
     settings = {
-      SYNCV3_SERVER = "https://${host}";
+      SYNCV3_SERVER = "https://${virtualhost}";
       SYNCV3_BINDADDR = "[::1]:${toString slidingSyncPort}";
     };
   };
 
   services.nginx.virtualHosts = {
-    ${server_name} = {
+    ${virtualhost} = {
       useACMEHost = "ayats.org";
       forceSSL = true;
       locations = let
@@ -177,18 +177,6 @@ in {
 
         # "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
         "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
-
-        "= /.well-known/matrix/server".extraConfig = mkWellKnown {
-          "m.server" = "${host}:443";
-        };
-        "= /.well-known/matrix/client".extraConfig = mkWellKnown (
-          {
-            "m.homeserver".base_url = "https://${host}";
-          }
-          // (lib.optionalAttrs config.services.matrix-sliding-sync.enable {
-            "org.matrix.msc3575.proxy".url = "https://${host}";
-          })
-        );
       };
     };
   };
