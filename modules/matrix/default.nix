@@ -6,7 +6,7 @@
   ...
 }: let
   server_name = "ayats.org";
-  virtualhost = server_name;
+  virtualHost = "matrix.${server_name}";
 
   writeTOML = (pkgs.formats.toml {}).generate;
   synapsePort = 8008;
@@ -102,8 +102,8 @@ in {
 
     settings = {
       inherit server_name;
-      public_baseurl = "https://${virtualhost}/";
-      web_client_location = "https://${virtualhost}/";
+      public_baseurl = "https://${virtualHost}/";
+      web_client_location = "https://${virtualHost}/";
       # web_client_location = null;
 
       database.name = "psycopg2";
@@ -156,28 +156,39 @@ in {
     environmentFile = config.sops.secrets.matrix-sliding-sync-env.path;
     createDatabase = true;
     settings = {
-      SYNCV3_SERVER = "https://${virtualhost}";
+      SYNCV3_SERVER = "https://${virtualHost}";
       SYNCV3_BINDADDR = "[::1]:${toString slidingSyncPort}";
     };
   };
 
   services.nginx.virtualHosts = {
-    ${virtualhost} = {
+    ${virtualHost} = {
       useACMEHost = "ayats.org";
       forceSSL = true;
-      locations = let
-        mkWellKnown = data: ''
-          default_type application/json;
-          add_header Access-Control-Allow-Origin *;
-          return 200 '${builtins.toJSON data}';
-        '';
-      in {
-        # IMPORTANT: sliding-sync rules needs to be before synapse rules
-        # the precedence is based on alphabetical sorting, not the nix value sorting
+      locations =
+        let
+          mkWellKnown = data: ''
+            default_type application/json;
+            add_header Access-Control-Allow-Origin *;
+            return 200 '${builtins.toJSON data}';
+          '';
+        in
+        {
+          # "/".extraConfig = ''
+          #   return 301 https://ayats.org;
+          # '';
 
-        # "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
-        "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://127.0.0.1:${toString synapsePort}";
-      };
+          # IMPORTANT: sliding-sync rules needs to be before synapse rules
+          # the precedence is based on alphabetical sorting, not the nix value sorting
+
+          "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
+          "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
+          "= /.well-known/matrix/server".extraConfig = mkWellKnown { "m.server" = "${virtualHost}:443"; };
+          "= /.well-known/matrix/client".extraConfig = mkWellKnown {
+            "m.homeserver".base_url = "https://${virtualHost}";
+            "org.matrix.msc3575.proxy".url = "https://${virtualHost}";
+          };
+        };
     };
   };
 
