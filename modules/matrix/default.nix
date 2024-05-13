@@ -176,7 +176,7 @@ in {
         # the precedence is based on alphabetical sorting, not the nix value sorting
 
         # "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
-        "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
+        "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://127.0.0.1:${toString synapsePort}";
       };
     };
   };

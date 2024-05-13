@@ -48,14 +48,14 @@ in {
     };
   };
 
-  resource."oci_core_security_list"."all-ingress-deploy" = withVCN {
-    display_name = "TF - All ingress deploy";
-    ingress_security_rules = {
-      protocol = "all";
-      source = "${tfRef "var.deploy_ip"}/32";
-      stateless = false;
-    };
-  };
+  # resource."oci_core_security_list"."all-ingress-deploy" = withVCN {
+  #   display_name = "TF - All ingress deploy";
+  #   ingress_security_rules = {
+  #     protocol = "all";
+  #     source = "${tfRef "var.deploy_ip"}/32";
+  #     stateless = false;
+  #   };
+  # };
 
   data."cloudflare_ip_ranges"."cloudflare" = {};
 

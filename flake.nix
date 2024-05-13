@@ -93,7 +93,7 @@
               shellcheck
               age
               just
-              nomad
+              # nomad
               hclfmt
 
               perlPackages.perl

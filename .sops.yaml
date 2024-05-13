@@ -10,6 +10,7 @@ creation_rules:
     key_groups:
     - age:
       - *ayats_gen6
+      - *ayats_zorah
 
   - path_regex: secrets(/|\\).*vault.yaml$
     key_groups:

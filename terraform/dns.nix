@@ -1,12 +1,17 @@
-{lib, ...}: let
+{
+  lib,
+  config,
+  ...
+}: let
   inherit (lib.tf) ref;
+  inherit (lib) mkForce;
   withZone = module:
     lib.mkMerge [
       {zone_id = ref "var.cloudflare_zone_id";}
       module
     ];
 in {
-  resource."cloudflare_record" = {
+  resource."cloudflare_record" = rec {
     "record-matrix" = withZone {
       name = "matrix";
       type = "A";
@@ -16,10 +21,10 @@ in {
 
     "record-matrix-wellknown" = withZone {
       type = "SRV";
-      name = "_matrix._tcp";
+      name = "_matrix-fed._tcp";
 
       data = {
-        service = "_matrix";
+        service = "_matrix-fed";
         proto = "_tcp";
         name = "ayats.org";
         priority = 0;
@@ -28,6 +33,16 @@ in {
         target = "matrix.ayats.org";
       };
     };
+
+    "record-matrix-wellknown-legacy" = lib.mkMerge [
+      record-matrix-wellknown
+      {
+        name = mkForce "_matrix._tcp";
+        data = {
+          service = mkForce "_matrix";
+        };
+      }
+    ];
 
     # mail
     "record-mail-a" = withZone {
