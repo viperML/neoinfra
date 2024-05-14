@@ -1,0 +1,12 @@
+{
+  "name": "neoinfra-terraform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc well-known.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "wrangler": "^3.55.0"
+  }
+}

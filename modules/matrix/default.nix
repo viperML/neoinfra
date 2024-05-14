@@ -111,7 +111,7 @@ in {
       listeners = [
         {
           port = synapsePort;
-          bind_addresses = ["127.0.0.1"];
+          bind_addresses = ["::1"];
           type = "http";
           tls = false;
           x_forwarded = true;
@@ -142,7 +142,7 @@ in {
       expire_access_token = true;
 
       # deploy
-      enable_registration = true;
+      enable_registration = false;
       enable_registration_without_verification = true;
     };
 
@@ -165,30 +165,9 @@ in {
     ${virtualHost} = {
       useACMEHost = "ayats.org";
       forceSSL = true;
-      locations =
-        let
-          mkWellKnown = data: ''
-            default_type application/json;
-            add_header Access-Control-Allow-Origin *;
-            return 200 '${builtins.toJSON data}';
-          '';
-        in
-        {
-          # "/".extraConfig = ''
-          #   return 301 https://ayats.org;
-          # '';
-
-          # IMPORTANT: sliding-sync rules needs to be before synapse rules
-          # the precedence is based on alphabetical sorting, not the nix value sorting
-
-          "~ ^/(_matrix/client/unstable/org.matrix.msc3575/sync|client/)".proxyPass = "http://localhost:${toString slidingSyncPort}";
-          "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://localhost:${toString synapsePort}";
-          "= /.well-known/matrix/server".extraConfig = mkWellKnown { "m.server" = "${virtualHost}:443"; };
-          "= /.well-known/matrix/client".extraConfig = mkWellKnown {
-            "m.homeserver".base_url = "https://${virtualHost}";
-            "org.matrix.msc3575.proxy".url = "https://${virtualHost}";
-          };
-        };
+      locations = {
+        "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://[::1]:${toString synapsePort}";
+      };
     };
   };
 

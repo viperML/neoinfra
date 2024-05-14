@@ -1,0 +1,3 @@
+name = "well-known"
+main = "well-known.js"
+compatibility_date = "2024-05-14"

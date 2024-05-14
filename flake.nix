@@ -95,6 +95,7 @@
               just
               # nomad
               hclfmt
+              nodejs
 
               perlPackages.perl
               perlPackages.AppCmd

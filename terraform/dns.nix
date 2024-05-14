@@ -69,39 +69,17 @@ in {
     zone_type = "PRIMARY";
   };
 
-  # resource."cloudflare_worker_route"."catch_all_route" = withZone {
-  #   enabled = true;
-  #   pattern = "${ref "var.cloudflare_zone_id"}/.well-known/*";
-  #   depends_on = [
-  #     "cloudflare_worker_script.main_script"
-  #   ];
-  # };
+  resource."cloudflare_worker_script"."well-known" = {
+    name = "well-known";
+    account_id = ref "var.cloudflare_account_id";
+    content = ref ''
+      file("${./well-known.js}")
+    '';
+    module = true;
+  };
 
-  # Rewrite the URI query component to a static query
-  resource."cloudflare_ruleset"."ruleset-matrix-dynamic" = withZone {
-    name = "matrix";
-    # description = "description";
-    kind = "zone";
-    phase = "http_request_dynamic_redirect";
-
-    rules = [
-      {
-        action = "redirect";
-        action_parameters = {
-          from_value = {
-            status_code = 301;
-            target_url = {
-              # value = "https://matrix.ayats.org/.well-known/matrix/server";
-              expression = "concat(\"https://matrix.ayats.org\", http.request.uri.path)";
-            };
-            preserve_query_string = false;
-          };
-        };
-
-        expression = "(starts_with(http.request.full_uri, \"https://ayats.org/.well-known/matrix\"))";
-        description = "Route well-known to matrix host";
-        enabled = true;
-      }
-    ];
+  resource."cloudflare_worker_route"."well-known" = withZone {
+    pattern = "ayats.org/.well-known/*";
+    script_name = ref "cloudflare_worker_script.well-known.name";
   };
 }
