@@ -50,7 +50,7 @@ in {
     "record-mail-dkim" = withZone {
       name = "mail._domainkey";
       type = "TXT";
-      value = "v=DKIM1; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF1CJldwrRKOLokhmDBgEuPtmo4G38D6DWVwFxarP7ethdcEQxQwty4nOFdwYxtjHcgeupJjv1/YT1oUVCWVHdy4tCUKCeVNb0FJt5cyLonma8jhv7PAMo+7hjQPqsZcteS6DXO3Dv+GhrOfIAHzT2e/gisvXq4a8LI+S7nGUcqQIDAQAB";
+      value = "v=DKIM1; p=${lib.fileContents ../modules/mail/dkim}";
       ttl = 10800;
     };
 
