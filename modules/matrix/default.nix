@@ -67,7 +67,7 @@
     ];
 in {
   imports = [
-    # ../matrix-bridge-irc
+    ../matrix-bridge-irc
     # ../matrix-bridge-whatsapp
   ];
 

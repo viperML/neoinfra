@@ -1,11 +1,9 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{config, ...}: let
+  synapsePort = (builtins.head config.services.matrix-synapse.settings.listeners).port;
+in {
   services.heisenbridge = {
     enable = true;
-    homeserver = "http://localhost:8008";
+    homeserver = "http://[::1]:${toString synapsePort}";
   };
 
   services.matrix-synapse.settings.app_service_config_files = [

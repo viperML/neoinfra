@@ -1,10 +1,11 @@
-{ config, pkgs, ... }:
-{
+{config, ...}: let
+  synapsePort = (builtins.head config.services.matrix-synapse.settings.listeners).port;
+in {
   # https://github.com/mautrix/whatsapp/blob/v0.10.6/example-config.yaml
   services.mautrix-whatsapp.settings = {
     homeserver = {
-      address = "http://localhost:8008";
-      domain = "matrix.ayats.org";
+      address = "http://[::1]:${toString synapsePort}";
+      domain = "ayats.org";
       software = "standard";
       status_endpoint = null;
       message_send_checkpoint_endpoint = null;
@@ -14,7 +15,7 @@
     };
     appservice = {
       # hardcoded in secrets/matrix.yaml
-      address = "http://localhost:29318";
+      address = "http://[::1]:29318";
       hostname = "0.0.0.0";
       port = 29318;
       database = {
@@ -112,7 +113,7 @@
       send_presence_on_typing = false;
       force_active_delivery_receipts = false;
       double_puppet_server_map = {
-        "matrix.ayats.org" = "https://matrix.ayats.org";
+        "ayats.org" = "https://matrix.ayats.org";
       };
       double_puppet_allow_discovery = false;
       login_shared_secret_map = {
@@ -126,7 +127,7 @@
       archive_tag = null;
       pinned_tag = null;
       tag_only_on_create = true;
-      enable_status_broadcast = true;
+      enable_status_broadcast = false;
       disable_status_broadcast_send = true;
       mute_status_broadcast = true;
       status_broadcast_tag = "m.lowpriority";
@@ -190,8 +191,8 @@
       };
       permissions = {
         "*" = "relay";
-        "matrix.ayats.org" = "user";
-        "@viperml:matrix.ayats.org" = "admin";
+        "ayats.org" = "user";
+        "@viperml:ayats.org" = "admin";
       };
       relay = {
         enabled = false;

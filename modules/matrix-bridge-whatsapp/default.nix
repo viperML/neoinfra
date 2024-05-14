@@ -3,16 +3,14 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # sync with:
   # https://github.com/NixOS/nixpkgs/blob/nixos-23.11/nixos/modules/services/matrix/mautrix-whatsapp.nix
   dataDir = "/var/lib/mautrix-whatsapp";
   settingsFile = "${dataDir}/config.json";
   registrationFile = "${dataDir}/whatsapp-registration.yaml";
   doublepuppetRegistrationFile = "${dataDir}/doublepuppet-registration.yaml";
-in
-{
+in {
   assertions = [
     {
       assertion = config.services.matrix-synapse.enable;
@@ -20,7 +18,7 @@ in
     }
   ];
 
-  imports = [ ./settings.nix ];
+  imports = [./settings.nix];
 
   services.mautrix-whatsapp = {
     enable = true;
@@ -40,7 +38,7 @@ in
         ensureDBOwnership = true;
       }
     ];
-    ensureDatabases = [ "mautrix-whatsapp" ];
+    ensureDatabases = ["mautrix-whatsapp"];
   };
 
   systemd.services.mautrix-whatsapp = {
@@ -67,21 +65,20 @@ in
 
   sops.secrets =
     lib.genAttrs
-      [
-        "mautrix-whatsapp-registration"
-        "mautrix-whatsapp-doublepuppet-registration"
-      ]
-      (
-        name: {
-          sopsFile = ../../secrets/matrix.yaml;
-          owner = "mautrix-whatsapp";
-          group = "matrix-synapse";
-          mode = "0440";
-          restartUnits = [
-            "mautrix-whatsapp.service"
-            "matrix-synapse.service"
-          ];
-        }
-
-      );
+    [
+      "mautrix-whatsapp-registration"
+      "mautrix-whatsapp-doublepuppet-registration"
+    ]
+    (
+      name: {
+        sopsFile = ../../secrets/matrix.yaml;
+        owner = "mautrix-whatsapp";
+        group = "matrix-synapse";
+        mode = "0440";
+        restartUnits = [
+          "mautrix-whatsapp.service"
+          "matrix-synapse.service"
+        ];
+      }
+    );
 }
