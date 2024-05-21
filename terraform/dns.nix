@@ -54,7 +54,7 @@ in {
     "record-mail-spf" = withZone {
       name = "@";
       type = "TXT";
-      value = "v=spf1 a:mail.ayats.org -all";
+      value = "v=spf1 a:mail.ayats.org a:ayats.org -all";
       ttl = 10800;
     };
 
