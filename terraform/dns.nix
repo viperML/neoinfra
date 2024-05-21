@@ -54,9 +54,17 @@ in {
     "record-mail-spf" = withZone {
       name = "@";
       type = "TXT";
-      value = "v=spf1 a:mail.ayats.org a:ayats.org -all";
+      value = "v=spf1 a:mail.ayats.org -all";
       ttl = 10800;
     };
+
+    "record-mail-spf2" = withZone {
+      name = "matrix";
+      type = "TXT";
+      value = "v=spf1 a:mail.ayats.org -all";
+      ttl = 10800;
+    };
+
 
     "record-mail-dkim" = withZone {
       name = "mail._domainkey";
