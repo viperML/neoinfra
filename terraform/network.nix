@@ -207,4 +207,12 @@ in {
     ];
     route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
   };
+
+  data."oci_core_ipv6s"."test_ipv6s" = {
+    subnet_id = tfRef "oci_core_subnet.terraform_subnet.id";
+  };
+
+  output."ipv6s" = {
+    value = tfRef "data.oci_core_ipv6s.test_ipv6s.ipv6s";
+  };
 }

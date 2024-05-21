@@ -1,4 +1,8 @@
-{lib, ...}: let
+{
+  lib,
+  config,
+  ...
+}: let
   inherit (lib.tf) ref;
   withZone = module:
     lib.mkMerge [
@@ -13,6 +17,13 @@ in {
       proxied = false;
       value = ref "oci_core_instance.shiva.public_ip";
     };
+
+    # "record-matrix-6" = withZone {
+    #   name = "matrix";
+    #   type = "AAAA";
+    #   proxied = false;
+    #   value = config.output."shiva_ip6".value;
+    # };
 
     # mail
     "record-mail-a" = withZone {

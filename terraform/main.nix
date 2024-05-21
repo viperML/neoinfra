@@ -64,6 +64,7 @@ in {
     };
     create_vnic_details = {
       assign_public_ip = true;
+      assign_ipv6ip = true; # maybe need to provide ipv6SubnetCidr
       subnet_id = tfRef "resource.oci_core_subnet.terraform_subnet.id";
       assign_private_dns_record = false;
     };
@@ -76,7 +77,7 @@ in {
       ignore_changes = [
         "source_details"
         "metadata"
-        # "create_vnic_details"
+        "create_vnic_details"
       ];
     };
     metadata = {
@@ -84,8 +85,25 @@ in {
     };
   };
 
+  data."oci_core_vnic_attachments"."shiva_vnic_attachment" = {
+    compartment_id = tfRef "var.compartment_id";
+    instance_id = tfRef "resource.oci_core_instance.shiva.id";
+  };
+
+  data."oci_core_vnic"."shiva_vnic" = {
+    vnic_id = tfRef "data.oci_core_vnic_attachments.shiva_vnic_attachment.vnic_attachments[0].vnic_id";
+  };
+
+  # output."shiva_vnic" = {
+  #   value = tfRef "data.oci_core_vnic_attachments.shiva_vnic_attachment.vnic_attachments[0]";
+  # };
+
   output."shiva_ip" = {
     value = tfRef "oci_core_instance.shiva.public_ip";
+  };
+
+  output."shiva_ip6" = {
+    value = tfRef "data.oci_core_vnic.shiva_vnic.ipv6addresses[0]";
   };
 
   data."local_file"."shiva_age" = {
