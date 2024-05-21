@@ -21,6 +21,7 @@ in {
       "10.0.0.0/16"
     ];
     dns_label = "neoinfra";
+    is_ipv6enabled = true;
   };
 
   resource."oci_core_internet_gateway"."terraform_vcn_gateway" = withVCN {
@@ -29,12 +30,19 @@ in {
   };
 
   resource."oci_core_route_table"."terraform_vcn_route0" = withVCN {
-    display_name = "Internet Gateway";
-    route_rules = {
-      network_entity_id = tfRef "oci_core_internet_gateway.terraform_vcn_gateway.id";
-      destination = "0.0.0.0/0";
-      destination_type = "CIDR_BLOCK";
-    };
+    display_name = "Terraform Internet Gateway";
+    route_rules = [
+      {
+        network_entity_id = tfRef "oci_core_internet_gateway.terraform_vcn_gateway.id";
+        destination = "0.0.0.0/0";
+        destination_type = "CIDR_BLOCK";
+      }
+      {
+        network_entity_id = tfRef "oci_core_internet_gateway.terraform_vcn_gateway.id";
+        destination = "::/0";
+        destination_type = "CIDR_BLOCK";
+      }
+    ];
   };
 
   # https://github.com/oracle/terraform-provider-oci/issues/1324
@@ -78,6 +86,15 @@ in {
       "172.64.0.0/13"
       "131.0.72.0/22"
     ];
+    blocks6 = [
+      "2400:cb00::/32"
+      "2606:4700::/32"
+      "2803:f800::/32"
+      "2405:b500::/32"
+      "2405:8100::/32"
+      "2a06:98c0::/29"
+      "2c0f:f248::/32"
+    ];
   in
     withVCN {
       display_name = "TF - All ingress cloudflare";
@@ -87,7 +104,7 @@ in {
           protocol = "all";
           stateless = false;
         })
-        blocks;
+        (blocks ++ blocks6);
     };
 
   resource."oci_core_security_list"."core" = {
@@ -107,6 +124,12 @@ in {
         # All egress
         protocol = "all";
         destination = "0.0.0.0/0";
+        stateless = false;
+      }
+      {
+        # All egress 6
+        protocol = "all";
+        destination = "::/0";
         stateless = false;
       }
     ];
@@ -184,14 +207,4 @@ in {
     ];
     route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
   };
-
-  # resource."oci_core_subnet"."all_ingress_egress" = withVCN {
-  #   display_name = "All ingress egress";
-  #   cidr_block = "10.0.1.0/24";
-  #   security_list_ids = [
-  #     (tfRef "oci_core_security_list.core.id")
-  #     (tfRef "oci_core_security_list.all_ingress.id")
-  #   ];
-  #   route_table_id = tfRef "oci_core_route_table.terraform_vcn_route0.id";
-  # };
 }
