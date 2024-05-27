@@ -25,6 +25,8 @@
     ../postgres
 
     ../mail
+
+    # ../slurm
   ];
 
   # was broken
