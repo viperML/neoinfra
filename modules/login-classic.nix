@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   users.mutableUsers = false;
   users.allowNoPasswordLogin = true; # module system doesn't know about certs
 
@@ -7,6 +7,7 @@
     isNormalUser = true;
     extraGroups = ["wheel"];
     createHome = true;
+    shell = pkgs.bashInteractive;
   };
 
   security.sudo.wheelNeedsPassword = false;

@@ -114,7 +114,7 @@
     });
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     snm = {
       url = "gitlab:simple-nixos-mailserver/nixos-mailserver/master";
       inputs.nixpkgs.follows = "nixpkgs";
