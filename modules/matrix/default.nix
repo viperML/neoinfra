@@ -69,7 +69,7 @@ in {
   imports = [
     ../matrix-bridge-irc
     # ../matrix-bridge-whatsapp
-    ../matrix-bridge-telegram
+    # ../matrix-bridge-telegram
   ];
 
   sops.secrets.matrix-synapse-config = {

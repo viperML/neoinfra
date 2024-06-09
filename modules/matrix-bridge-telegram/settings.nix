@@ -19,9 +19,9 @@ in {
     };
 
     appservice = rec {
-      hostname = "0.0.0.0";
+      hostname = "::1";
       port = 29317;
-      address = "http://localhost:${toString port}";
+      address = "http://[::1]:${toString port}";
       database = "postgresql:///mautrix-telegram?host=/run/postgresql";
     };
 
@@ -30,17 +30,13 @@ in {
         "ayats.org" = "https://ayats.org";
       };
       permissions = {
-        "*" = "relaybot";
         "ayats.org" = "full";
         "@viperml:ayats.org" = "admin";
       };
-      # relaybot = {
-      #   whitelist = [];
-      # };
       encryption = {
         allow = true;
         default = true;
-        require = true;
+        # require = true;
       };
     };
   };
