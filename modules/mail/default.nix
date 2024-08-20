@@ -86,7 +86,7 @@ in {
   };
 
   services.restic.backups.mail = {
-    repository = "rclone:mail:mail/mail-directory";
+    repository = "rclone:mail:mail/backup-mail-directory";
     paths = [
       config.mailserver.mailDirectory
     ];

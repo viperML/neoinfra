@@ -86,7 +86,14 @@
                 set -ex
                 nix build "$ROOT#terranix" -L -o config.tf.json
 
-                exec -a "$0" "${myTerraform}/bin/terraform" "$@"
+                ${myTerraform}/bin/terraform "$@"
+
+                rustic backup
+              '')
+              (pkgs.writeShellScriptBin "terraform-unwrapped" ''
+                echo ":: Please use terraform (wrapped)"
+                echo ""
+                exec ${myTerraform}/bin/terraform "$@"
               '')
               myTerraform
               oci-cli
@@ -96,6 +103,7 @@
               # nomad
               hclfmt
               nodejs
+              nodePackages.wrangler
 
               perlPackages.perl
               perlPackages.AppCmd

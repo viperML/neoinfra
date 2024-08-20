@@ -138,7 +138,7 @@ in {
     matrix-synapse-data = lib.mkMerge [
       common
       {
-        repository = "rclone:matrix:matrix/matrix-synapse-data";
+        repository = "rclone:matrix:matrix/backup-synapse-data";
         paths = [
           "/var/lib/matrix-synapse"
         ];
@@ -148,7 +148,7 @@ in {
     matrix-synapse-db = lib.mkMerge [
       common
       {
-        repository = "rclone:matrix:matrix/matrix-synapse-db";
+        repository = "rclone:matrix:matrix/backup-synapse-db";
         dynamicFilesFrom = "${pkgs.writeShellScript "restic-matrix-synapse-db-files" ''
           set -xeu
           outfile=$(mktemp -d)/matrix-synapse-backup
