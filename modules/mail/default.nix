@@ -4,7 +4,9 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  sopsFile = ../../secrets/mail.yaml;
+in {
   imports = [inputs.snm.nixosModule];
 
   mailserver = {
@@ -41,14 +43,24 @@
     forceSSL = true;
   };
 
-  sops.secrets."snm_password_fer" = {
-    sopsFile = ../../secrets/mail.yaml;
-    owner = config.mailserver.vmailUserName;
-    group = config.mailserver.vmailGroupName;
-  };
+  sops.secrets = {
+    "snm_password_fer" = {
+      inherit sopsFile;
+      owner = config.mailserver.vmailUserName;
+      group = config.mailserver.vmailGroupName;
+    };
 
-  sops.secrets."snm_dkim_key" = {
-    sopsFile = ../../secrets/mail.yaml;
+    "snm_dkim_key" = {
+      inherit sopsFile;
+    };
+
+    "snm-backup-password" = {
+      inherit sopsFile;
+    };
+
+    "snm-backup-env" = {
+      inherit sopsFile;
+    };
   };
 
   systemd.tmpfiles.settings = {
@@ -71,6 +83,18 @@
         mode = "0600";
       };
     };
+  };
+
+  services.restic.backups.mail = {
+    repository = "rclone:mail:mail/mail-directory";
+    paths = [
+      config.mailserver.mailDirectory
+    ];
+    user = "root";
+    passwordFile = config.sops.secrets.snm-backup-password.path;
+    rcloneConfig = import ../rclone-config.nix;
+    initialize = true;
+    environmentFile = config.sops.secrets.snm-backup-env.path;
   };
 
   assertions = [

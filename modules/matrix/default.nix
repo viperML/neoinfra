@@ -8,63 +8,9 @@
   server_name = "ayats.org";
   virtualHost = "matrix.${server_name}";
 
-  writeTOML = (pkgs.formats.toml {}).generate;
   synapsePort = 8008;
   slidingSyncPort = 8009;
-
-  mkSynapseRestic = {
-    systemdArgs,
-    extraScript,
-  }:
-    lib.mkMerge [
-      {
-        serviceConfig = {
-          EnvironmentFile = config.sops.secrets.matrix-backup-env.path;
-          Type = "oneshot";
-          PrivateTmp = true;
-          User = "matrix-synapse";
-          Group = "matrix-synapse";
-        };
-        environment = {
-          RCLONE_CONFIG = pkgs.writeText "rclone.conf" ''
-            [matrix]
-            type = s3
-            provider = Cloudflare
-            env_auth = true
-            acl = private
-            no_check_bucket = true
-          '';
-        };
-        path = [
-          pkgs.rclone
-          pkgs.rustic-rs
-          config.services.postgresql.package
-        ];
-        script = ''
-          # rustic reads the config from $HOME/rustic.toml
-          set -xu pipefail
-
-          export HOME=/tmp
-          cd $HOME
-          ln -vsfT ${
-            writeTOML "rustic.toml" {
-              forget = {
-                keep-monthly = 1;
-              };
-              # backup.sources = [
-              #   {
-              #     source = "/var/lib/matrix-synapse";
-              #   }
-              # ];
-            }
-          } ./rustic.toml
-          cat ./rustic.toml
-
-          ${extraScript}
-        '';
-      }
-      systemdArgs
-    ];
+  sopsFile = ../../secrets/matrix.yaml;
 in {
   imports = [
     ../matrix-bridge-irc
@@ -72,20 +18,28 @@ in {
     # ../matrix-bridge-telegram
   ];
 
-  sops.secrets.matrix-synapse-config = {
-    sopsFile = ../../secrets/matrix.yaml;
-    owner = config.systemd.services.matrix-synapse.serviceConfig.User;
-    group = config.systemd.services.matrix-synapse.serviceConfig.Group;
-  };
+  sops.secrets = {
+    matrix-synapse-config = {
+      inherit sopsFile;
+      owner = config.systemd.services.matrix-synapse.serviceConfig.User;
+      group = config.systemd.services.matrix-synapse.serviceConfig.Group;
+    };
 
-  sops.secrets.matrix-backup-env = {
-    sopsFile = ../../secrets/matrix.yaml;
-  };
+    matrix-backup-password = {
+      inherit sopsFile;
+      owner = config.systemd.services.matrix-synapse.serviceConfig.User;
+      group = config.systemd.services.matrix-synapse.serviceConfig.Group;
+    };
 
-  sops.secrets.matrix-sliding-sync-env = {
-    sopsFile = ../../secrets/matrix.yaml;
-    # owner = "matrix-sliding-sync";
-    # group = "matrix-sliding-sync";
+    matrix-sliding-sync-env = {
+      inherit sopsFile;
+      # owner = "matrix-sliding-sync";
+      # group = "matrix-sliding-sync";
+    };
+
+    matrix-backup-env = {
+      inherit sopsFile;
+    };
   };
 
   services.postgresql = {
@@ -172,46 +126,38 @@ in {
     };
   };
 
-  systemd.services = {
-    # matrix-synapse-backup = mkSynapseRestic {
-    #   extraScript = ''
-    #     export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-data"
-    #     set +e
-    #     rustic init || :
-    #     set -e
-    #     rustic backup /var/lib/matrix-synapse
+  services.restic.backups = let
+    common = {
+      user = "matrix-synapse";
+      passwordFile = config.sops.secrets.matrix-backup-password.path;
+      rcloneConfig = import ../rclone-config.nix;
+      initialize = true;
+      environmentFile = config.sops.secrets.matrix-backup-env.path;
+    };
+  in {
+    matrix-synapse-data = lib.mkMerge [
+      common
+      {
+        repository = "rclone:matrix:matrix/matrix-synapse-data";
+        paths = [
+          "/var/lib/matrix-synapse"
+        ];
+      }
+    ];
 
-    #     export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-db"
-    #     set +e
-    #     rustic init || :
-    #     set -e
-    #     pg_dump --format=custom --compress=0 --clean matrix-synapse | rustic backup --stdin-filename matrix-synapse.dump -
-    #   '';
-    #   systemdArgs = {
-    #     startAt = "*-*-* 03:00:00";
-    #   };
-    # };
-
-    # matrix-synapse-restore = mkSynapseRestic {
-    #   extraScript = ''
-    #     if [[ ! -f /var/lib/matrix-synapse/homeserver.signing.key ]]; then
-    #       export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-data"
-    #       rustic restore latest:/var/lib/matrix-synapse /var/lib/matrix-synapse
-
-    #       export RUSTIC_REPOSITORY="rclone:matrix:matrix/synapse-db"
-    #       rustic dump latest:matrix-synapse.dump | pg_restore --clean --if-exists -d matrix-synapse -e
-    #     fi
-    #   '';
-    #   systemdArgs = {
-    #     requiredBy = [ "matrix-synapse.service" ];
-    #     before = [ "matrix-synapse.service" ];
-    #   };
-    # };
+    matrix-synapse-db = lib.mkMerge [
+      common
+      {
+        repository = "rclone:matrix:matrix/matrix-synapse-db";
+        dynamicFilesFrom = "${pkgs.writeShellScript "restic-matrix-synapse-db-files" ''
+          set -xeu
+          outfile=$(mktemp -d)/matrix-synapse-backup
+          ${config.services.postgresql.package}/bin/pg_dump --format=custom --compress=0 --clean matrix-synapse -f $outfile
+          echo $outfile
+        ''}";
+      }
+    ];
   };
-
-  # systemd.timers."matrix-synapse-backup" = {
-  #   timerConfig.Persistent = true;
-  # };
 
   systemd.tmpfiles.rules = [
     "d /var/lib/matrix-synapse 0700 matrix-synapse matrix-synapse - -"

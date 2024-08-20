@@ -40,13 +40,14 @@
     pkgs.git
   ];
 
-  sops.age = {
-    keyFile = "/var/lib/secrets/main.age";
-    sshKeyPaths = [];
+  sops = {
+    age = {
+      keyFile = "/var/lib/secrets/main.age";
+      sshKeyPaths = [];
+    };
+    gnupg.sshKeyPaths = [];
+    defaultSopsFile = ../../secrets/shiva.yaml;
   };
-
-  sops.gnupg.sshKeyPaths = [];
-  sops.defaultSopsFile = ../../secrets/shiva.yaml;
 
   programs.nh = {
     enable = true;
