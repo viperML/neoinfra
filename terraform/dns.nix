@@ -18,6 +18,13 @@ in {
       value = ref "oci_core_instance.shiva.public_ip";
     };
 
+    "record-freshrss" = withZone {
+      name = "freshrss";
+      type = "A";
+      proxied = true;
+      value = ref "oci_core_instance.shiva.public_ip";
+    };
+
     # "record-matrix-6" = withZone {
     #   name = "matrix";
     #   type = "AAAA";
