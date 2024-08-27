@@ -17,10 +17,11 @@ in {
   services.freshrss = {
     enable = true;
     passwordFile = config.sops.secrets.freshrss_password.path;
-    virtualHost = "freshrss";
-    baseUrl = "https://${cfg.virtualHost}.ayats.org";
+    virtualHost = "freshrss.ayats.org";
+    baseUrl = "https://${cfg.virtualHost}";
     inherit user;
     database = {
+      type = "sqlite";
       passFile = config.sops.secrets.freshrss_password.path;
     };
   };
