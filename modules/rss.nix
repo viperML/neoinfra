@@ -12,6 +12,14 @@ in {
       inherit sopsFile;
       owner = lib.mkIf cfg.enable user;
     };
+
+    freshrss-backup-password = {
+      inherit sopsFile;
+    };
+
+    freshrss-backup-env = {
+      inherit sopsFile;
+    };
   };
 
   services.freshrss = {
@@ -30,5 +38,17 @@ in {
     enableACME = false;
     useACMEHost = "wildcard.ayats.org";
     forceSSL = true;
+  };
+
+  services.restic.backups.freshrss = {
+    repository = "rclone:freshrss:freshrss/backup-freshrss";
+    paths = [
+      cfg.dataDir
+    ];
+    user = "root";
+    passwordFile = config.sops.secrets.freshrss-backup-password.path;
+    rcloneConfig = import ./rclone-config.nix;
+    initialize = true;
+    environmentFile = config.sops.secrets.freshrss-backup-env.path;
   };
 }
