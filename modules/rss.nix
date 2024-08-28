@@ -25,4 +25,10 @@ in {
       passFile = config.sops.secrets.freshrss_password.path;
     };
   };
+
+  services.nginx.virtualHosts.${cfg.virtualHost} = {
+    enableACME = false;
+    useACMEHost = "wildcard.ayats.org";
+    forceSSL = true;
+  };
 }

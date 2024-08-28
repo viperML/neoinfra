@@ -26,7 +26,7 @@
 
     ../mail
 
-    ../freshrss.nix
+    ../rss.nix
 
     # ../slurm
   ];
