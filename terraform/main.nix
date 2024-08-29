@@ -19,6 +19,19 @@ in {
         version = "~> 4.17";
       };
     };
+
+    # https://github.com/hashicorp/terraform/issues/33847#issuecomment-1974231305
+    backend.s3 = {
+      bucket = "neoinfra";
+      key = "terraform.tfstate";
+      region = "auto";
+      skip_credentials_validation = true;
+      skip_metadata_api_check = true;
+      skip_region_validation = true;
+      skip_requesting_account_id = true;
+      skip_s3_checksum = true;
+      use_path_style = true;
+    };
   };
 
   provider."cloudflare" = {
@@ -155,7 +168,6 @@ in {
   #   instance_id = oci_core_instance.shiva.id
   # }
 
-
   # vishnu
 
   /*
@@ -228,5 +240,4 @@ in {
   #     "allow dynamic-group ${oci_identity_dynamic_group.vault_dynamic_group.name} to use secrets in compartment id ${var.compartment_id}"
   #   ]
   # }
-
 }

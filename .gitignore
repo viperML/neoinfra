@@ -3,6 +3,7 @@
 *result*
 *.qcow2
 perl-lang
+/rclone
 
 # rustic
 rustic/**

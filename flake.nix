@@ -66,17 +66,6 @@
             packages = [
               sops
               rclone
-              (inputs.wrapper-manager.lib.build {
-                inherit pkgs;
-                modules = [
-                  {
-                    wrappers.rustic = {
-                      basePackage = pkgs.rustic-rs;
-                      extraWrapperFlags = ''--run 'cd "$ROOT"' '';
-                    };
-                  }
-                ];
-              })
               (pkgs.writeShellScriptBin "terraform" ''
                 if [[ ! -f .terraform.lock.hcl ]]; then
                   echo "Please run this in a folder with a .terraform.lock.hcl"
@@ -87,13 +76,6 @@
                 nix build "$ROOT#terranix" -L -o config.tf.json
 
                 ${myTerraform}/bin/terraform "$@"
-
-                rustic backup
-              '')
-              (pkgs.writeShellScriptBin "terraform-unwrapped" ''
-                echo ":: Please use terraform (wrapped)"
-                echo ""
-                exec ${myTerraform}/bin/terraform "$@"
               '')
               myTerraform
               oci-cli

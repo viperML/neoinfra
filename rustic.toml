@@ -1,9 +1,0 @@
-[forget]
-keep-daily = 14
-keep-weekly = 5
-
-[backup]
-glob = [ "!*", "*.age", "*.tfstate" ]
-
-[[backup.sources]]
-source = "terraform secrets"
