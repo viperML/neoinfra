@@ -25,6 +25,13 @@ in {
       value = ref "oci_core_instance.shiva.public_ip";
     };
 
+    "record-minecraft" = withZone {
+      name = "mc";
+      type = "A";
+      proxied = false;
+      value = ref "oci_core_instance.shiva.public_ip";
+    };
+
     # "record-matrix-6" = withZone {
     #   name = "matrix";
     #   type = "AAAA";
