@@ -26,6 +26,10 @@ in {
       MOD_PLATFORM = "AUTO_CURSEFORGE";
       MEMORY = "6G";
       CF_PAGE_URL = "https://www.curseforge.com/minecraft/modpacks/all-the-mods-9-no-frills";
+      DIFFICULTY = "hard";
+      OPS = "viperML";
+      ALLOW_FLIGHT = "TRUE";
+      MOTD = "Modpack: All the Mods 9 - No frills";
     };
     environmentFiles = [
       config.sops.secrets.minecraft_env.path
