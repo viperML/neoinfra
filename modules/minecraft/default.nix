@@ -8,7 +8,7 @@
   minecraftPort' = 25565;
   minecraftPort = toString minecraftPort';
   voicechatPort' = 24454;
-  voicechatPort = toString 24454;
+  voicechatPort = toString voicechatPort';
 in {
   networking.firewall = {
     allowedTCPPorts = [
@@ -29,7 +29,7 @@ in {
     image = "itzg/minecraft-server";
     ports = [
       "${minecraftPort}:${minecraftPort}"
-      "${voicechatPort}:${voicechatPort}"
+      "${voicechatPort}:${voicechatPort}/udp"
     ];
     environment = {
       EULA = "true";
@@ -41,6 +41,7 @@ in {
       ALLOW_FLIGHT = "TRUE";
       MOTD = "Modpack: All the Mods 9 - No frills";
       CURSEFORGE_FILES = lib.concatStringsSep "," [
+        # TODO: sync with index.html
         "https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat/files/5676800"
       ];
     };
