@@ -86,6 +86,7 @@
               hclfmt
               nodejs
               nodePackages.wrangler
+              vscode-langservers-extracted
 
               perlPackages.perl
               perlPackages.AppCmd
