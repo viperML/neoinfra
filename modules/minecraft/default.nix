@@ -1,12 +1,23 @@
-{config, ...}: let
+{
+  config,
+  lib,
+  ...
+}: let
   sopsFile = ../../secrets/shiva.yaml;
   dataPath = "/var/lib/minecraft";
   minecraftPort' = 25565;
   minecraftPort = toString minecraftPort';
+  voicechatPort' = 24454;
+  voicechatPort = toString 24454;
 in {
-  networking.firewall.allowedTCPPorts = [
-    minecraftPort'
-  ];
+  networking.firewall = {
+    allowedTCPPorts = [
+      minecraftPort'
+    ];
+    allowedUDPPorts = [
+      voicechatPort'
+    ];
+  };
 
   sops.secrets = {
     minecraft_env = {
@@ -16,7 +27,10 @@ in {
 
   virtualisation.oci-containers.containers."minecraft" = {
     image = "itzg/minecraft-server";
-    ports = ["${minecraftPort}:${minecraftPort}"];
+    ports = [
+      "${minecraftPort}:${minecraftPort}"
+      "${voicechatPort}:${voicechatPort}"
+    ];
     environment = {
       EULA = "true";
       MOD_PLATFORM = "AUTO_CURSEFORGE";
@@ -26,6 +40,9 @@ in {
       OPS = "viperML";
       ALLOW_FLIGHT = "TRUE";
       MOTD = "Modpack: All the Mods 9 - No frills";
+      CURSEFORGE_FILES = lib.concatStringsSep "," [
+        "https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat/files/5676800"
+      ];
     };
     environmentFiles = [
       config.sops.secrets.minecraft_env.path
@@ -49,6 +66,13 @@ in {
         add_header Content-Type text/html;
       '';
       "/".root = ./.;
+    };
+  };
+
+  systemd.services."${config.virtualisation.oci-containers.backend}-minecraft" = {
+    serviceConfig = {
+      RuntimeMaxSec = "6h";
+      Restart = "always";
     };
   };
 }

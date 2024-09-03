@@ -174,7 +174,7 @@ in {
             protocol = "17";
             source = "0.0.0.0/0";
             stateless = false;
-            tcp_options = {
+            udp_options = {
               min = port;
               max = port;
             };
@@ -187,7 +187,7 @@ in {
             protocol = "17";
             source = "0.0.0.0/0";
             stateless = false;
-            tcp_options = {
+            udp_options = {
               min = from;
               max = to;
             };

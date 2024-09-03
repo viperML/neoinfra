@@ -41,6 +41,7 @@
 
   environment.systemPackages = [
     pkgs.git
+    pkgs.btop
   ];
 
   sops = {
