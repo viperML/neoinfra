@@ -1,9 +1,5 @@
-{
-  config,
-  pkgs,
-  ...
-}: let
-  sopsFile = ../secrets/shiva.yaml;
+{config, ...}: let
+  sopsFile = ../../secrets/shiva.yaml;
   dataPath = "/var/lib/minecraft";
   minecraftPort' = 25565;
   minecraftPort = toString minecraftPort';
@@ -42,4 +38,17 @@ in {
   systemd.tmpfiles.rules = [
     "d ${dataPath} 0755 root root - -"
   ];
+
+  services.nginx.virtualHosts."mc.ayats.org" = {
+    enableACME = false;
+    useACMEHost = "wildcard.ayats.org";
+    forceSSL = true;
+    locations = {
+      "/robots.txt".extraConfig = ''
+        return 200 "User-agent: *\nDisallow: /";
+        add_header Content-Type text/html;
+      '';
+      "/".root = ./.;
+    };
+  };
 }

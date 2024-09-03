@@ -29,7 +29,7 @@
     ../rss.nix
 
     # ../slurm
-    ../minecraft.nix
+    ../minecraft
   ];
 
   # was broken
