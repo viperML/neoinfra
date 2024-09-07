@@ -46,6 +46,10 @@ in {
         # server only
         "https://www.curseforge.com/minecraft/mc-mods/easier-sleeping/files/4628693"
       ];
+      RCON_CMDS_STARTUP = lib.concatStringsSep "\n" [
+        "gamerule doTraderSpawning false"
+        "gamerule doInsomnia false"
+      ];
     };
     environmentFiles = [
       config.sops.secrets.minecraft_env.path
