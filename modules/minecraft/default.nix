@@ -1,9 +1,10 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
-  sopsFile = ../../secrets/shiva.yaml;
+  sopsFile = ../../secrets/minecraft.yaml;
   dataPath = "/var/lib/minecraft";
   minecraftPort' = 25565;
   minecraftPort = toString minecraftPort';
@@ -22,7 +23,11 @@ in {
   };
 
   sops.secrets = {
-    minecraft_env = {
+    minecraft-env = {
+      inherit sopsFile;
+    };
+
+    minecraft-backup-env = {
       inherit sopsFile;
     };
   };
@@ -56,7 +61,7 @@ in {
       ENABLE_QUERY = "true";
     };
     environmentFiles = [
-      config.sops.secrets.minecraft_env.path
+      config.sops.secrets.minecraft-env.path
     ];
     volumes = [
       "${dataPath}:/data"
@@ -76,7 +81,12 @@ in {
         return 200 "User-agent: *\nDisallow: /";
         add_header Content-Type text/html;
       '';
-      "/".root = ./.;
+      "/".root = lib.fileset.toSource {
+        root = ./.;
+        fileset = lib.fileset.unions [
+          (lib.fileset.fileFilter (file: file.hasExt "html") ./.)
+        ];
+      };
     };
   };
 
@@ -85,5 +95,38 @@ in {
       RuntimeMaxSec = "6h";
       Restart = "always";
     };
+  };
+
+  systemd.services."backup-minecraft" = {
+    unitConfig = {
+      Type = "oneshot";
+    };
+    path = [
+      pkgs.rclone
+    ];
+    serviceConfig = {
+      PrivateTmp = true;
+      EnvironmentFile = [
+        config.sops.secrets.minecraft-backup-env.path
+      ];
+    };
+    script = let
+      r = "minecraft";
+      dir = "/var/lib/minecraft/simplebackups";
+    in ''
+      cd "$(mktemp -d)"
+
+      tee .rclone.conf << EOF
+      [${r}]
+      type = s3
+      provider = Cloudflare
+      env_auth = true
+      acl = private
+      no_check_bucket = true
+      EOF
+
+      rclone sync ${dir} ${r}:${r}
+    '';
+    startAt = "daily";
   };
 }
