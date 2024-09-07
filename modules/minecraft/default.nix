@@ -9,6 +9,8 @@
   minecraftPort = toString minecraftPort';
   voicechatPort' = 24454;
   voicechatPort = toString voicechatPort';
+  queryPort' = 25565;
+  queryPort = toString queryPort';
 in {
   networking.firewall = {
     allowedTCPPorts = [
@@ -30,6 +32,7 @@ in {
     ports = [
       "${minecraftPort}:${minecraftPort}"
       "${voicechatPort}:${voicechatPort}/udp"
+      "${queryPort}:${queryPort}/udp"
     ];
     environment = {
       EULA = "true";
@@ -50,6 +53,7 @@ in {
         "gamerule doTraderSpawning false"
         "gamerule doInsomnia false"
       ];
+      ENABLE_QUERY = "true";
     };
     environmentFiles = [
       config.sops.secrets.minecraft_env.path
