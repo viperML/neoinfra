@@ -43,6 +43,8 @@ in {
       CURSEFORGE_FILES = lib.concatStringsSep "," [
         # TODO: sync with index.html
         "https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat/files/5676800"
+        # server only
+        "https://www.curseforge.com/minecraft/mc-mods/easier-sleeping/files/4628693"
       ];
     };
     environmentFiles = [
