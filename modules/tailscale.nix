@@ -14,7 +14,14 @@ in {
     enable = true;
     extraUpFlags = ["--ssh"];
   };
-  networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [22];
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
+    allowedTCPPorts = [
+      22
+    ];
+    allowedUDPPorts = [
+      25565 # minecraft query port
+    ];
+  };
   networking.firewall.checkReversePath = "loose";
 
   services.openssh = {
