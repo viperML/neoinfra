@@ -1,5 +1,9 @@
-{config, lib, pkgs, ...}: {
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   system.build.firewallReport = pkgs.writeText "firewall-report" (lib.concatStringsSep "\n" (lib.flatten [
     (map (p: "TCP ${toString p}") config.networking.firewall.allowedTCPPorts)
     (map ({
