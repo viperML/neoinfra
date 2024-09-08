@@ -16,6 +16,7 @@
 
           inputs.noshell.nixosModules.default
           {programs.noshell.enable = true;}
+          ./common.nix
         ];
       });
 in {
