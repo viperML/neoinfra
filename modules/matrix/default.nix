@@ -6,7 +6,7 @@
   ...
 }: let
   server_name = "ayats.org";
-  virtualHost = "matrix.${server_name}";
+  virtualHost = "matrix2.${server_name}";
 
   synapsePort = 8008;
   slidingSyncPort = 8009;
@@ -123,6 +123,12 @@ in {
       locations = {
         "~ ^/(_matrix|_synapse/client|versions)".proxyPass = "http://[::1]:${toString synapsePort}";
       };
+    };
+
+    "matrix.ayats.org" = {
+      useACMEHost = "wildcard.ayats.org";
+      forceSSL = true;
+      locations."/".return = "410";
     };
   };
 

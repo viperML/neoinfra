@@ -12,10 +12,17 @@
 in {
   resource."cloudflare_record" = {
     "record-matrix" = withZone {
-      name = "matrix";
+      name = "matrix2";
       type = "A";
       proxied = false;
       value = ref "oci_core_instance.shiva.public_ip";
+    };
+
+    "record-matrix-tombstone" = withZone {
+      name = "matrix";
+      type = "A";
+      proxied = false;
+      value = "127.0.0.1";
     };
 
     "record-freshrss" = withZone {
@@ -72,13 +79,12 @@ in {
       ttl = 10800;
     };
 
-    "record-mail-spf2" = withZone {
-      name = "matrix";
-      type = "TXT";
-      value = "v=spf1 a:mail.ayats.org -all";
-      ttl = 10800;
-    };
-
+    # "record-mail-spf2" = withZone {
+    #   name = "matrix";
+    #   type = "TXT";
+    #   value = "v=spf1 a:mail.ayats.org -all";
+    #   ttl = 10800;
+    # };
 
     "record-mail-dkim" = withZone {
       name = "mail._domainkey";
