@@ -11,15 +11,16 @@ const res = {
     const { pathname } = new URL(request.url);
 
     let data = {};
+    const virtualHost = "matrix2.ayats.org";
 
     if (pathname === "/.well-known/matrix/server") {
       data = {
-        "m.server": "matrix.ayats.org:443",
+        "m.server": `${virtualHost}:443`,
       };
     } else if (pathname === "/.well-known/matrix/client") {
       data = {
         "m.homeserver": {
-          base_url: "https://matrix.ayats.org",
+          base_url: `https://${virtualHost}`,
         }
       }
     };
