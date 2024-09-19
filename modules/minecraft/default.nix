@@ -42,7 +42,7 @@ in {
     environment = {
       EULA = "true";
       MOD_PLATFORM = "AUTO_CURSEFORGE";
-      MEMORY = "6G";
+      MEMORY = "8G";
       CF_PAGE_URL = "https://www.curseforge.com/minecraft/modpacks/all-the-mods-9-no-frills";
       DIFFICULTY = "hard";
       OPS = "viperML";
