@@ -29,6 +29,8 @@
 
     ../rss.nix
 
+    ../outline
+
     # ../slurm
     # ../minecraft
   ];
