@@ -22,14 +22,12 @@
 
     # ../obsidian
 
-    ../matrix
+    # ../matrix
     ../postgres
 
-    ../mail
+    # ../mail
 
     ../rss.nix
-
-    ../outline
 
     # ../slurm
     # ../minecraft
