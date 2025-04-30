@@ -2,31 +2,31 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/cloudflare/cloudflare" {
-  version     = "4.29.0"
-  constraints = "~> 4.17"
+  version     = "5.3.0"
+  constraints = "~> 5.3"
   hashes = [
-    "h1:rBcmyJabpiKyLTi8+wn8aG54Lj9D3ErIt40IRn3bsnw=",
+    "h1:pomjNq11swbg7RPeUiOf31kphVNa6DNvyKfEM6MlwJw=",
   ]
 }
 
 provider "registry.terraform.io/hashicorp/cloudinit" {
-  version = "2.3.3"
+  version = "2.3.7"
   hashes = [
-    "h1:5ulRXpoNE5aVWq2+KYk7h/RJ8LY3iGpPkNCzPzFe+u0=",
+    "h1:FuzrCsesRi6R5yW7m4Qgp4zP3th/vbDjE1OTgMMUURk=",
   ]
 }
 
 provider "registry.terraform.io/hashicorp/local" {
-  version = "2.5.1"
+  version = "2.5.2"
   hashes = [
-    "h1:3ImtxMEx5j6ZksPY+scaYqe8DAuMY0OsY3SigHpekvg=",
+    "h1:SvaW6d/+S66TKJ6SjNcghE+hGRyYr/kxl3EP/efG+Ow=",
   ]
 }
 
 provider "registry.terraform.io/oracle/oci" {
-  version     = "5.36.0"
-  constraints = "~> 5.17"
+  version     = "6.35.0"
+  constraints = "~> 6.35"
   hashes = [
-    "h1:wNkMAYu7Vew576J+D02DsMuiK1A6FhcnwK7/Ax3nlJ8=",
+    "h1:usdIvr1laxyqhAv7SfWmloMto+VNjCV6ULkb7Wy9txY=",
   ]
 }

@@ -12,11 +12,11 @@ in {
     required_providers = {
       oci = {
         source = "oracle/oci";
-        version = "~> 5.17";
+        version = "~> 6.35";
       };
       cloudflare = {
         source = "cloudflare/cloudflare";
-        version = "~> 4.17";
+        version = "~> 5.3";
       };
     };
 

@@ -10,7 +10,7 @@
       module
     ];
 in {
-  resource."cloudflare_record" = {
+  resource."cloudflare_dns_record" = {
     # "record-matrix" = withZone {
     #   name = "matrix2";
     #   type = "A";
@@ -18,26 +18,26 @@ in {
     #   value = ref "oci_core_instance.shiva.public_ip";
     # };
     #
-    "record-matrix-tombstone" = withZone {
-      name = "matrix";
-      type = "A";
-      proxied = false;
-      value = "127.0.0.1";
-    };
-
-    "record-freshrss" = withZone {
-      name = "freshrss";
-      type = "A";
-      proxied = true;
-      value = ref "oci_core_instance.shiva.public_ip";
-    };
-
-    "record-minecraft" = withZone {
-      name = "mc";
-      type = "A";
-      proxied = false;
-      value = ref "oci_core_instance.shiva.public_ip";
-    };
+    # "record-matrix-tombstone" = withZone {
+    #   name = "matrix";
+    #   type = "A";
+    #   proxied = false;
+    #   value = "127.0.0.1";
+    # };
+    #
+    # "record-freshrss" = withZone {
+    #   name = "freshrss";
+    #   type = "A";
+    #   proxied = true;
+    #   value = ref "oci_core_instance.shiva.public_ip";
+    # };
+    #
+    # "record-minecraft" = withZone {
+    #   name = "mc";
+    #   type = "A";
+    #   proxied = false;
+    #   value = ref "oci_core_instance.shiva.public_ip";
+    # };
 
     # "record-matrix-6" = withZone {
     #   name = "matrix";
@@ -165,17 +165,17 @@ in {
     zone_type = "PRIMARY";
   };
 
-  resource."cloudflare_worker_script"."well-known" = {
-    name = "well-known";
-    account_id = ref "var.cloudflare_account_id";
-    content = ref ''
-      file("${./well-known.js}")
-    '';
-    module = true;
-  };
-
-  resource."cloudflare_worker_route"."well-known" = withZone {
-    pattern = "ayats.org/.well-known/*";
-    script_name = ref "cloudflare_worker_script.well-known.name";
-  };
+  # resource."cloudflare_worker_script"."well-known" = {
+  #   name = "well-known";
+  #   account_id = ref "var.cloudflare_account_id";
+  #   content = ref ''
+  #     file("${./well-known.js}")
+  #   '';
+  #   module = true;
+  # };
+  #
+  # resource."cloudflare_worker_route"."well-known" = withZone {
+  #   pattern = "ayats.org/.well-known/*";
+  #   script_name = ref "cloudflare_worker_script.well-known.name";
+  # };
 }

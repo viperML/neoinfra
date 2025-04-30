@@ -85,7 +85,7 @@
               # nomad
               hclfmt
               nodejs
-              nodePackages.wrangler
+              # nodePackages.wrangler
               vscode-langservers-extracted
 
               perlPackages.perl
@@ -105,7 +105,7 @@
     });
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     snm = {
       url = "gitlab:simple-nixos-mailserver/nixos-mailserver/master";
       inputs.nixpkgs.follows = "nixpkgs";
