@@ -87,6 +87,8 @@
               nodejs
               # nodePackages.wrangler
               vscode-langservers-extracted
+              consul
+              nomad
 
               perlPackages.perl
               perlPackages.AppCmd

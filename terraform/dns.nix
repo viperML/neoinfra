@@ -9,8 +9,27 @@
       {zone_id = ref "var.cloudflare_zone_id";}
       module
     ];
+
+  shivaIp = ref "oci_core_instance.shiva.public_ip";
+  shivaIp6 = ref "data.oci_core_vnic.shiva_vnic.ipv6addresses[0]";
 in {
   resource."cloudflare_dns_record" = {
+    "record-oci" = withZone {
+      name = "shiva.ayats.org";
+      type = "A";
+      proxied = true;
+      content = shivaIp;
+      ttl = 1; # auto
+    };
+
+    "record-oci-6" = withZone {
+      name = "shiva.ayats.org";
+      type = "AAAA";
+      proxied = true;
+      content = shivaIp6;
+      ttl = 1; # auto
+    };
+
     # "record-matrix" = withZone {
     #   name = "matrix2";
     #   type = "A";

@@ -21,6 +21,9 @@
     ../docker
 
     # ../obsidian
+    ../consul/node.nix
+    ../nomad/node.nix
+    ../consul/nginx.nix
 
     # ../matrix
     # ../postgres
@@ -62,4 +65,6 @@
   networking.hostName = "shiva";
 
   boot.enableContainers = true;
+
+  services.consul.webUi = true;
 }
