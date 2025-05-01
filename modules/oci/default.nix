@@ -8,7 +8,7 @@
     (modulesPath + "/profiles/minimal.nix")
   ];
 
-  environment.noXlibs = false; # true is broken
+  # environment.noXlibs = false; # true is broken
   documentation.man.enable = true;
 
   services.cloud-init = {

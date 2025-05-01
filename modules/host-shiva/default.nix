@@ -23,11 +23,11 @@
     # ../obsidian
 
     # ../matrix
-    ../postgres
+    # ../postgres
 
     # ../mail
 
-    ../rss.nix
+    # ../rss.nix
 
     # ../slurm
     # ../minecraft
