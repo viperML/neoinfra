@@ -42,10 +42,17 @@ in
   };
 
   services.consul-template.instances."nginx" = {
-    inherit user group;
+    # inherit user group;
     settings = {
       template = [
         {
+          exec = [
+            {
+              command = "${pkgs.systemdMinimal}/bin/systemctl reload nginx.service";
+            }
+          ];
+          inherit user group;
+          destination = configPath;
           contents = ''
             # consul-template config: dynamically generate a server for each consul service with tag "shiva"
             server {
@@ -70,10 +77,15 @@ in
                 # Service {{ .Name }}
                 {{ if (contains "shiva" .Tags) }}
                 {{ range service .Name }}
-                location {{ index .ServiceMeta "location" }} {
-                    proxy_pass http://{{ .Address }}:{{ .Port }}{{ index .ServiceMeta "location" }};
-                    include ${recommendedProxyConfig} ;
+                {{- $location := (index .ServiceMeta "location") -}}
+                {{- if (and $location (regexMatch "^/[a-zA-Z0-9._-]+$" $location)) -}}
+                location ~ ^{{ $location }}(/|$) {
+                    proxy_pass http://{{ .Address }}:{{ .Port }};
+                    include ${recommendedProxyConfig};
                 }
+                {{- else if $location -}}
+                # location: {{ $location }}
+                {{- end -}}
                 {{ end }}
                 {{ end }}
                 {{ end }}
@@ -84,7 +96,6 @@ in
                 # }
             }
           '';
-          destination = configPath;
         }
       ];
     };

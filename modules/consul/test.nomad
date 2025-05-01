@@ -27,15 +27,15 @@ job "hello-nginx" {
         port     = "http"
 
         meta {
-          location = "/foo"
+          location = "/test"
         }
-        check {
-          name     = "nginx-http"
-          type     = "http"
-          path     = "/foo"
-          interval = "10s"
-          timeout  = "2s"
-        }
+        # check {
+        #   name     = "nginx-http"
+        #   type     = "http"
+        #   path     = "/test2"
+        #   interval = "10s"
+        #   timeout  = "2s"
+        # }
       }
     }
   }
