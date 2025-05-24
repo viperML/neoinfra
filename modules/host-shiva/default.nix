@@ -4,7 +4,8 @@
   lib,
   config,
   ...
-}: {
+}:
+{
   imports = [
     inputs.sops-nix.nixosModules.default
     ../oci-lustrate-oracle9
@@ -23,6 +24,7 @@
     # ../obsidian
     ../consul/node.nix
     ../nomad/node.nix
+    ../nomad/web.nix
     ../consul/nginx.nix
 
     # ../matrix
@@ -51,10 +53,13 @@
   sops = {
     age = {
       keyFile = "/var/lib/secrets/main.age";
-      sshKeyPaths = [];
+      sshKeyPaths = [ ];
     };
-    gnupg.sshKeyPaths = [];
+    gnupg.sshKeyPaths = [ ];
     defaultSopsFile = ../../secrets/shiva.yaml;
+
+    # secrets.gh-pat = { };
+    secrets.docker-config = { };
   };
 
   programs.nh = {
@@ -67,4 +72,24 @@
   boot.enableContainers = true;
 
   services.consul.webUi = true;
+
+  services.nomad.settings = {
+    plugin = [
+      {
+        docker = [
+          {
+            config = [
+              {
+                auth = [
+                  {
+                    config = config.sops.secrets.docker-config.path;
+                  }
+                ];
+              }
+            ];
+          }
+        ];
+      }
+    ];
+  };
 }

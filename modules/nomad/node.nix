@@ -5,6 +5,7 @@
     dropPrivileges = false;
     enableDocker = true;
     settings = {
+      acl.enabled = true;
       data_dir = "/var/lib/nomad";
       server = {
         enabled = true;

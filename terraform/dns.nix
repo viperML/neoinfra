@@ -30,6 +30,22 @@ in {
       ttl = 1; # auto
     };
 
+    "record-nomad" = withZone {
+      name = "nomad.ayats.org";
+      type = "A";
+      proxied = false;
+      content = shivaIp;
+      ttl = 1; # auto
+    };
+
+    "record-nomad-6" = withZone {
+      name = "nomad.ayats.org";
+      type = "AAAA";
+      proxied = false;
+      content = shivaIp6;
+      ttl = 1; # auto
+    };
+
     # "record-matrix" = withZone {
     #   name = "matrix2";
     #   type = "A";
