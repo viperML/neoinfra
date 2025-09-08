@@ -1,11 +1,14 @@
 # depends on ssh-admin.nix
 {
+  pkgs,
   lib,
   config,
   ...
-}: let
+}:
+let
   ca_path = "ssh/ca.d";
-in {
+in
+{
   users.users.ayats = {
     name = "ayats";
     isNormalUser = true;
@@ -43,5 +46,9 @@ in {
   systemd.tmpfiles.rules = with config.users.users.ayats; [
     "d ${home} 700 ${name} ${group} - -"
     "z ${home} 700 ${name} ${group} - -"
+  ];
+
+  environment.systemPackages = [
+    pkgs.ghostty.terminfo
   ];
 }

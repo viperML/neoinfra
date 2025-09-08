@@ -36,7 +36,7 @@
 
     # ../slurm
     # ../minecraft
-    ../factorio.nix
+    # ../factorio.nix
   ];
 
   # was broken
