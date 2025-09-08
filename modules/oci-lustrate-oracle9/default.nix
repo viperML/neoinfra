@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   pkgs,
   lib,
@@ -100,5 +99,6 @@ in {
     "usr"
     "var"
     ".swapfile"
+    "home/opc"
   ];
 }
