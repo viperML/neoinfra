@@ -1,11 +1,10 @@
-{lib, ...}: let
-  inherit (lib) tfRef;
-
+let
   mkStringVar = description: {
     type = "string";
     inherit description;
   };
-in {
+in
+{
   variable = {
     "compartment_id" = mkStringVar "OCI Compartment OCID";
     "oci_key_id" = mkStringVar "Vault Key OCID";

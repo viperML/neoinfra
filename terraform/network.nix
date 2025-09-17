@@ -2,19 +2,23 @@
   lib,
   nixosConfigurations,
   ...
-}: let
+}:
+let
   inherit (lib) tfRef;
-  withCID = module:
+  withCID =
+    module:
     lib.mkMerge [
-      {compartment_id = tfRef "var.compartment_id";}
+      { compartment_id = tfRef "var.compartment_id"; }
       module
     ];
-  withVCN = module:
+  withVCN =
+    module:
     lib.mkMerge [
-      (withCID {vcn_id = tfRef "oci_core_vcn.terraform_vcn.id";})
+      (withCID { vcn_id = tfRef "oci_core_vcn.terraform_vcn.id"; })
       module
     ];
-in {
+in
+{
   resource."oci_core_vcn"."terraform_vcn" = withCID {
     display_name = "neoinfra";
     cidr_blocks = [
@@ -65,46 +69,45 @@ in {
   #   };
   # };
 
-  data."cloudflare_ip_ranges"."cloudflare" = {};
+  data."cloudflare_ip_ranges"."cloudflare" = { };
 
-  resource."oci_core_security_list"."all-ingress-cloudflare" = let
-    # https://www.cloudflare.com/ips-v4/#
-    blocks = [
-      "173.245.48.0/20"
-      "103.21.244.0/22"
-      "103.22.200.0/22"
-      "103.31.4.0/22"
-      "141.101.64.0/18"
-      "108.162.192.0/18"
-      "190.93.240.0/20"
-      "188.114.96.0/20"
-      "197.234.240.0/22"
-      "198.41.128.0/17"
-      "162.158.0.0/15"
-      "104.16.0.0/13"
-      "104.24.0.0/14"
-      "172.64.0.0/13"
-      "131.0.72.0/22"
-    ];
-    blocks6 = [
-      "2400:cb00::/32"
-      "2606:4700::/32"
-      "2803:f800::/32"
-      "2405:b500::/32"
-      "2405:8100::/32"
-      "2a06:98c0::/29"
-      "2c0f:f248::/32"
-    ];
-  in
+  resource."oci_core_security_list"."all-ingress-cloudflare" =
+    let
+      # https://www.cloudflare.com/ips-v4/#
+      blocks = [
+        "173.245.48.0/20"
+        "103.21.244.0/22"
+        "103.22.200.0/22"
+        "103.31.4.0/22"
+        "141.101.64.0/18"
+        "108.162.192.0/18"
+        "190.93.240.0/20"
+        "188.114.96.0/20"
+        "197.234.240.0/22"
+        "198.41.128.0/17"
+        "162.158.0.0/15"
+        "104.16.0.0/13"
+        "104.24.0.0/14"
+        "172.64.0.0/13"
+        "131.0.72.0/22"
+      ];
+      blocks6 = [
+        "2400:cb00::/32"
+        "2606:4700::/32"
+        "2803:f800::/32"
+        "2405:b500::/32"
+        "2405:8100::/32"
+        "2a06:98c0::/29"
+        "2c0f:f248::/32"
+      ];
+    in
     withVCN {
       display_name = "TF - All ingress cloudflare";
-      ingress_security_rules =
-        map (source: {
-          inherit source;
-          protocol = "all";
-          stateless = false;
-        })
-        (blocks ++ blocks6);
+      ingress_security_rules = map (source: {
+        inherit source;
+        protocol = "all";
+        stateless = false;
+      }) (blocks ++ blocks6);
     };
 
   resource."oci_core_security_list"."core" = {
@@ -137,30 +140,32 @@ in {
 
   resource."oci_core_security_list"."nixos" = withVCN {
     display_name = "TF - Main";
-    ingress_security_rules = lib.mkMerge (map (
-      nixos: let
-        inherit
-          (nixos.config.networking.firewall)
-          allowedTCPPorts
-          allowedTCPPortRanges
-          allowedUDPPorts
-          allowedUDPPortRanges
-          ;
-      in
+    ingress_security_rules = lib.mkMerge (
+      map (
+        nixos:
+        let
+          inherit (nixos.config.networking.firewall)
+            allowedTCPPorts
+            allowedTCPPortRanges
+            allowedUDPPorts
+            allowedUDPPortRanges
+            ;
+        in
         (map (port: {
-            protocol = "6";
-            source = "0.0.0.0/0";
-            stateless = false;
-            tcp_options = {
-              min = port;
-              max = port;
-            };
-          })
-          allowedTCPPorts)
-        ++ (map ({
+          protocol = "6";
+          source = "0.0.0.0/0";
+          stateless = false;
+          tcp_options = {
+            min = port;
+            max = port;
+          };
+        }) allowedTCPPorts)
+        ++ (map (
+          {
             from,
             to,
-          }: {
+          }:
+          {
             protocol = "6";
             source = "0.0.0.0/0";
             stateless = false;
@@ -168,22 +173,23 @@ in {
               min = from;
               max = to;
             };
-          })
-          allowedTCPPortRanges)
+          }
+        ) allowedTCPPortRanges)
         ++ (map (port: {
-            protocol = "17";
-            source = "0.0.0.0/0";
-            stateless = false;
-            udp_options = {
-              min = port;
-              max = port;
-            };
-          })
-          allowedUDPPorts)
-        ++ (map ({
+          protocol = "17";
+          source = "0.0.0.0/0";
+          stateless = false;
+          udp_options = {
+            min = port;
+            max = port;
+          };
+        }) allowedUDPPorts)
+        ++ (map (
+          {
             from,
             to,
-          }: {
+          }:
+          {
             protocol = "17";
             source = "0.0.0.0/0";
             stateless = false;
@@ -191,9 +197,10 @@ in {
               min = from;
               max = to;
             };
-          })
-          allowedUDPPortRanges)
-    ) (builtins.attrValues nixosConfigurations));
+          }
+        ) allowedUDPPortRanges)
+      ) (builtins.attrValues nixosConfigurations)
+    );
   };
 
   resource."oci_core_subnet"."terraform_subnet" = withVCN {

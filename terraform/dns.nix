@@ -1,18 +1,20 @@
 {
   lib,
-  config,
   ...
-}: let
+}:
+let
   inherit (lib.tf) ref;
-  withZone = module:
+  withZone =
+    module:
     lib.mkMerge [
-      {zone_id = ref "var.cloudflare_zone_id";}
+      { zone_id = ref "var.cloudflare_zone_id"; }
       module
     ];
 
   shivaIp = ref "oci_core_instance.shiva.public_ip";
   shivaIp6 = ref "data.oci_core_vnic.shiva_vnic.ipv6addresses[0]";
-in {
+in
+{
   resource."cloudflare_dns_record" = {
     "record-oci" = withZone {
       name = "shiva.ayats.org";

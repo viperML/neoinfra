@@ -1,0 +1,63 @@
+{
+  "pins": {
+    "nix-common": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "viperML",
+        "repo": "nix-common"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "13294e0c7e8d8610d517c36bba3fea070c8dd9d5",
+      "url": "https://github.com/viperML/nix-common/archive/13294e0c7e8d8610d517c36bba3fea070c8dd9d5.tar.gz",
+      "hash": "0r99wlwlhsb2k8n9p7hg1df8lax50v39ksmr9mnm967pxcf3b2dx"
+    },
+    "nixpkgs": {
+      "type": "Channel",
+      "name": "nixpkgs-unstable",
+      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.11pre862603.08b8f92ac635/nixexprs.tar.xz",
+      "hash": "0wlbzgy0jy9iy7i9ir7yqzqm5s0gavvs68vq4c336avcas92kmfn"
+    },
+    "noshell": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "viperML",
+        "repo": "noshell"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4d194d838a50ea106cd0e47c024e47afc154ab42",
+      "url": "https://github.com/viperML/noshell/archive/4d194d838a50ea106cd0e47c024e47afc154ab42.tar.gz",
+      "hash": "1x2d9j6ndihypq985s0610q1l878v6v6k6lg9mm9d46qfjz23wil"
+    },
+    "sops-nix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "Mic92",
+        "repo": "sops-nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f77d4cfa075c3de66fc9976b80e0c4fc69e2c139",
+      "url": "https://github.com/Mic92/sops-nix/archive/f77d4cfa075c3de66fc9976b80e0c4fc69e2c139.tar.gz",
+      "hash": "0iv71lw7wsv9wb9hcfi57yffkgn3v138fsyyamqlwi1snsaz128x"
+    },
+    "terranix": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "terranix",
+        "repo": "terranix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "924573fa6587ac57b0d15037fbd2d3f0fcdf17fb",
+      "url": "https://github.com/terranix/terranix/archive/924573fa6587ac57b0d15037fbd2d3f0fcdf17fb.tar.gz",
+      "hash": "1iih76ixincy7bisin8zq5y1nmxqlsgnalkgkm8sbywlh7m24cw5"
+    }
+  },
+  "version": 5
+}

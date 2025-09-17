@@ -1,6 +1,8 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   inherit (lib) tfRef;
-in {
+in
+{
   imports = [
     ./variables.nix
     ./network.nix
@@ -12,11 +14,11 @@ in {
     required_providers = {
       oci = {
         source = "oracle/oci";
-        version = "~> 6.35";
+        version = "~> 7.18";
       };
       cloudflare = {
         source = "cloudflare/cloudflare";
-        version = "~> 5.3";
+        version = "~> 5.9";
       };
     };
 
@@ -171,51 +173,51 @@ in {
   # vishnu
 
   /*
-  resource "oci_core_instance" "vishnu" {
-    display_name        = "terraform-visnhu"
-    availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
-    compartment_id      = var.compartment_id
-    shape               = "VM.Standard.E2.1.Micro"
-    create_vnic_details {
-      assign_public_ip          = true
-      subnet_id                 = module.network.terraform_subnet.id
-      assign_private_dns_record = false
+    resource "oci_core_instance" "vishnu" {
+      display_name        = "terraform-visnhu"
+      availability_domain = "vOMn:EU-MARSEILLE-1-AD-1"
+      compartment_id      = var.compartment_id
+      shape               = "VM.Standard.E2.1.Micro"
+      create_vnic_details {
+        assign_public_ip          = true
+        subnet_id                 = module.network.terraform_subnet.id
+        assign_private_dns_record = false
+      }
+      source_details {
+        source_type = "image"
+        source_id   = module.images.always-free
+      }
+      lifecycle {
+        ignore_changes = [
+          source_details,
+          metadata
+        ]
+      }
+      metadata = {
+        user_data = data.cloudinit_config.visnhu.rendered
+      }
     }
-    source_details {
-      source_type = "image"
-      source_id   = module.images.always-free
-    }
-    lifecycle {
-      ignore_changes = [
-        source_details,
-        metadata
-      ]
-    }
-    metadata = {
-      user_data = data.cloudinit_config.visnhu.rendered
-    }
-  }
 
-  output "vishnu_ip" {
-    value = oci_core_instance.vishnu.public_ip
-  }
-
-  data "local_file" "vishnu_age" {
-    filename = "../secrets/vishnu.age"
-  }
-
-  data "cloudinit_config" "visnhu" {
-    gzip          = false
-    base64_encode = true
-    part {
-      filename     = "cloud-config.yaml"
-      content_type = "text/cloud-config"
-      content = templatefile("cloud-config.yaml.tftpl", {
-        ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
-        age_key        = jsonencode(data.local_file.vishnu_age.content)
-      })
+    output "vishnu_ip" {
+      value = oci_core_instance.vishnu.public_ip
     }
-  }
+
+    data "local_file" "vishnu_age" {
+      filename = "../secrets/vishnu.age"
+    }
+
+    data "cloudinit_config" "visnhu" {
+      gzip          = false
+      base64_encode = true
+      part {
+        filename     = "cloud-config.yaml"
+        content_type = "text/cloud-config"
+        content = templatefile("cloud-config.yaml.tftpl", {
+          ssh_public_key = jsonencode(data.local_file.ssh_public_key.content)
+          age_key        = jsonencode(data.local_file.vishnu_age.content)
+        })
+      }
+    }
   */
 
   # resource "oci_identity_dynamic_group" "vault_dynamic_group" {

@@ -49,6 +49,6 @@ in
   ];
 
   environment.systemPackages = [
-    pkgs.ghostty.terminfo
+    # pkgs.ghostty.terminfo
   ];
 }

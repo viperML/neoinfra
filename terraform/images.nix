@@ -1,6 +1,8 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   inherit (lib) tfRef;
-in {
+in
+{
   data."oci_core_images"."base-aarch64" = {
     compartment_id = tfRef "var.compartment_id";
     operating_system = "Oracle Linux";
