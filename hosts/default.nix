@@ -9,7 +9,12 @@ in
     {
       config.nixpkgs.pkgs = pkgs;
     }
-
+    "${sources.nix-common}/nixos"
+    {
+      disabledModules = [
+        "${sources.nix-common}/nixos/channels-to-flakes.nix"
+      ];
+    }
   ]
   ++ modules;
 })
