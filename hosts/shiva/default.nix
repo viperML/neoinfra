@@ -12,5 +12,7 @@ import ../. {
 
     ../../modules/login-ayats.nix
     ../../modules/docker
+
+    ./caddy.nix
   ];
 }
