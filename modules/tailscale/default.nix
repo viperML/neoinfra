@@ -79,7 +79,8 @@ in
       pkgs.nodejs
     ];
     script = ''
-      exec node ${./genkey.mjs} > ${authKeyFile}
+      node ${./genkey.mjs} > ${authKeyFile}
+      echo "TS_AUTHKEY=$(<${authKeyFile})" > /var/lib/tailscale/auth-key.env
     '';
     wantedBy = [
       "multi-user.target"
