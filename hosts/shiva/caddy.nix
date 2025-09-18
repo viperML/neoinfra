@@ -61,6 +61,12 @@
               icon = "si-consul-#e03875";
             };
           }
+          {
+            "Grafana" = {
+              href = "https://grafana.vulture-ratio.ts.net";
+              icon = "si-grafana-#f58b1b";
+            };
+          }
         ];
       }
     ];

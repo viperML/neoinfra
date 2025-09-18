@@ -16,5 +16,7 @@ import ../. {
     ./caddy.nix
 
     ../../modules/consul/node.nix
+
+    ./grafana.nix
   ];
 }
