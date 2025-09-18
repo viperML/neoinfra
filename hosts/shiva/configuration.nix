@@ -31,7 +31,7 @@
 
   # boot.enableContainers = true;
 
-  # services.consul.webUi = true;
+  services.consul.webUi = true;
 
   # services.nomad.settings = {
   #   plugin = [

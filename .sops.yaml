@@ -83,3 +83,9 @@ creation_rules:
     - age:
       - *ayats_gen6
       - *vishnu
+
+  - path_regex: secrets(/|\\).*tailscale.*\.yaml$
+    key_groups:
+    - age:
+      - *ayats_gen6
+      - *shiva

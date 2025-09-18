@@ -8,11 +8,13 @@ import ../. {
     "${sources.sops-nix}/modules/sops"
     ../../modules/oci-lustrate-oracle9
     ../../modules/login-classic.nix
-    ../../modules/tailscale.nix
+    ../../modules/tailscale
 
     ../../modules/login-ayats.nix
     ../../modules/docker
 
     ./caddy.nix
+
+    ../../modules/consul/node.nix
   ];
 }

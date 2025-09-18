@@ -1,0 +1,11 @@
+{
+    "extends": "@tsconfig/strictest/tsconfig.json",
+    "compilerOptions": {
+        "target": "es2023",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "outDir": "dist",
+        "noUnusedLocals": false
+    },
+    "include": ["**/*.js"]
+}

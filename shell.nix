@@ -12,6 +12,7 @@ mkShellNoCC {
     nodejs
     consul
     nomad
+    nodejs
 
     tf.terraform-wrapped
     tf.terraformWithPlugins

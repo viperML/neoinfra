@@ -4,6 +4,7 @@
 *.qcow2
 perl-lang
 /rclone
+/node_modules
 
 # rustic
 rustic/**
