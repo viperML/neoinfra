@@ -9,6 +9,7 @@
 
   services.caddy = {
     enable = true;
+    enableReload = true;
     package = pkgs.caddy.withPlugins {
       plugins = [
         "github.com/tailscale/caddy-tailscale@v0.0.0-20250915161136-32b202f0a953"
@@ -37,6 +38,22 @@
       bind tailscale/nomad
       handle {
         reverse_proxy localhost:4646
+      }
+    '';
+
+    virtualHosts."shiva1.vulture-ratio.ts.net".extraConfig = ''
+      log {
+        level DEBUG
+      }
+      bind tailscale/shiva1
+      handle {
+        reverse_proxy localhost:9090
+      }
+    '';
+
+    virtualHosts."shiva.ayats.org".extraConfig = ''
+      handle {
+        reverse_proxy localhost:9090
       }
     '';
   };

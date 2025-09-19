@@ -20,5 +20,6 @@ import ../. {
     ./grafana.nix
 
     ../../modules/nomad/node.nix
+    ../../modules/consul/nginx.nix
   ];
 }
