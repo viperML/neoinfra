@@ -32,6 +32,13 @@
         reverse_proxy localhost:8500
       }
     '';
+
+    virtualHosts."nomad.vulture-ratio.ts.net".extraConfig = ''
+      bind tailscale/nomad
+      handle {
+        reverse_proxy localhost:4646
+      }
+    '';
   };
 
   systemd.services.caddy = rec {
@@ -65,6 +72,12 @@
             "Grafana" = {
               href = "https://grafana.vulture-ratio.ts.net";
               icon = "si-grafana-#f58b1b";
+            };
+          }
+          {
+            "Nomad" = {
+              href = "https://nomad.vulture-ratio.ts.net";
+              icon = "si-nomad-#1d9467";
             };
           }
         ];

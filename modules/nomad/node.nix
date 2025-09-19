@@ -21,15 +21,12 @@
       cni-plugins
       dmidecode
     ];
-    extraSettingsPlugins = with pkgs; [
-      nomad-driver-podman
-    ];
   };
 
   assertions = [
     {
-      assertion = config.services.tailscale.enable;
-      message = "nomad requires consul";
+      assertion = config.virtualisation.docker.enable;
+      message = "nomad requires docker";
     }
   ];
 }

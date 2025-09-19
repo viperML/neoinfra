@@ -18,5 +18,7 @@ import ../. {
     ../../modules/consul/node.nix
 
     ./grafana.nix
+
+    ../../modules/nomad/node.nix
   ];
 }
