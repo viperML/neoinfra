@@ -16,7 +16,7 @@ let
 in
 {
   resource."cloudflare_dns_record" = {
-    "record-oci" = withZone {
+    "record-shiva" = withZone {
       name = "shiva.ayats.org";
       type = "A";
       proxied = true;
@@ -24,26 +24,10 @@ in
       ttl = 1; # auto
     };
 
-    "record-oci-6" = withZone {
+    "record-shiva-6" = withZone {
       name = "shiva.ayats.org";
       type = "AAAA";
       proxied = true;
-      content = shivaIp6;
-      ttl = 1; # auto
-    };
-
-    "record-nomad" = withZone {
-      name = "nomad.ayats.org";
-      type = "A";
-      proxied = false;
-      content = shivaIp;
-      ttl = 1; # auto
-    };
-
-    "record-nomad-6" = withZone {
-      name = "nomad.ayats.org";
-      type = "AAAA";
-      proxied = false;
       content = shivaIp6;
       ttl = 1; # auto
     };
