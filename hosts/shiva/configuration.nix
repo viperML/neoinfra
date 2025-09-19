@@ -28,28 +28,4 @@
   };
 
   networking.hostName = "shiva";
-
-  # boot.enableContainers = true;
-
-  services.consul.webUi = true;
-
-  # services.nomad.settings = {
-  #   plugin = [
-  #     {
-  #       docker = [
-  #         {
-  #           config = [
-  #             {
-  #               auth = [
-  #                 {
-  #                   config = config.sops.secrets.docker-config.path;
-  #                 }
-  #               ];
-  #             }
-  #           ];
-  #         }
-  #       ];
-  #     }
-  #   ];
-  # };
 }

@@ -1,5 +1,11 @@
 { config, pkgs, ... }:
+let
+  inherit (config.networking) hostName;
+  tailNet = "vulture-ratio.ts.net";
+in
 {
+  services.consul.webUi = true;
+
   services.tailscale.permitCertUid = "caddy";
 
   networking.firewall.allowedTCPPorts = [
@@ -19,41 +25,41 @@
 
     environmentFile = "/var/lib/tailscale/auth-key.env";
 
-    logFormat = "level INFO";
+    logFormat = "level WARN";
 
-    virtualHosts."shiva.vulture-ratio.ts.net".extraConfig = ''
+    virtualHosts."${hostName}.${tailNet}".extraConfig = ''
       handle {
         reverse_proxy localhost:${toString config.services.homepage-dashboard.listenPort}
       }
     '';
 
-    virtualHosts."consul.vulture-ratio.ts.net".extraConfig = ''
+    virtualHosts."consul.${tailNet}".extraConfig = ''
       bind tailscale/consul
       handle {
         reverse_proxy localhost:8500
       }
     '';
 
-    virtualHosts."nomad.vulture-ratio.ts.net".extraConfig = ''
+    virtualHosts."nomad.${tailNet}".extraConfig = ''
       bind tailscale/nomad
       handle {
         reverse_proxy localhost:4646
       }
     '';
 
-    virtualHosts."shiva1.vulture-ratio.ts.net".extraConfig = ''
+    virtualHosts."${hostName}1.${tailNet}".extraConfig = ''
       log {
         level DEBUG
       }
-      bind tailscale/shiva1
+      bind tailscale/${hostName}1
       handle {
-        reverse_proxy localhost:9090
+        reverse_proxy localhost:${toString config.neoinfra.nginx-dynamic.port}
       }
     '';
 
-    virtualHosts."shiva.ayats.org".extraConfig = ''
+    virtualHosts."${hostName}.ayats.org".extraConfig = ''
       handle {
-        reverse_proxy localhost:9090
+        reverse_proxy localhost:${toString config.neoinfra.nginx-dynamic.port}
       }
     '';
   };

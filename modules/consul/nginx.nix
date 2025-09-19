@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 let
@@ -8,92 +9,110 @@ let
   configPath = "${stateDir}/nginx.conf";
   user = "nginx-dynamic";
   group = "nginx-dynamic";
+
+  cfg = config.neoinfra.nginx-dynamic;
 in
 {
-  systemd.services."nginx-dynamic" = {
-    script = ''
-      exec ${lib.getExe pkgs.nginx} -c ${configPath}
-    '';
+  options = {
+    neoinfra.nginx-dynamic = {
+      enable = (lib.mkEnableOption "Nginx with dynamic config from Consul") // {
+        default = true;
+      };
 
-    serviceConfig = {
-      User = user;
-      Group = group;
-      ReadWritePaths = [
-        stateDir
-      ];
-      # StateDirectory = stateDir;
-      # LogDirectory = stateDir;
-      Restart = "on-failure";
-      NoNewPrivileges = true;
-      PrivateDevices = true;
-      ProtectHome = true;
+      port = lib.mkOption {
+        type = lib.types.int;
+        default = 9090;
+        description = "The port on which Nginx listens";
+      };
     };
   };
 
-  users.users.${user} = {
-    group = group;
-    home = stateDir;
-    isSystemUser = true;
-  };
+  config = lib.mkIf cfg.enable {
+    systemd.services."nginx-dynamic" = {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "consul.service" ];
+      requires = [ "consul-template-nginx-dynamic.service" ];
 
-  users.groups.${group} = {
-  };
+      serviceConfig = {
+        ExecStart = "${lib.getExe pkgs.nginx} -c ${configPath}";
+        User = user;
+        Group = group;
+        ReadWritePaths = [
+          stateDir
+        ];
+        Restart = "on-failure";
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        ProtectHome = true;
+      };
+    };
 
-  services.consul-template.instances."nginx-dynamic" = {
-    inherit user group;
-    settings = {
-      template = [
-        {
-          exec = [
-            {
-              command = pkgs.writeShellScript "nginx-reload" ''
-                set -x
-                exec ${pkgs.coreutils}/bin/kill -s HUP $(<${stateDir}/nginx.pid)
-              '';
-            }
-          ];
-          inherit user group;
-          destination = configPath;
-          contents = ''
-            daemon off;
-            error_log ${stateDir}/error.log;
-            pid ${stateDir}/nginx.pid;
-            events { }
+    users.users.${user} = {
+      group = group;
+      home = stateDir;
+      isSystemUser = true;
+    };
 
-            http {
-              access_log ${stateDir}/access.log;
-              server {
-                listen 9090;
+    users.groups.${group} = {
+    };
 
-                {{ range services }}
-                # Service {{ .Name }}
-                {{ if (contains "shiva" .Tags) }}
-                {{ range service .Name }}
-                {{- $location := (index .ServiceMeta "location") -}}
-                {{- if (and $location (regexMatch "^/[a-zA-Z0-9._-]+$" $location)) -}}
-                location ~ ^{{ $location }}(/|$) {
-                    proxy_pass http://{{ .Address }}:{{ .Port }};
-                }
-                {{- else if $location -}}
-                # location: {{ $location }}
-                {{- end -}}
-                {{ end }}
-                {{ end }}
-                {{ end }}
+    services.consul-template.instances."nginx-dynamic" = {
+      inherit user group;
+      settings = {
+        template = [
+          {
+            exec = [
+              {
+                command = pkgs.writeShellScript "nginx-reload" ''
+                  set -x
+                  exec ${pkgs.coreutils}/bin/kill -s HUP $(<${stateDir}/nginx.pid)
+                '';
+              }
+            ];
+            inherit user group;
+            destination = configPath;
+            contents = ''
+              daemon off;
+              error_log ${stateDir}/error.log;
+              pid ${stateDir}/nginx.pid;
+              events { }
 
-                location / {
-                  # Return Hello
-                  return 200 "Hello from nginx-dynamic";
+              http {
+                access_log ${stateDir}/access.log;
+                server {
+                  listen 9090;
+
+                  {{ range services }}
+                  # Service {{ .Name }}
+                  {{ if (contains "shiva" .Tags) }}
+                  {{ range service .Name }}
+                  {{- $location := (index .ServiceMeta "location") -}}
+                  {{- if (and $location (regexMatch "^/[a-zA-Z0-9._-]+$" $location)) -}}
+                  location ~ ^{{ $location }}(/|$) {
+                      proxy_pass http://{{ .Address }}:{{ .Port }};
+                  }
+                  {{- else if $location -}}
+                  # location: {{ $location }}
+                  {{- end -}}
+                  {{ end }}
+                  {{ end }}
+                  {{ end }}
+
+                  location / {
+                    # Return Hello
+                    return 200 "Hello from nginx-dynamic";
+                  }
                 }
               }
-            }
-          '';
-        }
-      ];
+            '';
+          }
+        ];
+      };
     };
+
+    systemd.tmpfiles.rules = [
+      "d ${stateDir} 0700 ${user} ${group} - -"
+    ];
   };
 
-  systemd.tmpfiles.rules = [
-    "d ${stateDir} 0755 ${user} ${group} - -"
-  ];
 }

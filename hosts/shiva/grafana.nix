@@ -24,6 +24,4 @@ in
       reverse_proxy localhost:${toString port}
     }
   '';
-
-  systemd.services.grafana.before = [ "caddy.service" ];
 }
