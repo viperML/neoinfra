@@ -28,4 +28,20 @@
   };
 
   networking.hostName = "shiva";
+
+  programs.nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      extraArgs = "--keep 1 --optimise";
+    };
+  };
+
+  systemd.services."journalctl-vacuum" = {
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/journalctl --vacuum-size=300M";
+    };
+    startAt = "weekly";
+  };
 }
