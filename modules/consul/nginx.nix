@@ -47,6 +47,21 @@ in
       };
     };
 
+    systemd.services."nginx-dynamic-restart" = {
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl try-restart nginx-dynamic.service";
+      };
+    };
+
+    systemd.paths."nginx-dynamic-config" = {
+      wantedBy = [ "paths.target" ];
+      pathConfig = {
+        Unit = "nginx-dynamic-restart.service";
+        PathModified = configPath;
+      };
+    };
+
     users.users.${user} = {
       group = group;
       home = stateDir;
@@ -61,14 +76,14 @@ in
       settings = {
         template = [
           {
-            exec = [
-              {
-                command = pkgs.writeShellScript "nginx-reload" ''
-                  set -x
-                  exec ${pkgs.coreutils}/bin/kill -s HUP $(<${stateDir}/nginx.pid)
-                '';
-              }
-            ];
+            # exec = [
+            #   {
+            #     command = pkgs.writeShellScript "nginx-reload" ''
+            #       set -x
+            #       exec ${pkgs.coreutils}/bin/kill -s HUP $(<${stateDir}/nginx.pid)
+            #     '';
+            #   }
+            # ];
             inherit user group;
             destination = configPath;
             contents = ''

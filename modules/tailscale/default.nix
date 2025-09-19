@@ -51,9 +51,23 @@ in
     hostKeys = lib.mkForce [ ];
   };
 
+  systemd.paths = lib.mapAttrs' (name: value: lib.nameValuePair "tailscale-${name}" value) (
+    lib.genAttrs keyNames (key: {
+      wantedBy = [ "paths.target" ];
+      pathConfig = {
+        Unit = "sshd-restart-tailscale.service";
+        PathModified = "${prefix}/${key}";
+      };
+    })
+  );
+
+  systemd.services."sshd-restart-tailscale" = {
+    serviceConfig.Type = "oneshot";
+    serviceConfig.ExecStart = "${pkgs.systemd}/bin/systemctl try-restart sshd.service";
+  };
+
   systemd.services."sshd" = {
     after = [ "tailscaled.service" ];
-    restartTriggers = map (k: "${prefix}/${k}") keyNames;
   };
 
   systemd.tmpfiles.rules = [
