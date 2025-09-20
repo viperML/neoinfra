@@ -19,7 +19,7 @@ on:
     secrets:
       ts_oauth_client_id:
         required: true
-      ts_oauth_secret:
+      ts_oauth_client_secret:
         required: true
       nomad_token:
         required: true
@@ -97,7 +97,7 @@ jobs:
         uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ secrets.ts_oauth_client_id }}
-          oauth-secret: ${{ secrets.ts_oauth_secret }}
+          oauth-secret: ${{ secrets.ts_oauth_client_secret }}
           tags: tag:ci
 
       - name: Checkout
