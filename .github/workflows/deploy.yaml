@@ -10,15 +10,16 @@ on:
       installable:
         required: true
         type: string
+      nomad_file:
+        required: true
+        type: string
+    secrets:
       ts_oauth_client_id:
         required: true
-        type: string
       ts_oauth_secret:
         required: true
-        type: string
       nomad_token:
         required: true
-        type: string
 
 jobs:
   build:
@@ -92,8 +93,8 @@ jobs:
       - name: Install Tailscale
         uses: tailscale/github-action@v3
         with:
-          oauth-client-id: ${{ inputs.ts_oauth_client_id }}
-          oauth-secret: ${{ inputs.ts_oauth_secret }}
+          oauth-client-id: ${{ secrets.ts_oauth_client_id }}
+          oauth-secret: ${{ secrets.ts_oauth_secret }}
           tags: tag:ci
 
       - name: Checkout
@@ -102,6 +103,6 @@ jobs:
       - name: Request deployment to Nomad
         env:
           NOMAD_ADDR: http://shiva:4646
-          NOMAD_TOKEN: ${{ inputs.nomad_token }}
+          NOMAD_TOKEN: ${{ secrets.nomad_token }}
         run: |
-          nomad run -var="tag=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}" ./app.nomad
+          nomad run -var="tag=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}" ${{ inputs.nomad_file }}
