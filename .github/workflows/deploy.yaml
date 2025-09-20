@@ -1,0 +1,107 @@
+name: ci
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+    inputs:
+      installable:
+        required: true
+        type: string
+      ts_oauth_client_id:
+        required: true
+        type: string
+      ts_oauth_secret:
+        required: true
+        type: string
+      nomad_token:
+        required: true
+        type: string
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        image: [ubuntu-24.04-arm, ubuntu-24.04]
+    runs-on: ${{ matrix.image }}
+    permissions:
+      packages: write
+    steps:
+      - name: Install nix
+        uses: cachix/install-nix-action@master
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          nix build ${{ inputs.installable }} -L
+
+      - name: Tag and push image
+        id: docker_push
+        run: |
+          ARCH="$(docker info --format json | jq -r '.ClientInfo.Arch')"
+          IMAGE_TAG=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-$ARCH
+          ./result | docker load
+          docker tag ${GITHUB_REPOSITORY@L}:latest $IMAGE_TAG
+          docker push $IMAGE_TAG
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  merge:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge images
+        run: |
+          docker pull ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-amd64
+          docker pull ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-arm64
+          docker manifest create ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }} \
+            ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-amd64 \
+            ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-arm64
+          docker manifest push ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}
+
+  deploy:
+    needs: merge
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+    steps:
+      - name: Install Nomad
+        uses: hashicorp/setup-nomad@main
+
+      - name: Install Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ inputs.ts_oauth_client_id }}
+          oauth-secret: ${{ inputs.ts_oauth_secret }}
+          tags: tag:ci
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Request deployment to Nomad
+        env:
+          NOMAD_ADDR: http://shiva:4646
+          NOMAD_TOKEN: ${{ inputs.nomad_token }}
+        run: |
+          nomad run -var="tag=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}" ./app.nomad
