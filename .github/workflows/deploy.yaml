@@ -13,6 +13,9 @@ on:
       nomad_file:
         required: true
         type: string
+      nix_docker_tag:
+        required: true
+        type: string
     secrets:
       ts_oauth_client_id:
         required: true
@@ -55,7 +58,7 @@ jobs:
           ARCH="$(docker info --format json | jq -r '.ClientInfo.Arch')"
           IMAGE_TAG=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-$ARCH
           ./result | docker load
-          docker tag ${GITHUB_REPOSITORY@L}:latest $IMAGE_TAG
+          docker tag ${{ inputs.nix_docker_tag }} $IMAGE_TAG
           docker push $IMAGE_TAG
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
