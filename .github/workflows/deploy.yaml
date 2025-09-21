@@ -84,6 +84,10 @@ jobs:
             ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}-arm64
           docker manifest push ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}
 
+          # Also tag as latest
+          docker tag ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }} ghcr.io/${GITHUB_REPOSITORY@L}:latest
+          docker push ghcr.io/${GITHUB_REPOSITORY@L}:latest
+
   deploy:
     needs: merge
     runs-on: ubuntu-24.04
