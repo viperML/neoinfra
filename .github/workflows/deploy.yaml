@@ -105,7 +105,7 @@ jobs:
 
       - name: Request deployment to Nomad
         env:
-          NOMAD_ADDR: http://shiva:4646
+          NOMAD_ADDR: https://nomad.vulture-ratio.ts.net
           NOMAD_TOKEN: ${{ secrets.nomad_token }}
         run: |
           nomad run -var="tag=ghcr.io/${GITHUB_REPOSITORY@L}:${{ github.sha }}" ${{ inputs.nomad_file }}

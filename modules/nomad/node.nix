@@ -16,6 +16,15 @@
         alloc_dir = "/var/lib/nomad/alloc";
         alloc_mounts_dir = "/var/lib/nomad/alloc_mounts";
       };
+      plugin = [
+        {
+          docker = {
+            config = {
+              volumes = [ { enabled = true; } ];
+            };
+          };
+        }
+      ];
     };
     extraPackages = with pkgs; [
       cni-plugins
