@@ -22,25 +22,25 @@ in
 
   services.tailscale = {
     enable = true;
-    extraUpFlags = [ "--ssh" ];
+    extraUpFlags = [
+      "--ssh"
+      "--advertise-exit-node"
+    ];
     inherit authKeyFile;
+    useRoutingFeatures = "both";
   };
 
-  networking.firewall = {
-    checkReversePath = "loose";
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
+    allowedTCPPorts = [
+      22
+    ];
 
-    interfaces.${config.services.tailscale.interfaceName} = {
-      allowedTCPPorts = [
-        22
-      ];
-
-      allowedTCPPortRanges = [
-        {
-          from = 8000;
-          to = 8999;
-        }
-      ];
-    };
+    allowedTCPPortRanges = [
+      {
+        from = 8000;
+        to = 8999;
+      }
+    ];
   };
 
   services.openssh = {
