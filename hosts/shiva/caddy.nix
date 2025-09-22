@@ -65,7 +65,7 @@ in
   };
 
   systemd.services.caddy = rec {
-    after = [ "tailscale-regen-authkey.service" ];
+    after = [ "tailscaled-regen-authkey.service" ];
     wants = after;
   };
 

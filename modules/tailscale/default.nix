@@ -55,13 +55,13 @@ in
     lib.genAttrs keyNames (key: {
       wantedBy = [ "paths.target" ];
       pathConfig = {
-        Unit = "sshd-restart-tailscale.service";
+        Unit = "sshd-restart-tailscaled.service";
         PathModified = "${prefix}/${key}";
       };
     })
   );
 
-  systemd.services."sshd-restart-tailscale" = {
+  systemd.services."sshd-restart-tailscaled" = {
     serviceConfig.Type = "oneshot";
     serviceConfig.ExecStart = "${pkgs.systemd}/bin/systemctl try-restart sshd.service";
   };
@@ -74,7 +74,7 @@ in
     "d /var/lib/tailscale 0700 root root"
   ];
 
-  systemd.services."tailscale-regen-authkey" = {
+  systemd.services."tailscaled-regen-authkey" = {
     serviceConfig = {
       Type = "oneshot";
       EnvironmentFile = config.sops.secrets.tailscale_oauth.path;
@@ -89,15 +89,18 @@ in
     wantedBy = [
       "multi-user.target"
     ];
-    before = [
-      "multi-user.target"
+    after = [
+      "network-online.target"
+    ];
+    wants = [
+      "network-online.target"
     ];
     requiredBy = [
       "tailscaled.service"
     ];
   };
 
-  systemd.timers."tailscale-regen-authkey" = {
+  systemd.timers."tailscaled-regen-authkey" = {
     timerConfig = {
       OnCalendar = "daily";
       Persistent = true;

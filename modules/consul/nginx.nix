@@ -30,7 +30,10 @@ in
   config = lib.mkIf cfg.enable {
     systemd.services."nginx-dynamic" = {
       wantedBy = [ "multi-user.target" ];
-      after = [ "consul.service" ];
+      after = [
+        "consul.service"
+        "systemd-tmpfiles-setup.service"
+      ];
       requires = [ "consul-template-nginx-dynamic.service" ];
 
       serviceConfig = {
@@ -41,6 +44,8 @@ in
           stateDir
         ];
         Restart = "on-failure";
+        RestartSec = 1;
+        StartLimitIntervalSec = 0;
         NoNewPrivileges = true;
         PrivateDevices = true;
         ProtectHome = true;
