@@ -15,7 +15,7 @@ in
 
   services.caddy = {
     enable = true;
-    enableReload = true;
+    enableReload = false;
     package = pkgs.caddy.withPlugins {
       plugins = [
         "github.com/tailscale/caddy-tailscale@v0.0.0-20250915161136-32b202f0a953"
@@ -93,8 +93,14 @@ in
           }
           {
             "Grafana" = {
-              href = "https://grafana.vulture-ratio.ts.net";
+              href = "https://ts-grafana.vulture-ratio.ts.net";
               icon = "si-grafana-#f58b1b";
+            };
+          }
+          {
+            "Prometheus" = {
+              href = "https://ts-prometheus.vulture-ratio.ts.net";
+              icon = "si-prometheus-#e64a22";
             };
           }
           {

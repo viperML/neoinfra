@@ -1,5 +1,8 @@
+{ config, ... }:
 let
-  port = 2342;
+  grafanaPort = 2342;
+  prometheusPort = 9095;
+  prometheusNodePort = 9096;
 in
 {
   services.grafana = {
@@ -11,17 +14,49 @@ in
         org_name = "Main Org.";
       };
       server = {
-        domain = "grafana.vulture-ratio.ts.net";
+        domain = "ts-grafana.vulture-ratio.ts.net";
         http_addr = "127.0.0.1";
-        http_port = port;
+        http_port = grafanaPort;
       };
     };
   };
 
-  services.caddy.virtualHosts."grafana.vulture-ratio.ts.net".extraConfig = ''
-    bind tailscale/grafana
+  services.caddy.virtualHosts."ts-grafana.vulture-ratio.ts.net".extraConfig = ''
+    bind tailscale/ts-grafana
     handle {
-      reverse_proxy localhost:${toString port}
+      reverse_proxy localhost:${toString grafanaPort}
+    }
+  '';
+
+  services.prometheus = {
+    enable = true;
+    port = prometheusPort;
+
+    exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [ "systemd" ];
+        port = prometheusNodePort;
+      };
+    };
+
+    scrapeConfigs = [
+      {
+        job_name = config.networking.hostName;
+        static_configs = [
+          {
+            targets = [ "localhost:${toString prometheusNodePort}" ];
+          }
+        ];
+      }
+    ];
+
+  };
+
+  services.caddy.virtualHosts."ts-prometheus.vulture-ratio.ts.net".extraConfig = ''
+    bind tailscale/ts-prometheus
+    handle {
+      reverse_proxy localhost:${toString prometheusPort}
     }
   '';
 }
