@@ -13,6 +13,7 @@
 
   environment.systemPackages = [
     pkgs.git
+    pkgs.pkgsBuildBuild.ghostty.terminfo
   ];
 
   sops = {
