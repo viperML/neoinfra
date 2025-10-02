@@ -36,9 +36,17 @@ job "minecraft" {
       }
 
       env {
-        EULA        = "TRUE"
-        TYPE        = "PAPER"
-        SERVER_HOST = "0.0.0.0"
+        EULA          = "TRUE"
+        TYPE          = "PAPER"
+        MEMORY        = "4G"
+        MOTD          = "tonto el que lo lea"
+        DIFFICULTY    = "hard"
+        MAX_PLAYERS   = "100"
+        ALLOW_FLIGHT  = "TRUE"
+        RCON_PASSWORD = "rcon"
+        # https://www.spigotmc.org/resources/simple-tpa.64270
+        # https://www.spigotmc.org/resources/sleepfixer-one-player-sleep.76746/
+        SPIGET_RESOURCES = "64270,76746"
       }
 
       service {
