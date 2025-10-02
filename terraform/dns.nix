@@ -31,6 +31,14 @@ in
       content = shivaIp6;
       ttl = 1; # auto
     };
+
+    "record-shiva-mc" = withZone {
+      name = "mc.ayats.org";
+      type = "A";
+      proxied = false;
+      content = shivaIp;
+      ttl = 1; # auto
+    };
   };
 
   # unused?

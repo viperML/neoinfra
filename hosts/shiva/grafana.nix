@@ -49,6 +49,18 @@ in
           }
         ];
       }
+      {
+        job_name = "nomad";
+        static_configs = [
+          {
+            targets = [ "localhost:4646" ];
+          }
+        ];
+        metrics_path = "/v1/metrics";
+        params = {
+          format = [ "prometheus" ];
+        };
+      }
     ];
 
   };

@@ -33,6 +33,11 @@ in
   networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
     allowedTCPPorts = [
       22
+      25565 # minecraft
+    ];
+
+    allowedUDPPorts = [
+      25575 # minecraft-rcon
     ];
 
     allowedTCPPortRanges = [

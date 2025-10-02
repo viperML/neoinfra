@@ -45,4 +45,8 @@
     };
     startAt = "weekly";
   };
+
+  networking.firewall.allowedTCPPorts = [
+    25565
+  ];
 }
