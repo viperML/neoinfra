@@ -61,6 +61,14 @@ in
           format = [ "prometheus" ];
         };
       }
+      {
+        job_name = "minecraft";
+        static_configs = [
+          {
+            targets = [ "localhost:25566" ];
+          }
+        ];
+      }
     ];
 
   };
