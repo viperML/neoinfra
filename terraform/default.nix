@@ -13,6 +13,7 @@ lib.fix (self: {
     t.null
     t.local
     t.cloudinit
+    t.aws
   ]);
 
   terranix =
