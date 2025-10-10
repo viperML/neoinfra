@@ -21,9 +21,10 @@ lib.fix (self: {
       inherit pkgs;
       strip_nulls = true;
       extraArgs = {
-        nixosConfigurations = {
-          shiva = import ../hosts/shiva;
-        };
+        nixosConfigurations =
+          builtins.readDir ../hosts
+          |> lib.filterAttrs (n: _: n != "default.nix")
+          |> builtins.mapAttrs (n: v: import ../hosts/${n});
       };
       terranix_config.imports = [
         ./main.nix

@@ -49,7 +49,7 @@ in
   };
 
   services.openssh = {
-    openFirewall = false;
+    openFirewall = true;
     extraConfig = lib.mkOrder 0 ''
       ${lib.concatMapStringsSep "\n" (k: "HostKey ${prefix}/${k}") keyNames}
     '';
