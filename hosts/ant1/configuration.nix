@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   documentation.enable = true;
 
@@ -19,4 +20,18 @@
   };
 
   networking.hostName = "ant1";
+
+  services.prometheus.exporters = {
+    node = {
+      enable = true;
+      enabledCollectors = [ "systemd" ];
+      port = 9096;
+    };
+  };
+
+  networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
+    allowedTCPPorts = [
+      9096
+    ];
+  };
 }

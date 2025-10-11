@@ -50,6 +50,14 @@ in
         ];
       }
       {
+        job_name = "ant1";
+        static_configs = [
+          {
+            targets = [ "ant1.vulture-ratio.ts.net:9096" ];
+          }
+        ];
+      }
+      {
         job_name = "nomad";
         static_configs = [
           {
