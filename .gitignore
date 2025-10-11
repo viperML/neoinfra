@@ -6,6 +6,7 @@ perl-lang
 /rclone
 /node_modules
 inventory.yml
+.*-history
 
 # rustic
 rustic/**

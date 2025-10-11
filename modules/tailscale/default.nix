@@ -11,7 +11,9 @@ let
     "ssh_host_ecdsa_key"
   ];
   prefix = "/var/lib/tailscale/ssh";
-  authKeyFile = "/run/tailscale/auth-key";
+  authKeyFile = "${authBaseDir}/key";
+  authBaseDir = "/run/tailscale-auth";
+  authEnvFile = "${authBaseDir}/env";
 in
 {
   sops.secrets = {
@@ -78,8 +80,8 @@ in
   systemd.tmpfiles.rules = [
     "d /var/lib/tailscale 0700 root root - -"
     "z /var/lib/tailscale 0700 root root - -"
-    "d /run/tailscale 0700 root root - -"
-    "z /run/tailscale 0700 root root - -"
+    "d ${authBaseDir} 0700 root root - -"
+    "z ${authBaseDir} 0700 root root - -"
   ];
 
   systemd.services."tailscaled-regen-authkey" = {
@@ -93,7 +95,7 @@ in
     script = ''
       set -ex
       node ${./genkey.mjs} > ${authKeyFile}
-      echo "TS_AUTHKEY=$(<${authKeyFile})" > /run/tailscale/auth-key.env
+      echo "TS_AUTHKEY=$(<${authKeyFile})" > ${authEnvFile}
     '';
     wantedBy = [
       "multi-user.target"
@@ -123,4 +125,6 @@ in
       "timers.target"
     ];
   };
+
+  services.caddy.environmentFile = authEnvFile;
 }

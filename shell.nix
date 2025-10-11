@@ -36,6 +36,11 @@ mkShellNoCC {
 
       hostname="$(basename "$2")"
 
+      extra_args=()
+      if [[ "$hostname" = "shiva" ]]; then
+        extra_args+=(--build-host "admin@$hostname")
+      fi
+
       set -x
       exec nixos-rebuild \
         "$1" \
@@ -43,7 +48,7 @@ mkShellNoCC {
         --no-reexec \
         --sudo \
         --target-host "admin@$hostname" \
-        --build-host "admin@$hostname"
+        "''${extra_args[@]}" \
     '')
   ];
 }

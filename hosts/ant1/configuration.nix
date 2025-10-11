@@ -34,4 +34,11 @@
       9096
     ];
   };
+
+  # services.postgresql = {
+  #   enable = true;
+  #   identMap = ''
+  #     postgres root postgres
+  #   '';
+  # };
 }

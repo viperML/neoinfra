@@ -11,5 +11,6 @@ import ../. {
     ../../modules/tailscale
 
     ../../modules/login-ayats.nix
+    ../../modules/caddy-tailscale.nix
   ];
 }

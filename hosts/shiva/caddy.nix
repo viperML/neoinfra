@@ -6,25 +6,7 @@ in
 {
   services.consul.webUi = true;
 
-  services.tailscale.permitCertUid = "caddy";
-
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-
   services.caddy = {
-    enable = true;
-    enableReload = false;
-    package = pkgs.caddy.withPlugins {
-      plugins = [
-        "github.com/tailscale/caddy-tailscale@v0.0.0-20250915161136-32b202f0a953"
-      ];
-      hash = "sha256-sakFvjkN0nwNBbL2wxjtlRlKmryu9akurTtM2309spg=";
-    };
-
-    environmentFile = "/run/tailscale/auth-key.env";
-
     logFormat = "level WARN";
 
     virtualHosts."${hostName}.${tailNet}".extraConfig = ''
@@ -62,11 +44,6 @@ in
         reverse_proxy localhost:${toString config.neoinfra.nginx-dynamic.port}
       }
     '';
-  };
-
-  systemd.services.caddy = rec {
-    after = [ "tailscaled-regen-authkey.service" ];
-    wants = after;
   };
 
   services.homepage-dashboard = {
