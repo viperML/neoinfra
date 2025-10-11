@@ -43,9 +43,10 @@ in
         ReadWritePaths = [
           stateDir
         ];
-        Restart = "on-failure";
+        Restart = "always";
         RestartSec = 1;
         StartLimitIntervalSec = 0;
+        StartLimitBurst = 0;
         NoNewPrivileges = true;
         PrivateDevices = true;
         ProtectHome = true;

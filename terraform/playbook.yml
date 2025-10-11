@@ -124,14 +124,3 @@
       environment:
         NIXOS_INSTALL_BOOTLOADER: "1"
       when: not nixos_bootloader.stat.exists or nixos_build.stdout != current_nixos.stdout
-
-    - name: Prompt for reboot
-      pause:
-        prompt: "NixOS deployment complete. Do you want to reboot now? (yes/no)"
-      register: reboot_prompt
-
-    - name: Reboot the system
-      reboot:
-        msg: "Rebooting to complete NixOS installation"
-        reboot_timeout: 800
-      when: reboot_prompt.user_input | bool

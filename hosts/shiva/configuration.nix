@@ -13,7 +13,7 @@
 
   environment.systemPackages = [
     pkgs.git
-    pkgs.pkgsBuildBuild.ghostty.terminfo
+    # pkgs.pkgsBuildBuild.ghostty.terminfo
     pkgs.net-tools
   ];
 

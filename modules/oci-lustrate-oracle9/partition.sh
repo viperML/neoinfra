@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -xu
+set -exu
 
-umount /dev/sda1
-umount /dev/sda2
+umount /dev/sda1 || true
+umount /dev/sda2 || true
 
 sgdisk --delete 1 /dev/sda
 sgdisk --delete 2 /dev/sda
@@ -16,15 +16,15 @@ partprobe
 
 sgdisk --typecode 1:ef00 /dev/sda
 sgdisk --change-name 1:esp /dev/sda
-mkfs.vfat -F32 /dev/disk/by-partlabel/esp
+mkfs.vfat -F32 /dev/sda1
 
 sgdisk --typecode 2:8200 /dev/sda
 sgdisk --change-name 2:swap /dev/sda
-mkswap /dev/disk/by-partlabel/swap
+mkswap /dev/sda2
 
 partprobe
 
-mount /dev/disk/by-partlabel/esp /boot
+mount /dev/sda1 /boot
 touch /boot/NIXOS
 
 set +x

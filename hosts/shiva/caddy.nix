@@ -23,7 +23,7 @@ in
       hash = "sha256-sakFvjkN0nwNBbL2wxjtlRlKmryu9akurTtM2309spg=";
     };
 
-    environmentFile = "/var/lib/tailscale/auth-key.env";
+    environmentFile = "/run/tailscale/auth-key.env";
 
     logFormat = "level WARN";
 

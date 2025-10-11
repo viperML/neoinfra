@@ -11,7 +11,7 @@ let
     "ssh_host_ecdsa_key"
   ];
   prefix = "/var/lib/tailscale/ssh";
-  authKeyFile = "/var/lib/tailscale/auth-key";
+  authKeyFile = "/run/tailscale/auth-key";
 in
 {
   sops.secrets = {
@@ -76,7 +76,10 @@ in
   };
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/tailscale 0700 root root"
+    "d /var/lib/tailscale 0700 root root - -"
+    "z /var/lib/tailscale 0700 root root - -"
+    "d /run/tailscale 0700 root root - -"
+    "z /run/tailscale 0700 root root - -"
   ];
 
   systemd.services."tailscaled-regen-authkey" = {
@@ -88,14 +91,19 @@ in
       pkgs.nodejs
     ];
     script = ''
+      set -ex
       node ${./genkey.mjs} > ${authKeyFile}
-      echo "TS_AUTHKEY=$(<${authKeyFile})" > /var/lib/tailscale/auth-key.env
+      echo "TS_AUTHKEY=$(<${authKeyFile})" > /run/tailscale/auth-key.env
     '';
     wantedBy = [
       "multi-user.target"
     ];
     after = [
       "network-online.target"
+    ];
+    before = [
+      "tailscaled.service"
+      "tailscaled-autoconnect.service"
     ];
     wants = [
       "network-online.target"
