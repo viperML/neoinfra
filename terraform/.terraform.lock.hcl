@@ -9,20 +9,6 @@ provider "registry.terraform.io/cloudflare/cloudflare" {
   ]
 }
 
-provider "registry.terraform.io/hashicorp/aws" {
-  version = "6.13.0"
-  hashes = [
-    "h1:/hyTX9bCjC9Hos1p4ifnZcdbsqspaB7uhVw1dAsMECQ=",
-  ]
-}
-
-provider "registry.terraform.io/hashicorp/cloudinit" {
-  version = "2.3.7"
-  hashes = [
-    "h1:2BK+s5/TV8MYvISESGAT/cI6TYOgOJQ5AFBCf41mdMs=",
-  ]
-}
-
 provider "registry.terraform.io/oracle/oci" {
   version     = "7.18.0"
   constraints = "~> 7.18"
