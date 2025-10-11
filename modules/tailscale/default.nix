@@ -49,7 +49,7 @@ in
   };
 
   services.openssh = {
-    openFirewall = true;
+    openFirewall = false;
     extraConfig = lib.mkOrder 0 ''
       ${lib.concatMapStringsSep "\n" (k: "HostKey ${prefix}/${k}") keyNames}
     '';
@@ -102,6 +102,7 @@ in
     ];
     requiredBy = [
       "tailscaled.service"
+      "tailscaled-autoconnect.service"
     ];
   };
 

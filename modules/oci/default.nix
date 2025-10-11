@@ -17,7 +17,7 @@
       builtins.toJSON
       {
         disable_root = false;
-        preserve_hostname = false;
+        preserve_hostname = true;
         system_info = {
           distro = "nixos";
           network = {renderers = ["networkd"];};

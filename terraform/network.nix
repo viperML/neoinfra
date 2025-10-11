@@ -17,6 +17,10 @@ let
       (withCID { vcn_id = tfRef "oci_core_vcn.terraform_vcn.id"; })
       module
     ];
+
+  extraTCPPorts = [
+    22
+  ];
 in
 {
   resource."oci_core_vcn"."terraform_vcn" = withCID {
@@ -159,7 +163,7 @@ in
             min = port;
             max = port;
           };
-        }) allowedTCPPorts)
+        }) (allowedTCPPorts ++ extraTCPPorts))
         ++ (map (
           {
             from,

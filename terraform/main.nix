@@ -122,13 +122,13 @@ in
       };
     })
 
-    (mkOCI "ant2" {
-      shape = "VM.Standard.E2.1.Micro";
-      source_details = {
-        source_type = "image";
-        source_id = tfRef "data.oci_core_images.always-free.images[0].id";
-        boot_volume_size_in_gbs = 50;
-      };
-    })
+    # (mkOCI "ant2" {
+    #   shape = "VM.Standard.E2.1.Micro";
+    #   source_details = {
+    #     source_type = "image";
+    #     source_id = tfRef "data.oci_core_images.always-free.images[0].id";
+    #     boot_volume_size_in_gbs = 50;
+    #   };
+    # })
   ];
 }

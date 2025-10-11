@@ -25,7 +25,18 @@ mkswap /dev/disk/by-partlabel/swap
 partprobe
 
 mount /dev/disk/by-partlabel/esp /boot
+touch /boot/NIXOS
 
-mkdir -pv /newvar/lib/secrets
-cp -vf /var/lib/secrets/*.age /newvar/lib/secrets
-ls -la /newvar/lib/secrets
+set +x
+
+# Delete all boot entries
+while IFS= read -r line; do
+    if [[ $line =~ ^Boot([0-9A-Fa-f]{4}) ]]; then
+        bootnum="${BASH_REMATCH[1]}"
+        efibootmgr -b "$bootnum" -B
+    fi
+done < <(efibootmgr)
+
+set -x
+
+efibootmgr

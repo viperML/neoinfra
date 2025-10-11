@@ -5,6 +5,7 @@
 perl-lang
 /rclone
 /node_modules
+inventory.yml
 
 # rustic
 rustic/**

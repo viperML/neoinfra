@@ -1,0 +1,137 @@
+---
+- name: Bootstrap new host
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Check if secrets file exists
+      local_action: stat path=../secrets/{{ inventory_hostname }}.age
+      register: secrets_file
+      become: false
+
+    - name: Check if host configuration exists
+      local_action: stat path=../hosts/{{ inventory_hostname }}
+      register: host_config
+      become: false
+
+    - name: Fail if secrets file does not exist
+      fail:
+        msg: "Required secrets file ../secrets/{{ inventory_hostname }}.age does not exist"
+      when: not secrets_file.stat.exists
+
+    - name: Fail if host configuration does not exist
+      fail:
+        msg: "Required host configuration ../hosts/{{ inventory_hostname }} does not exist"
+      when: not host_config.stat.exists
+
+  tasks:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+      register: selinux_result
+
+    - name: Reboot if SELinux was disabled
+      reboot:
+        msg: "Rebooting to apply SELinux changes"
+        reboot_timeout: 800
+      when: selinux_result.reboot_required
+
+    - name: Check if Nix is installed
+      stat:
+        path: /nix
+      register: nix_dir
+
+    - name: Install Nix
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/experimental-installer \
+        | sh -s -- install --no-confirm --no-add-channel \
+        --extra-conf "extra-trusted-users = {{ ansible_user }}" \
+        --extra-conf "extra-experimental-features = nix-command"
+      when: not nix_dir.stat.exists
+      args:
+        creates: /nix
+
+    - name: Build NixOS configuration
+      become: false
+      local_action: >
+        shell nix build -f ../hosts/{{ inventory_hostname }}
+        --no-link
+        --print-out-paths
+        config.system.build.toplevel
+      register: nixos_build
+      changed_when: true
+
+    - name: Check current NixOS deployment
+      shell: readlink -f /nix/var/nix/profiles/system || echo "none"
+      register: current_nixos
+      changed_when: false
+      failed_when: false
+
+    - name: Send NixOS closure
+      become: false
+      local_action: >
+        shell nix copy
+        --no-check-sigs
+        --to ssh-ng://{{ ansible_user }}@{{ ansible_host }}?ssh-key={{ ansible_ssh_private_key_file }}
+        {{ nixos_build.stdout }}
+      when: nixos_build.stdout != current_nixos.stdout
+
+    - name: Deploy NixOS configuration
+      shell: /nix/var/nix/profiles/default/bin/nix build --profile /nix/var/nix/profiles/system --no-link {{ nixos_build.stdout }}
+      when: nixos_build.stdout != current_nixos.stdout
+
+    - name: Reformat disks
+      shell: /nix/var/nix/profiles/system/etc/format
+      args:
+        creates: /boot/NIXOS
+      register: reformat_result
+
+    - name: Print reformat disks output
+      debug:
+        var: reformat_result
+
+    - name: Create secrets directory
+      file:
+        path: /newvar/lib/secrets
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Load age key
+      copy:
+        src: ../secrets/{{ inventory_hostname }}.age
+        dest: /newvar/lib/secrets/main.age
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create NIXOS marker file
+      file:
+        path: /etc/NIXOS
+        state: touch
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Check if NixOS was installed
+      stat:
+        path: /boot/EFI/nixos
+      register: nixos_bootloader
+
+    - name: Switch to NixOS configuration
+      shell: /nix/var/nix/profiles/system/bin/switch-to-configuration boot
+      environment:
+        NIXOS_INSTALL_BOOTLOADER: "1"
+      when: not nixos_bootloader.stat.exists or nixos_build.stdout != current_nixos.stdout
+
+    - name: Prompt for reboot
+      pause:
+        prompt: "NixOS deployment complete. Do you want to reboot now? (yes/no)"
+      register: reboot_prompt
+
+    - name: Reboot the system
+      reboot:
+        msg: "Rebooting to complete NixOS installation"
+        reboot_timeout: 800
+      when: reboot_prompt.user_input | bool
