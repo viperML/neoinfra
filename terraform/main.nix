@@ -53,6 +53,7 @@ in
     ./network.nix
     ./images.nix
     ./dns.nix
+    ./workers.nix
   ];
 
   config = lib.mkMerge [

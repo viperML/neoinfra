@@ -6,7 +6,7 @@
     "build": "tsc well-known.ts"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
+    "@cloudflare/workers-types": "^4.20251011.0",
     "wrangler": "^3.55.0"
   }
 }

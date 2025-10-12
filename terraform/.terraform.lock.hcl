@@ -2,17 +2,17 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/cloudflare/cloudflare" {
-  version     = "5.9.0"
+  version     = "5.11.0"
   constraints = "~> 5.9"
   hashes = [
-    "h1:dzc7x3+yEd2NMoJz8eIcQas+jE5sjWVU1wkGQvqSs1o=",
+    "h1:t6iB0FgR6PgCwXuPbfqHqd2y+m49+gOB9C9MOuzRoG0=",
   ]
 }
 
 provider "registry.terraform.io/oracle/oci" {
-  version     = "7.18.0"
+  version     = "7.21.0"
   constraints = "~> 7.18"
   hashes = [
-    "h1:TVlfUkP65AY5srFF9Ieb5JD/8trUjuffPSyOAxqxkUE=",
+    "h1:3g5ZdPYhPZeTL4u1ZHZajOBOr0P4+EMYgcdWfFj9Mi8=",
   ]
 }
