@@ -29,8 +29,12 @@ job "factorio" {
       config {
         image = "docker.io/factoriotools/factorio:latest"
         ports = ["game", "rcon"]
-        volumes = [
-          "factorio-data:/factorio"
+        mounts = [
+          {
+            type   = "volume"
+            target = "/factorio"
+            source = "factorio-data"
+          }
         ]
         network_mode = "host"
       }

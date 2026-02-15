@@ -22,6 +22,6 @@ import ../. {
 
     ../../modules/nomad/node.nix
     ../../modules/consul/nginx.nix
-    ./minecraft.nix
+    # ./minecraft.nix
   ];
 }
