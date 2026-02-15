@@ -48,6 +48,10 @@
   };
 
   networking.firewall.allowedTCPPorts = [
-    25565
+    25565 # minecraft
+    27015 # factorio
+  ];
+  networking.firewall.allowedUDPPorts = [
+    34197
   ];
 }
