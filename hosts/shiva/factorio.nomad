@@ -32,6 +32,7 @@ job "factorio" {
         volumes = [
           "factorio-data:/factorio"
         ]
+        network_mode = "host"
       }
 
       env {

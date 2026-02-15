@@ -32,8 +32,8 @@ in
       ttl = 1; # auto
     };
 
-    "record-shiva-mc" = withZone {
-      name = "mc.ayats.org";
+    "record-shiva-alt" = withZone {
+      name = "x.ayats.org";
       type = "A";
       proxied = false;
       content = shivaIp;
