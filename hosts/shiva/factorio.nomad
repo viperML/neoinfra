@@ -16,12 +16,6 @@ job "factorio" {
       }
     }
 
-    volume "factorio-data" {
-      type      = "host"
-      source    = "factorio-data"
-      read_only = false
-    }
-
     restart {
       attempts = 3
       interval = "5m"
@@ -32,19 +26,17 @@ job "factorio" {
     task "factorio" {
       driver = "docker"
 
-      volume_mount {
-        volume      = "factorio-data"
-        destination = "/factorio"
-        read_only   = false
-      }
-
       config {
-        image = "docker.io/factoriotools/factorio:stable"
+        image = "docker.io/factoriotools/factorio:latest"
         ports = ["game", "rcon"]
+        volumes = [
+          "factorio-data:/factorio"
+        ]
       }
 
       env {
         GENERATE_NEW_SAVE = "true"
+        SAVE_NAME         = "main-deathworld"
         PRESET            = "death-world"
       }
 
