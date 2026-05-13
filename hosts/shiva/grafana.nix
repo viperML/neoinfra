@@ -15,6 +15,7 @@ in
       };
       server = {
         domain = "ts-grafana.vulture-ratio.ts.net";
+        root_url = "https://ts-grafana.vulture-ratio.ts.net";
         http_addr = "127.0.0.1";
         http_port = grafanaPort;
       };
